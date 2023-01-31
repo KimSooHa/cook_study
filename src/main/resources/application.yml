@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    username: root
+    password: 12341234
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost:3306/cook_study
+
+
+  jpa:
+    hibernate:
+      ddl-auto: create  # create: 자동으로 테이블 만들어줌
+    properties:
+      hibernate:
+#        show_sql: true
+        format_sql: true
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+#    org.hibernate.type: trace #띄어쓰기 2칸
