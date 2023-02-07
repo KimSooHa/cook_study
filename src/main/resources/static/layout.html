@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+     <main>
+    <div class="learning-body">
+      <nav class="learning-body-nav d-none d-flex-md">
+        <h1>뉴렉처 학습</h1>
+        <ul>
+          <li>
+            <router-link to="/learning/questions">문제</router-link>
+          </li>
+          <li>
+            <router-link to="/learning/tests">시험</router-link>
+          </li>
+        </ul>
+
+        <h1>보관함</h1>
+        <ul>
+          <li><a href="">내 자료</a></li>
+          <li><a href="">스크랩</a></li>
+        </ul>
+      </nav>
+
+      <!-----------router----------->
+      <router-view></router-view>
+
+      <aside class="d-none d-flex-md">
+        <nav class="learning-body-nav">
+          <div class="fixed-box">
+            <!-- 인기 태그 -->
+            <section class="popular-tag-container">
+              <h1>인기태그</h1>
+              <div class="">
+                <ul>
+                  <li>
+                    <a href="" class="btn btn-tag-small"># 오류</a>
+                  </li>
+                  <li>
+                    <a href="" class="btn btn-tag-small"># 파이썬</a>
+                  </li>
+                  <li>
+                    <a href="" class="btn btn-tag-small"># JPA</a>
+                  </li>
+                  <li>
+                    <a href="" class="btn btn-tag-small"># vue</a>
+                  </li>
+                  <li>
+                    <a href="" class="btn btn-tag-small"># spring</a>
+                  </li>
+                  <li>
+                    <a href="" class="btn btn-tag-small"># 스프링 부트</a>
+                  </li>
+                  <li>
+                    <a href="" class="btn btn-tag-small"># java</a>
+                  </li>
+                  <li>
+                    <a href="" class="btn btn-tag-small"># react</a>
+                  </li>
+                  <li>
+                    <a href="" class="btn btn-tag-small"># css</a>
+                  </li>
+                  <li>
+                    <a href="" class="btn btn-tag-small"># node js</a>
+                  </li>
+                  <li>
+                    <a href="" class="btn btn-tag-small"># docker</a>
+                  </li>
+                </ul>
+              </div>
+            </section>
+            <section class="recent-question-container">
+              <h1 class=""><a href="">최근 본 문제</a></h1>
+              <div class="recent-question">
+                <div class="recent-question-title"><a href="">자바 객체 지향 문제</a></div>
+                <div class="recent-question-content">
+                  <span class="profile-img">
+                    <img class="btn btn-profile-sm" src="/image/newlec.jpg">
+                  </span>
+                  <span class="nickname">
+                    <a class="t-color-strong">Master Of Java</a>
+                  </span>
+                </div>
+              </div>
+              <div class="recent-question">
+                <div class="recent-question-title"><a href="">자바 객체 지향 문제</a></div>
+                <div class="recent-question-content">
+                  <span class="profile-img">
+                    <img class="btn btn-profile-sm" src="/image/newlec.jpg">
+                  </span>
+                  <span class="nickname">
+                    <a class="t-color-strong">Master Of Java</a>
+                  </span>
+                </div>
+              </div>
+
+              <div class="recent-question">
+                <div class="recent-question-title"><a href="">자바 객체 지향 문제</a></div>
+                <div class="recent-question-content">
+                  <span class="profile-img">
+                    <img class="btn btn-profile-sm" src="/image/newlec.jpg">
+                  </span>
+                  <span class="nickname">
+                    <a class="t-color-strong">Master Of Java</a>
+                  </span>
+                </div>
+              </div>
+
+              <div class="recent-question">
+                <div class="recent-question-title"><a href="">자바 객체 지향 문제</a></div>
+                <div class="recent-question-content">
+                  <span class="profile-img">
+                    <img class="btn btn-profile-sm" src="/image/newlec.jpg">
+                  </span>
+                  <span class="nickname">
+                    <a class="t-color-strong">Master Of Java</a>
+                  </span>
+                </div>
+              </div>
+            </section>
+          </div>
+        </nav>
+      </aside>
+    </div>
+  </main>
+</body>
+</html>

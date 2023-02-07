@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../../css/reset.css" rel="stylesheet" type="text/css" />
+    <link href="../../css/style.css" rel="stylesheet" type="text/css" />
+    <link href="../../css/layout.css" rel="stylesheet" type="text/css" />
+    <link href="../../css/component.css" rel="stylesheet" type="text/css" />
+    <link href="../../css/buttons.css" rel="stylesheet" type="text/css" />
+    <link href="../../css/utils.css" rel="stylesheet" type="text/css">
+    <title>요리모여 - 레시피를 공유하고 함께 요리하는 공간</title>
+    <script src="../../js/admin/menu/list.js"></script>
+</head>
+<body>
+
+<!-- header 부분 -->
+<div th:replace="inc/header :: header"></div>
+
+<div layout:fragment="content"></div>
+
+<!-- footer 부분 -->
+<div th:replace="inc/footer :: footer"></div>
+</body>
+</html>

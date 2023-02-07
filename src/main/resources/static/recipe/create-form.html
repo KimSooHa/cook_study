@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../../css/reset.css" rel="stylesheet" type="text/css" />
+    <link href="../../css/style.css" rel="stylesheet" type="text/css" />
+    <link href="../../css/layout.css" rel="stylesheet" type="text/css" />
+    <link href="../../css/component.css" rel="stylesheet" type="text/css" />
+    <link href="../../css/buttons.css" rel="stylesheet" type="text/css" />
+    <link href="../../css/utils.css" rel="stylesheet" type="text/css">
+    <title>레시피 등록 페이지</title>
+</head>
+<header class="header">
+    <div class="header-top">
+        <div class="d-flex align-items-center">
+            <h1 class="header-title">요리모여</h1>
+        </div>
+
+        <nav class="nav-login">
+
+            <div class="btn btn-strong">
+                <a href="">레시피 등록</a>
+            </div>
+            <div class="btn btn-strong">
+                <a href="">쿡스터디 등록</a>
+            </div>
+
+            <div class="btn btn-default">
+                <a href="">로그인</a>
+            </div>
+
+            <div class="btn btn-strong">
+                <a href="">회원가입</a>
+            </div>
+        </nav>
+    </div>
+
+    <div class="header-bottom">
+        <nav>
+            <ul class="d-flex">
+                <li><a href="">레시피</a></li>
+                <li><a href="">쿡스터디</a></li>
+                <li><a href="">요리실</a></li>
+                <li><a href="">마이페이지</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<body>
+    <main>
+        <form class="detail-container create-container">
+            <div class="detail-container-title">레시피 등록</div>
+            
+            <div class="detail-intro">
+
+                <div class="detail-input-box d-flex-md">
+                    <label for="" class="detail-title">레시피 제목</label>
+                    <input type="text" name="" id="" placeholder="내용을 입력해주세요." required>
+                </div>
+
+                <!-- <img class="food-detail-img" src="https://www.menupan.com/cook/cookimg/004000.jpg" alt=""> -->
+                <div class="img-input-box">
+                    <label class="detail-title" for="image">메인 이미지</label>
+                    <input type="file" name="" id="image">
+                </div>
+                <div class="info explanation input-content">
+                    <span class="detail-title">요리 설명</span>
+                    <textarea name="" id="" cols="30" rows="7" placeholder="내용을 입력해주세요." required></textarea>
+                </div>
+                <div class="info">
+                    <div class="serving-info">
+                        <label class="detail-title" for="serving-input">인분</label>
+                        <input type="text" name="" id="serving-input">
+                    </div>
+                    <div class="cooking-info">
+                        <label class="detail-title" for="cooking-time">조리시간</label>
+                        <input type="number" name="" id="cooking-time" max="5">
+                    </div>
+                </div>
+            </div>
+            <div class="info explanation input-content">
+                <span class="detail-title">재료</span>
+                <textarea name="" id="" cols="30" rows="5" placeholder="내용을 입력해주세요." required></textarea>
+            </div>
+            <section class="cooking-order">
+                <h1 class="detail-sub-title">조리순서</h1>
+
+                <div class="info explanation input-content order-box">
+
+                    <div class="img-input-box">
+                        <span class="order-num">1.</span>
+                        <label class="detail-title" for="image"></label>
+                        <input type="file" name="" id="image">
+                    </div>
+                    <img class="food-detail-img"
+                        src="https://bakeitwithlove.com/wp-content/uploads/2022/02/valentines-day-chocolate-covered-strawberries-sq.jpg"
+                        alt="요리사진">
+
+                    <textarea name="" id="" cols="30" rows="5" placeholder="내용을 입력해주세요." required></textarea>
+                </div>
+                <div class="info explanation input-content order-box">
+
+                    <div class="img-input-box">
+                        <span class="order-num">2.</span>
+                        <label class="detail-title" for="image"></label>
+                        <input type="file" name="" id="image">
+                    </div>
+                    <img class="food-detail-img"
+                        src="https://www.allrecipes.com/thmb/F-EluJr_7l4tdCKSuAsjWNcjUnA=/750x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/5112458-61ab2bab516346c5a02f78612c7823fe.jpg"
+                        alt="요리사진">
+
+                    <textarea name="" id="" cols="30" rows="5" placeholder="내용을 입력해주세요." required></textarea>
+                </div>
+                <div class="info explanation input-content order-box">
+
+                    <div class="img-input-box">
+                        <span class="order-num">3.</span>
+                        <label class="detail-title" for="image"></label>
+                        <input type="file" name="" id="image">
+                    </div>
+                    <img class="food-detail-img" src="https://www.menupan.com/cook/cookimg/pimg/003700_p01.jpg"
+                        alt="요리사진">
+
+                    <textarea name="" id="" cols="30" rows="5" placeholder="내용을 입력해주세요." required></textarea>
+                </div>
+
+                <!-- <div class="info explanation input-content order-box">
+
+                    <div class="img-input-box">
+                        <span class="order-num">3.</span>
+                        <label class="detail-title" for="image"></label>
+                        <input type="file" name="" id="image">
+                    </div>
+                    <img class="d-none food-detail-img" src=""
+                        alt="요리사진">
+
+                    <textarea name="" id="" cols="30" rows="5" placeholder="내용을 입력해주세요." required></textarea>
+                </div> -->
+
+                <div class="add-form">
+                    <span class="btn btn-strong">추가</span>
+                </div>
+            </section>
+            <div class="edit-box">
+                <input class="btn btn-default btn-basic" type="submit" value="등록">
+            </div>
+        </form>
+    </main>
+</body>
+
+</html>

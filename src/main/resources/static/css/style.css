@@ -1,0 +1,123 @@
+@charset "UTF-8";
+
+
+
+:root{
+	/*----------------color-------------------*/
+	--color-text-dark:#000000cd;
+
+    --color-warning:#FF0505;
+
+	--color-bd-color:#707070;
+
+	--color-bg:#4E4E4E;
+	--color-bg-light:#D2D2D2;
+	--color-bg-dark:#000000;
+	--color-bg-gray : #CCCCCC;
+	--color-bg-white : #FFFFFF;
+	--color-bg-blue : #EFF3FA;
+	--color-bg-white2 : #FFFFFFDB;
+	--color-bg-pink: rgb(239, 219, 219);
+
+	--color-text:rgb(94, 94, 94);
+	--color-text-light:grey;
+	--color-text-invert:#FFFFFF;
+	--color-text-emphasis : rgb(210, 90, 80);
+	--color-text-emphasis-red : rgb(132, 73, 73);
+
+	--color-main-light:#FFE8C5;
+	--color-main:rgb(234, 145, 145);
+	--color-main-dark:#A24F17;
+
+	--color-strong:rgb(233, 172, 172);
+	--color-strong-dark:#005FFF;
+
+	--color-border : #e0e0e0;
+
+	--color-btn-warning: rgba(255, 5, 5, .5);
+	--color-btn-grey: rgb(244, 244, 244);
+	--color-btn-main: rgb(233, 172, 172);
+
+	/*------------border---------------*/
+
+	--border-weight-light : 1px;
+	--border-radius-1 : 3px;
+	--border-radius-2: 15px;
+	--border-radius-3 : 10px;
+
+	/*----------------button-------------------*/
+	--icon-size : 32px;
+	--icon-size-sm : 16px;
+	--icon-size-md : 30px;
+	--logo-width : 150px;
+
+	--btn-diameter-small : 37px;
+	--btn-diameter-medium : 54px;
+	--btn-diameter-large : 79px;
+
+	--btn-p-v:0.5em;
+	--btn-p-h:1em;
+	--tag-p-v:0.5em;
+	--tag-p-h:1em;
+	--btn-t-v:0.3em;
+	--btn-t-h:0.5em;
+
+	--profile-size : 30px;
+
+
+	/*----------------image------------------*/
+	--image-list-size-w: 250px;
+	--image-list-size-h: 180px;
+	--image-detail-size-w: 600px;
+	--image-detail-size-h: 400px;
+
+	/*----------------layout------------------*/
+
+	--layout-interval : 30px;
+
+	--item-interval-lr : 16px;
+	--item-interval-ud : 8px;
+
+	--header-height : 70px;
+	--header-padding : 100px;
+
+	/*----------------text-------------------*/
+
+	--text-indent : -999px;
+	--text-title0: 28px;
+	--text-title1 : 24px;
+	--text-title2 : 21px;
+	--text-title3 : 18px;
+	--text-content : 14px;
+	--text-tag-small : 12px;
+
+	--font-content : 'S-CoreDream-3Light', sans-serif;
+
+	/* responsive */
+	--mobile-min-width: 360px;
+	--mobile-max-width: 768px;
+}
+
+/*-------------text------------------*/
+.t-h1{
+	font-size: var(--text-title1);
+}
+
+.t-h2{
+	font-size: var(--text-title2);
+}
+
+.t-h3{
+	font-size: var(--text-title3);
+}
+
+.t-hidden{
+	overflow: hidden;
+	text-indent: var(--text-indent);
+}
+
+body {
+	font-size: var(--text-content);
+	font-family: 'S-CoreDream-3Light', sans-serif;
+	color: var(--color-text-dark);
+}
