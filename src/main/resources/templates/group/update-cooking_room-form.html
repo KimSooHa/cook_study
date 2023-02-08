@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="../../css/reset.css" rel="stylesheet" type="text/css" />
+        <link href="../../css/style.css" rel="stylesheet" type="text/css" />
+        <link href="../../css/layout.css" rel="stylesheet" type="text/css" />
+        <link href="../../css/component.css" rel="stylesheet" type="text/css" />
+        <link href="../../css/buttons.css" rel="stylesheet" type="text/css" />
+        <link href="../../css/utils.css" rel="stylesheet" type="text/css">
+        <title>쿡스터디 등록 페이지</title>
+    </head>
+    <header class="header">
+        <div class="header-top">
+            <div class="d-flex align-items-center">
+                <h1 class="header-title">요리모여</h1>
+            </div>
+    
+            <nav class="nav-login">
+    
+                <div class="btn btn-strong">
+                    <a href="">레시피 등록</a>
+                </div>
+                <div class="btn btn-strong">
+                    <a href="">쿡스터디 등록</a>
+                </div>
+    
+                <div class="btn btn-default">
+                    <a href="">로그인</a>
+                </div>
+    
+                <div class="btn btn-strong">
+                    <a href="">회원가입</a>
+                </div>
+            </nav>
+        </div>
+    
+        <div class="header-bottom">
+            <nav>
+                <ul class="d-flex">
+                    <li><a href="">레시피</a></li>
+                    <li><a href="">쿡스터디</a></li>
+                    <li><a href="">요리실</a></li>
+                    <li><a href="">마이페이지</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <body>
+        <main>
+            <form class="detail-container create-container">
+                <div class="detail-container-title">요리실 수정</div>
+    
+                <div class="detail-intro">
+    
+                    <div class="detail-input-box d-flex-md">
+                        <label for="select-date" class="detail-title">날짜 선택</label>
+                        <input type="date" name="" id="select-date">
+                    </div>
+    
+                    <div class="info">
+                        <label class="detail-title" for="select">요리실 선택</label>
+                        <select id="select" class="form-control">
+                            <option value="">요리실 선택</option>
+                            <optgroup label="101호(10명)">
+                                <option>101호(10명) 10:00~12:00</option>
+                                <option>101호(10명) 14:00~16:00</option>
+                            </option>
+                            <optgroup label="102호(10명)">
+                                <option>102호(10명) 10:00~12:00</option>
+                                <option>102호(10명) 14:00~16:00</option>
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="edit-box">
+                    <input class="btn btn-default btn-basic" type="submit" value="다음">
+                </div>
+            </form>
+        </main>
+    </body>
+</html>

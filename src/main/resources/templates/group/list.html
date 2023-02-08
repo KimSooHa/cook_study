@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../../css/reset.css" rel="stylesheet" type="text/css" />
+    <link href="../../css/style.css" rel="stylesheet" type="text/css" />
+    <link href="../../css/layout.css" rel="stylesheet" type="text/css" />
+    <link href="../../css/component.css" rel="stylesheet" type="text/css" />
+    <link href="../../css/buttons.css" rel="stylesheet" type="text/css" />
+    <link href="../../css/utils.css" rel="stylesheet" type="text/css">
+    <title>쿡스터디 목록 페이지</title>
+</head>
+<header class="header">
+    <div class="header-top">
+        <div class="d-flex align-items-center">
+            <h1 class="header-title">요리모여</h1>
+        </div>
+
+        <nav class="nav-login">
+
+            <div class="btn btn-strong">
+                <a href="">레시피 등록</a>
+            </div>
+            <div class="btn btn-strong">
+                <a href="">쿡스터디 등록</a>
+            </div>
+
+            <div class="btn btn-default">
+                <a href="">로그인</a>
+            </div>
+
+            <div class="btn btn-strong">
+                <a href="">회원가입</a>
+            </div>
+        </nav>
+    </div>
+
+    <div class="header-bottom">
+        <nav>
+            <ul class="d-flex">
+                <li><a href="">레시피</a></li>
+                <li><a href="">쿡스터디</a></li>
+                <li><a href="">요리실</a></li>
+                <li><a href="">마이페이지</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<body>
+    <main>
+        <section class="list-container">
+            <header class="header-search">
+                <h1 class="d-none">그룹 목록</h1>
+                <form class="search-box">
+                    <div class="input-search d-flex-md">
+                        <input class="icon icon-md icon-search" type="submit">
+                        <label for="search" class="d-none">
+                            검색
+                        </label>
+                        <input type="text" id="search">
+                    </div>
+                    <label class="d-none" for="select">정렬 선택</label>
+                    <select id="select" class="form-control">
+                        <option value="">조회 선택</option>
+                        <option>최신순</option>
+                        <option>리뷰순</option>
+                        <option>좋아요 순</option>
+                    </select>
+                </form>
+            </header>
+
+            
+            <nav class="nav-category">
+                <ul>
+                    <li class="nav-selected">
+                        <a class="btn btn-tag" href="/menu/list">전체</a>
+                    </li>
+                    <li>
+                        <a class="btn btn-tag" href="">한식</a>
+                    </li>
+                    <li>
+                        <a class="btn btn-tag" href="">양식</a>
+                    </li>
+                    <li>
+                        <a class="btn btn-tag" href="">일식</a>
+                    </li>
+                    <li>
+                        <a class="btn btn-tag" href="">중식</a>
+                    </li>
+                    <li>
+                        <a class="btn btn-tag" href="">디저트</a>
+                    </li>
+                </ul>
+            </nav>
+            
+
+            <div class="intro">
+                <span>총 <span class="text-strong">8</span>개의 그룹이 있습니다.</span>
+            </div>
+
+            <section class="list-box">
+                <h1 class="d-none">그룹 목록</h1>
+                <section class="list-element">
+                    <a href="/menu/detail?id=13">
+                        <img class="image-view-round food-list-img"
+                            src="https://images.unsplash.com/photo-1515442261605-65987783cb6a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+                            alt="">
+                    </a>
+                    <h1>그룹 제목</h1>
+                </section>
+                <section class="list-element">
+                    <a href="/menu/detail?id=13">
+                        <img class="image-view-round food-list-img"
+                            src="https://images.unsplash.com/photo-1515442261605-65987783cb6a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+                            alt="">
+                    </a>
+                    <h1>그룹 제목</h1>
+                </section>
+                <section class="list-element">
+                    <a href="/menu/detail?id=13">
+                        <img class="image-view-round food-list-img"
+                            src="https://images.unsplash.com/photo-1515442261605-65987783cb6a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+                            alt="">
+                    </a>
+                    <h1>그룹 제목</h1>
+                </section>
+                <section class="list-element">
+                    <a href="/menu/detail?id=13">
+                        <img class="image-view-round food-list-img"
+                            src="https://images.unsplash.com/photo-1515442261605-65987783cb6a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+                            alt="">
+                    </a>
+                    <h1>그룹 제목</h1>
+                </section>
+                <section class="list-element">
+                    <a href="/menu/detail?id=13">
+                        <img class="image-view-round food-list-img"
+                            src="https://images.unsplash.com/photo-1515442261605-65987783cb6a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+                            alt="">
+                    </a>
+                    <h1>그룹 제목</h1>
+                </section>
+                <section class="list-element">
+                    <a href="/menu/detail?id=13">
+                        <img class="image-view-round food-list-img"
+                            src="https://images.unsplash.com/photo-1515442261605-65987783cb6a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+                            alt="">
+                    </a>
+                    <h1>그룹 제목</h1>
+                </section>
+                <section class="list-element">
+                    <a href="/menu/detail?id=13">
+                        <img class="image-view-round food-list-img"
+                            src="https://images.unsplash.com/photo-1515442261605-65987783cb6a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+                            alt="">
+                    </a>
+                    <h1>그룹 제목</h1>
+                </section>
+            </section>
+
+            <div class="paging-box">
+                <a href="" class="btn btn-tag btn-icon icon-arrow-left">왼쪽 버튼</a>
+                <a href="" class="btn btn-default selected">1</a>
+                <a href="" class="btn btn-default">2</a>
+                <a href="" class="btn btn-default">3</a>
+                <a href="" class="btn btn-default">4</a>
+                <a href="" class="btn btn-tag btn-icon icon-arrow-right">오른쪽 버튼</a>
+            </div>
+        </section>
+    </main>
+</body>
+
+</html>

@@ -4,110 +4,62 @@
   	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
   	layout:decorate="inc/layout">
 <main layout:fragment="content">
-    <section>
-        <header class="header-search">
-            <h1 class="text-title1-h1">알랜드 메뉴</h1>
-            <form>
-                <input type="text">
-                <input type="submit" class="btn btn-search text-hidden">
-            </form>
-        </header>
-
-        <nav class="nav-category admin-nav-category">
-            <div>
-                <h1 class="text-normal-bold">메뉴분류</h1>
-                <a class="btn btn-strong" href="">분류관리</a>
+    <section class="recipe-best best-container">
+        <div class="recipe-best-header best-container-header">
+            <h1>레시피 BEST</h1>
+            <div class="btn btn-strong">
+                <a href="">더보기</a>
             </div>
-            <ul>
-                <li class="nav-selected">
-                    <a href="/menu/list">전체</a>
-                </li>
-                <li>
-                    <a href="">커피음료</a>
-                </li>
-                <li>
-                    <a href="">수제청</a>
-                </li>
-                <li>
-                    <a href="">샌드위치</a>
-                </li>
-                <li>
-                    <a href="">쿠키</a>
-                </li>
-            </ul>
-        </nav>
-
-        <section class="cart">
-            <h1 class="d-none">장바구니</h1>
-            <span class="text-title3">커피음료</span>
-            <a href="" class="btn btn-strong">메뉴추가</a>
-        </section>
-
-        <section class="menu-list">
-            <h1 class="d-none">메뉴 목록</h1>
-            <section class="menu-list-element">
-                <form>
-                    <h1>알랜드 커피1</h1>
-                    <span>4,500원</span>
-                    <a href="/menu/detail?id=13">
-                        <img class="image-view-round" src="https://images.unsplash.com/photo-1515442261605-65987783cb6a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80" alt="">
-                    </a>
-                    <fieldset>
-                        <input type = "checkbox" name="ice-option" value="1">
-                        <label>ICED</label>
-                        <input type = "checkbox" name="size-option" value="1">
-                        <label>Large</label>
-                    </fieldset>
-
-                    <div>
-                        <a class="btn btn-default">영양정보수정</a>
-                        <a class="btn btn-modify" href=""> </a>
-                        <a class="btn btn-remove" href=""> </a>
-                    </div>
-                </form>
-                
-            </section>
-             <section class="menu-list-element">
-                <form>
-                    <h1>알랜드 커피2</h1>
-                    <span>4,500원</span>
-                    <a href="/menu/detail?id=13">
-                        <img class="image-view-round" src="https://images.unsplash.com/photo-1515442261605-65987783cb6a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80" alt="">
-                    </a>
-                    <fieldset>
-                        <input type = "checkbox" name="ice-option" value="1">
-                        <label>ICED</label>
-                        <input type = "checkbox" name="size-option" value="1">
-                        <label>Large</label>
-                    </fieldset>
-
-                    <div>
-                        <a class="btn btn-default">영양정보수정</a>
-                        <a class="btn btn-modify" href=""> </a>
-                        <a class="btn btn-remove" href=""> </a>
-                    </div>
-                </form>
-                
-            </section>
-        </section>
-
-        <div class="d-flex justify-content-center">
-            <a href="" class="btn btn-next">더보기(13+)</a>
         </div>
-
-        <section class="new-menu">
-            <h1 class="d-none">신메뉴 목록</h1>
-            <!-- <ul>
-                <li>
-                </li>
-            </ul>  -->
-            <div class="list">
-                <span>신규로 출시된 메뉴가 없습니다.</span>
+        <section class="best-list">
+            <h1 class="d-none">best 레시피 목록</h1>
+            <div class="list-element">
+                <img class="food-list-img" src="https://src.hidoc.co.kr/image/lib/2020/11/9/1604911318873_0.jpg" alt="">
+                <span class="title">레시피 제목</span>
+            </div>
+            <div class="list-element">
+                <img class="food-list-img" src="https://src.hidoc.co.kr/image/lib/2020/11/9/1604911318873_0.jpg" alt="">
+                <span class="title">레시피 제목</span>
+            </div>
+            <div class="list-element">
+                <img class="food-list-img" src="https://src.hidoc.co.kr/image/lib/2020/11/9/1604911318873_0.jpg" alt="">
+                <span class="title">레시피 제목</span>
+            </div>
+            <div class="list-element">
+                <img class="food-list-img" src="https://src.hidoc.co.kr/image/lib/2020/11/9/1604911318873_0.jpg" alt="">
+                <span class="title">레시피 제목</span>
             </div>
         </section>
 
-  		</section>
+    </section>
+
+    <section class="cook_study-best best-container">
+        <div class="cook_study-best-header best-container-header">
+            <h1>쿡스터디 BEST</h1>
+            <div class="btn btn-strong">
+                <a href="">더보기</a>
+            </div>
+        </div>
+        <section class="best-list">
+            <h1 class="d-none">best 쿡스터디 목록</h1>
+            <div class="list-element">
+                <img class="food-list-img" src="https://src.hidoc.co.kr/image/lib/2020/11/9/1604911318873_0.jpg" alt="">
+                <span class="title">쿡스터디 제목</span>
+            </div>
+            <div class="list-element">
+                <img class="food-list-img" src="https://src.hidoc.co.kr/image/lib/2020/11/9/1604911318873_0.jpg" alt="">
+                <span class="title">쿡스터디 제목</span>
+            </div>
+            <div class="list-element">
+                <img class="food-list-img" src="https://src.hidoc.co.kr/image/lib/2020/11/9/1604911318873_0.jpg" alt="">
+                <span class="title">쿡스터디 제목</span>
+            </div>
+            <div class="list-element">
+                <img class="food-list-img" src="https://src.hidoc.co.kr/image/lib/2020/11/9/1604911318873_0.jpg" alt="">
+                <span class="title">쿡스터디 제목</span>
+            </div>
+        </section>
+    </section>
     </main>
     
-    <!-- <div th:replace="~{admin/inc/footer::footer}"></div>	id로 찾을때는 # 사용 -->
 </html>
