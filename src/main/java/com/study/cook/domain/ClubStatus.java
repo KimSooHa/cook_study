@@ -1,6 +1,5 @@
 package com.study.cook.domain;
 
-public enum GroupStatus {
-
+public enum ClubStatus {
     POS, COMP
 }

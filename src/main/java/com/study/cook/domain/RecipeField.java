@@ -3,6 +3,7 @@ package com.study.cook.domain;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 import static javax.persistence.FetchType.LAZY;
 
@@ -14,17 +15,21 @@ import static javax.persistence.FetchType.LAZY;
 public class RecipeField {
 
     @Id
-    @GeneratedValue
-    @Column(name = "recipe_form_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "recipe_field_id")
     private Long id;
 
     private String img;
+    @NotNull
+    @Column(length = 200)
     private String content;
 
+    @NotNull
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @NotNull
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "recipe_id")
     private Recipe recipe;

@@ -3,6 +3,9 @@ package com.study.cook.domain;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static javax.persistence.FetchType.LAZY;
@@ -11,31 +14,43 @@ import static javax.persistence.FetchType.LAZY;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(of = {"id", "startTime", "endTime", "useDate", "regDate"})
+@ToString(of = {"id", "startTime", "endTime", "status", "regDate"})
 public class Reservation {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "reservation_id")
     private Long id;
 
-    private String startTime;
-    private String endTime;
-    private String useDate;
+    @NotNull
+    private LocalDateTime startDateTime;
+
+    @NotNull
+    private LocalDateTime endDateTime;
+
+    @Enumerated
+    @NotNull
+    @Column(length = 10)
+    private ReservationStatus status;
+
+    @NotNull
     private LocalDateTime regDate;
 
+    @NotNull
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @NotNull
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "cooking_room_id")
     private CookingRoom cookingRoom;
 
-    public Reservation(String startTime, String endTime, String useDate) {
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.useDate = useDate;
+    public Reservation(LocalDateTime startDateTime, LocalDateTime endDateTime, ReservationStatus status) {
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
+        this.status = status;
+        this.regDate = LocalDateTime.now();
     }
 
     public void setMember(Member member) {

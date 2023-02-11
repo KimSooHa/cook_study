@@ -1,0 +1,123 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/header :: header">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="../../css/reset.css" rel="stylesheet" type="text/css" />
+        <link href="../../css/style.css" rel="stylesheet" type="text/css" />
+        <link href="../../css/layout.css" rel="stylesheet" type="text/css" />
+        <link href="../../css/component.css" rel="stylesheet" type="text/css" />
+        <link href="../../css/buttons.css" rel="stylesheet" type="text/css" />
+        <link href="../../css/utils.css" rel="stylesheet" type="text/css">
+        <title>쿡스터디 상세 페이지</title>
+    </head>
+    <style>
+        .fieldError {
+            border-color: #bd2130;
+        }
+    </style>
+    <header class="header">
+        <div class="header-top">
+            <div class="d-flex align-items-center">
+                <h1 class="header-title">요리모여</h1>
+            </div>
+
+            <nav class="nav-login">
+
+                <div class="btn btn-strong">
+                    <a href="/recipe/create-form.html">레시피 등록</a>
+                </div>
+                <div class="btn btn-strong">
+                    <a href="/club/reserv-cooking_room-form.html">쿡스터디 등록</a>
+                </div>
+
+                <div class="btn btn-default">
+                    <a href="">로그인</a>
+                </div>
+
+                <div class="btn btn-strong">
+                    <a href="">회원가입</a>
+                </div>
+            </nav>
+        </div>
+
+        <div class="header-bottom">
+            <nav>
+                <ul class="d-flex">
+                    <li><a href="/recipe/list.html">레시피</a></li>
+                    <li><a href="/club/list.html">쿡스터디</a></li>
+                    <li><a href="">요리실</a></li>
+                    <li><a href="">마이페이지</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+<body>
+    <main>
+        <section class="input-container">
+            <h1 class="detail-title">프로필 수정</h1>
+            <form role="form" action="/members/new" th:object="${memberForm}" method="post">
+                <!-- id -->
+                <input type="hidden" th:field="*{memberId}" name="">
+                <div class="form-club">
+                    <div class="input-box">
+                        <label th:for="name">이름</label>
+                        <input type="text" th:field="*{name}" class="form-control" placeholder="이름을 입력하세요"
+                            th:class="${#fields.hasErrors('name')}? 'form-control fieldError' : 'form-control'">
+                    </div>
+                    <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Incorrect date</p>
+                </div>
+                <div class="form-club">
+                    <div class="input-box">
+                    <label th:for="nickname">닉네임</label>
+                    <input type="text" th:field="*{name}" class="form-control" placeholder="닉네임을 입력하세요"
+                        th:class="${#fields.hasErrors('name')}? 'form-control fieldError' : 'form-control'">
+                    </div>
+                    <p th:if="${#fields.hasErrors('nickname')}" th:errors="*{nickname}">존재하는 닉네임입니다.</p>
+                </div>
+                <div class="form-club">
+                    <div class="input-box">
+                        <label th:for="loginId">아이디</label>
+                        <input type="text" th:field="*{name}" class="form-control" placeholder="아이디를 입력하세요"
+                        th:class="${#fields.hasErrors('loginId')}? 'form-control fieldError' : 'form-control'">
+                        <!-- <a class="btn btn-default btn-basic" href="">확인</a> -->
+                        </div>
+                    <p th:if="${#fields.hasErrors('loginId')}" th:errors="*{loginId}">존재하는 아이디입니다.</p>
+                </div>
+                <div class="form-club">
+                    <div class="input-box">
+                    <label th:for="pwd">비밀번호</label>
+                    <input type="text" th:field="*{name}" class="form-control" placeholder="아이디를 입력하세요"
+                        th:class="${#fields.hasErrors('pwd')}? 'form-control fieldError' : 'form-control'">
+                        </div>
+                    <p th:if="${#fields.hasErrors('pwd')}" th:errors="*{pwd}">존재하는 아이디입니다.</p>
+                </div>
+                <div class="form-club">
+                    <div class="input-box">
+                    <label th:for="email">이메일</label>
+                    <input type="text" th:field="*{name}" class="form-control" placeholder="아이디를 입력하세요"
+                        th:class="${#fields.hasErrors('email')}? 'form-control fieldError' : 'form-control'">
+                        </div>
+                    <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}">이메일 형식에 맞지 않습니다.</p>
+                </div>
+                <div class="form-club">
+                    <div class="input-box">
+                    <label th:for="phoneNum">전화번호</label>
+                    <input type="text" th:field="*{phoneNum}" class="form-control" placeholder="아이디를 입력하세요"
+                        th:class="${#fields.hasErrors('phoneNum')}? 'form-control fieldError' : 'form-control'">
+                        </div>
+                    <p th:if="${#fields.hasErrors('phoneNum')}" th:errors="*{phoneNum}">전화번호 형식에 맞지 않습니다.</p>
+                </div>
+                
+                <button type="submit" class="btn btn-strong btn-default btn-submit">수정하기</button>
+            </form>
+            <br />
+        </section> <!-- /container -->
+    </main>
+</body>
+
+</html>

@@ -3,11 +3,12 @@ package com.study.cook.domain;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.study.cook.domain.GroupStatus.POS;
+import static com.study.cook.domain.ClubStatus.POS;
 import static javax.persistence.FetchType.LAZY;
 
 @Entity
@@ -15,31 +16,50 @@ import static javax.persistence.FetchType.LAZY;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(of = {"id", "name", "introduction", "status", "maxCount", "price", "regDate"})
-public class Group {
+public class Club {
 
     @Id
-    @GeneratedValue
-    @Column(name = "group_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "club_id")
     private Long id;
-
+    @NotNull
+    @Column(length = 45)
     private String name;
+
+    @NotNull
+    @Column(length = 100)
     private String introduction;
 
+    @NotNull
+    @Column(length = 10)
     @Enumerated(EnumType.STRING)
-    private GroupStatus status;
+    private ClubStatus status;
+
+    @NotNull
+    @Column(columnDefinition = "TINYINT")
     private int maxCount;
+
+    @NotNull
+    @Column(columnDefinition = "SMALLINT")
     private int price;
+
+    @NotNull
+    @Column(length = 200)
     private String ingredients;
+
+    @NotNull
     private LocalDateTime regDate;
 
+    @NotNull
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToMany(mappedBy = "group")
+    @NotNull
+    @OneToMany(mappedBy = "club")
     private List<Participation> participations = new ArrayList<>();
 
-    public Group(String name, String introduction, int maxCount, String ingredients) {
+    public Club(String name, String introduction, int maxCount, String ingredients) {
         this.name = name;
         this.introduction = introduction;
         this.maxCount = maxCount;
@@ -49,18 +69,18 @@ public class Group {
     //==연관관계 메서드==//
     public void setMember(Member member) {
         this.member = member;
-        member.getGroups().add(this);
+        member.getClubs().add(this);
     }
 
-    public static Group createGroup(Group group, Member member) {
+    public static Club createClub(Club club, Member member) {
 
-        group.setStatus(POS);
-        group.setPrice(12000);
-        group.setRegDate(LocalDateTime.now());
+        club.setStatus(POS);
+        club.setPrice(12000);
+        club.setRegDate(LocalDateTime.now());
 
-        group.setMember(member);
+        club.setMember(member);
 
-        return group;
+        return club;
     }
 
 

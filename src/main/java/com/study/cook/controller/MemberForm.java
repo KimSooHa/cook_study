@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 public class MemberForm {
 
     private String name;
-    private String nickname;
     private String loginId;
     private String pwd;
     private String email;

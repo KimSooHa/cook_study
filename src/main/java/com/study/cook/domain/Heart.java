@@ -2,9 +2,8 @@ package com.study.cook.domain;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 import static javax.persistence.FetchType.LAZY;
 
@@ -12,13 +11,19 @@ import static javax.persistence.FetchType.LAZY;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(of = {"id", "role", "useDate"})
-public class Like {
+public class Heart {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "heart_id")
+    private Long id;
+
+    @NotNull
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @NotNull
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "recipe_id")
     private Recipe recipe;
@@ -26,20 +31,20 @@ public class Like {
     //== 연관관계 메서드==//
     public void setMember(Member member) {
         this.member = member;
-        member.getLikes().add(this);
+        member.getHearts().add(this);
     }
 
     public void setRecipe(Recipe recipe) {
         this.recipe = recipe;
-        recipe.getLikes().add(this);
+        recipe.getHearts().add(this);
     }
 
-    public static Like pressLike(Member member, Recipe recipe) {
-        Like like = new Like();
+    public static Heart pressHeart(Member member, Recipe recipe) {
+        Heart heart = new Heart();
 
-        like.setMember(member);
-        like.setRecipe(recipe);
+        heart.setMember(member);
+        heart.setRecipe(recipe);
 
-        return like;
+        return heart;
     }
 }

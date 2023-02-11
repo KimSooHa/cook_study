@@ -3,6 +3,7 @@ package com.study.cook.domain;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,15 +16,19 @@ import java.util.List;
 public class Schedule {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "schedule_id")
     private Long id;
 
+
+    @NotNull
     private String startTime;
+    @NotNull
     private String endTime;
 
-    @OneToMany(mappedBy = "schedule")
-    private List<CookingRoomSchedule> cookingRoomSchedules = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "cooking_room_id")
+    private CookingRoom cookingRoom;
 
     public Schedule(String startTime, String endTime) {
         this.startTime = startTime;

@@ -3,6 +3,7 @@ package com.study.cook.domain;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 
@@ -18,21 +19,26 @@ import static javax.persistence.FetchType.LAZY;
 public class Participation {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "participation_id")
     private Long id;
 
+    @NotNull
+    @Column(length = 15)
     @Enumerated(EnumType.STRING)
     private Role role;   // MANAGER[운영자], PARTICIPANT[참여자]
+    @NotNull
     private LocalDateTime regDate;
 
+    @NotNull
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @NotNull
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "group_id")
-    private Group group;
+    @JoinColumn(name = "club_id")
+    private Club club;
 
 
 
@@ -41,15 +47,15 @@ public class Participation {
         member.getParticipations().add(this);
     }
 
-    public void setGroup(Group group) {
-        this.group = group;
-        group.getParticipations().add(this);
+    public void setClub(Club club) {
+        this.club = club;
+        club.getParticipations().add(this);
     }
 
-    public static Participation createParticipation(Member member, Group group) {
+    public static Participation createParticipation(Member member, Club club) {
         Participation participation = new Participation();
 
-        if(member.getId() == group.getMember().getId()) {
+        if(member.getId() == club.getMember().getId()) {
             participation.setRole(MANAGER);
         }
         else {
@@ -59,7 +65,7 @@ public class Participation {
         participation.setRegDate(LocalDateTime.now());
 
         participation.setMember(member);
-        participation.setGroup(group);
+        participation.setClub(club);
 
         return participation;
     }

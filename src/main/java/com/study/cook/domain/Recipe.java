@@ -1,9 +1,10 @@
 package com.study.cook.domain;
 
-import com.study.cook.controller.RecipeForm;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,30 +15,49 @@ import static javax.persistence.FetchType.LAZY;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(of = {"id", "introduction", "img", "ingredients", "cookingTime", "servings", "likes", "regDate"})
+@ToString(of = {"id", "title", "introduction", "img", "ingredients", "cookingTime", "servings", "likes", "regDate"})
 public class Recipe {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "recipe_id")
     private Long id;
 
+    @NotNull
+    @Column(length = 20)
+    private String title;
+
+    @Column(length = 200)
     private String introduction;
+
+    @NotNull
     private String img;
+
+    @Column(length = 200)
+    @NotNull
     private String ingredients; // 재료
+
+    @NotNull
+    @Column(columnDefinition = "TINYINT", length = 1)
     private int cookingTime;    // 요리시간
+
+    @NotNull
+    @Column(columnDefinition = "TINYINT", length = 1)
     private int servings;   // 인분
-    private int likeCount;  // 좋아요 수
+    @NotNull
     private LocalDateTime regDate;
 
+    @NotNull
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @NotNull
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
 
+    @NotNull
     @OneToMany(mappedBy = "recipe")
     private List<RecipeField> recipeFields = new ArrayList<>();
 
@@ -45,7 +65,7 @@ public class Recipe {
     private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "recipe")
-    private List<Like> likes = new ArrayList<>();
+    private List<Heart> hearts = new ArrayList<>();
 
     public Recipe(String introduction, String img, String ingredients, int cookingTime, int servings) {
         this.introduction = introduction;

@@ -3,6 +3,9 @@ package com.study.cook.domain;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,21 +18,35 @@ import java.util.List;
 public class Member {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
     private Long id;
 
+    @NotNull
+    @Column(length = 18)
     private String name;
-    private String nickname;
+
+    @NotNull
+    @Column(length = 10)
     private String loginId;
+
+    @NotNull
+    @Column(length = 16)
     private String pwd;
+
+    @NotNull
+    @Column(length = 320)
     private String email;
+
+    @NotNull
+    @Column(length = 13)
     private String phoneNum;
+
+    @NotNull
     private LocalDateTime regDate;
 
-    public Member(String name, String nickname, String loginId, String pwd, String email, String phoneNum) {
+    public Member(String name, String loginId, String pwd, String email, String phoneNum) {
         this.name = name;
-        this.nickname = nickname;
         this.loginId = loginId;
         this.pwd = pwd;
         this.email = email;
@@ -49,9 +66,9 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private List<Participation> participations = new ArrayList<>();
     @OneToMany(mappedBy = "member")
-    private List<Like> likes = new ArrayList<>();
+    private List<Heart> hearts = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
-    private List<Group> groups = new ArrayList<>();
+    private List<Club> clubs = new ArrayList<>();
     
 }
