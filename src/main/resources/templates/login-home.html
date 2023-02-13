@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="UTF-8">
@@ -19,6 +19,8 @@
             <h1 class="header-title">요리모여</h1>
         </div>
 
+        <div class="login-member" th:text="|${member.name}님|">로그인 회원 이름</div>
+
         <nav class="nav-login">
 
             <div class="btn btn-strong">
@@ -27,13 +29,14 @@
             <div class="btn btn-strong">
                 <a href="">쿡스터디 등록</a>
             </div>
+            <form th:action="@{/logout}" method="post">
+                <div class="btn btn-default">
+                    <input class="btn-submit" type="submit" value="로그아웃">
+                </div>
+            </form>
 
             <div class="btn btn-default">
-                <a href="">로그인</a>
-            </div>
-
-            <div class="btn btn-strong">
-                <a href="">회원가입</a>
+                <a href="" th:href="@{/members}">회원가입</a>
             </div>
         </nav>
     </div>
@@ -49,6 +52,7 @@
         </nav>
     </div>
 </header>
+
 <body>
     <main>
         <section class="recipe-best best-container">
@@ -61,25 +65,29 @@
             <section class="best-list">
                 <h1 class="d-none">best 레시피 목록</h1>
                 <div class="list-element">
-                    <img class="food-list-img" src="https://src.hidoc.co.kr/image/lib/2020/11/9/1604911318873_0.jpg" alt="">
+                    <img class="food-list-img" src="https://src.hidoc.co.kr/image/lib/2020/11/9/1604911318873_0.jpg"
+                        alt="">
                     <span class="title">레시피 제목</span>
                 </div>
                 <div class="list-element">
-                    <img class="food-list-img" src="https://src.hidoc.co.kr/image/lib/2020/11/9/1604911318873_0.jpg" alt="">
+                    <img class="food-list-img" src="https://src.hidoc.co.kr/image/lib/2020/11/9/1604911318873_0.jpg"
+                        alt="">
                     <span class="title">레시피 제목</span>
                 </div>
                 <div class="list-element">
-                    <img class="food-list-img" src="https://src.hidoc.co.kr/image/lib/2020/11/9/1604911318873_0.jpg" alt="">
+                    <img class="food-list-img" src="https://src.hidoc.co.kr/image/lib/2020/11/9/1604911318873_0.jpg"
+                        alt="">
                     <span class="title">레시피 제목</span>
                 </div>
                 <div class="list-element">
-                    <img class="food-list-img" src="https://src.hidoc.co.kr/image/lib/2020/11/9/1604911318873_0.jpg" alt="">
+                    <img class="food-list-img" src="https://src.hidoc.co.kr/image/lib/2020/11/9/1604911318873_0.jpg"
+                        alt="">
                     <span class="title">레시피 제목</span>
                 </div>
             </section>
-    
+
         </section>
-    
+
         <section class="cook_study-best best-container">
             <div class="cook_study-best-header best-container-header">
                 <h1>쿡스터디 BEST</h1>
@@ -90,25 +98,30 @@
             <section class="best-list">
                 <h1 class="d-none">best 쿡스터디 목록</h1>
                 <div class="list-element">
-                    <img class="food-list-img" src="https://src.hidoc.co.kr/image/lib/2020/11/9/1604911318873_0.jpg" alt="">
+                    <img class="food-list-img" src="https://src.hidoc.co.kr/image/lib/2020/11/9/1604911318873_0.jpg"
+                        alt="">
                     <span class="title">쿡스터디 제목</span>
                 </div>
                 <div class="list-element">
-                    <img class="food-list-img" src="https://src.hidoc.co.kr/image/lib/2020/11/9/1604911318873_0.jpg" alt="">
+                    <img class="food-list-img" src="https://src.hidoc.co.kr/image/lib/2020/11/9/1604911318873_0.jpg"
+                        alt="">
                     <span class="title">쿡스터디 제목</span>
                 </div>
                 <div class="list-element">
-                    <img class="food-list-img" src="https://src.hidoc.co.kr/image/lib/2020/11/9/1604911318873_0.jpg" alt="">
+                    <img class="food-list-img" src="https://src.hidoc.co.kr/image/lib/2020/11/9/1604911318873_0.jpg"
+                        alt="">
                     <span class="title">쿡스터디 제목</span>
                 </div>
                 <div class="list-element">
-                    <img class="food-list-img" src="https://src.hidoc.co.kr/image/lib/2020/11/9/1604911318873_0.jpg" alt="">
+                    <img class="food-list-img" src="https://src.hidoc.co.kr/image/lib/2020/11/9/1604911318873_0.jpg"
+                        alt="">
                     <span class="title">쿡스터디 제목</span>
                 </div>
             </section>
-    
+
         </section>
     </main>
+    <div th:replace="inc/footer :: footer"></div>
 </body>
 
 </html>

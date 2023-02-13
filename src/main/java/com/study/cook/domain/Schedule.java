@@ -4,9 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalTime;
 
 @Entity
 @Getter
@@ -20,17 +18,16 @@ public class Schedule {
     @Column(name = "schedule_id")
     private Long id;
 
-
     @NotNull
-    private String startTime;
+    private LocalTime startTime;
     @NotNull
-    private String endTime;
+    private LocalTime endTime;
 
     @ManyToOne
     @JoinColumn(name = "cooking_room_id")
     private CookingRoom cookingRoom;
 
-    public Schedule(String startTime, String endTime) {
+    public Schedule(LocalTime startTime, LocalTime endTime) {
         this.startTime = startTime;
         this.endTime = endTime;
     }

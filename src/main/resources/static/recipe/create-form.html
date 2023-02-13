@@ -53,7 +53,7 @@
     <main>
         <form class="detail-container create-container">
             <div class="detail-container-title">레시피 등록</div>
-            
+
             <div class="detail-intro">
 
                 <div class="detail-input-box d-flex-md">
@@ -74,8 +74,8 @@
 
                 <!-- <img class="food-detail-img" src="https://www.menupan.com/cook/cookimg/004000.jpg" alt=""> -->
                 <div class="img-input-box">
-                    <label class="detail-title" for="image">메인 이미지</label>
-                    <input type="file" name="" id="image">
+                    <label class="detail-title" for="image-file">메인 이미지</label>
+                    <input type="file" name="" id="image-file" accept="image/*">
                 </div>
                 <div class="info explanation input-content">
                     <span class="detail-title">요리 설명</span>
@@ -99,7 +99,7 @@
             <section class="cooking-order">
                 <h1 class="detail-sub-title">조리순서</h1>
 
-                <div class="info explanation input-content order-box">
+                <!-- <div class="info explanation input-content order-box">
 
                     <div class="img-input-box">
                         <span class="order-num">1.</span>
@@ -136,30 +136,30 @@
                         alt="요리사진">
 
                     <textarea name="" id="" cols="30" rows="5" placeholder="내용을 입력해주세요." required></textarea>
-                </div>
+                </div> -->
 
-                <!-- <div class="info explanation input-content order-box">
+                <div class="info explanation input-content order-box">
 
                     <div class="img-input-box">
-                        <span class="order-num">3.</span>
+                        <span class="order-num">1.</span>
                         <label class="detail-title" for="image"></label>
                         <input type="file" name="" id="image">
                     </div>
-                    <img class="d-none food-detail-img" src=""
-                        alt="요리사진">
+                    <img class="d-none food-detail-img" src="" alt="요리사진">
 
                     <textarea name="" id="" cols="30" rows="5" placeholder="내용을 입력해주세요." required></textarea>
-                </div> -->
-
-                <div class="add-form">
-                    <span class="btn btn-strong">추가</span>
                 </div>
+
             </section>
+            <div class="add-form">
+                <span class="btn btn-strong">추가</span>
+            </div>
             <div class="edit-box">
                 <input class="btn btn-default btn-basic" type="submit" value="등록">
             </div>
         </form>
     </main>
+    <script src="/script/recipe-form.js"></script>
 </body>
 
 </html>

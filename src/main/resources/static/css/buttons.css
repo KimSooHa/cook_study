@@ -20,6 +20,9 @@
     /*item-layout*/
     display: inline-block;
 
+    /* effect */
+    cursor: pointer;
+
 }
 
 .btn-default{

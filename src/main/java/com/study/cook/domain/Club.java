@@ -59,6 +59,12 @@ public class Club {
     @OneToMany(mappedBy = "club")
     private List<Participation> participations = new ArrayList<>();
 
+    @NotNull
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
+
+
     public Club(String name, String introduction, int maxCount, String ingredients) {
         this.name = name;
         this.introduction = introduction;
@@ -72,13 +78,19 @@ public class Club {
         member.getClubs().add(this);
     }
 
-    public static Club createClub(Club club, Member member) {
+    public void setCategory(Category category) {
+        this.category = category;
+        category.getClubs().add(this);
+    }
+
+    public static Club createClub(Club club, Member member, Category category) {
 
         club.setStatus(POS);
         club.setPrice(12000);
         club.setRegDate(LocalDateTime.now());
 
         club.setMember(member);
+        club.setCategory(category);
 
         return club;
     }

@@ -4,7 +4,9 @@ spring:
     password: 12341234
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://localhost:3306/cook_study
-
+  spring:
+    messages:
+      basename=messages,errors  # 에러메시지
 
   jpa:
     hibernate:
@@ -19,3 +21,11 @@ logging:
   level:
     org.hibernate.SQL: debug
 #    org.hibernate.type: trace #띄어쓰기 2칸
+
+
+server:
+  servlet:
+    session:
+      tracking-modes=cookie # url 전달 방식 끄고 항상 쿠키를 통해서만 세션 유지
+#      timeout=1800  # 세션 타임아웃 설정(분 단위 기준) 60(1분)
+

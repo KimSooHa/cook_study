@@ -11,15 +11,18 @@ public class ClubDto {
     private String introduction;
     private ClubStatus status;
     private int maxCount;
+
+    private int restCount;
     private int price;
     private String ingredients;
 
     @QueryProjection
-    public ClubDto(String name, String introduction, ClubStatus status, int maxCount, int price, String ingredients) {
+    public ClubDto(String name, String introduction, ClubStatus status, int maxCount, int restCount, int price, String ingredients) {
         this.name = name;
         this.introduction = introduction;
         this.status = status;
         this.maxCount = maxCount;
+        this.restCount = restCount;
         this.price = price;
         this.ingredients = ingredients;
     }

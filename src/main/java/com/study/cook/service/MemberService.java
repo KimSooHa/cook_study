@@ -37,7 +37,7 @@ public class MemberService {
         Optional<Member> findMember = memberRepository.findByLoginId(member.getLoginId());   // 로그인 아이디로 회원 찾기
 //        Optional<Member> findMember = Optional.empty();
 
-        // 해당 이름의 회원이 있으면
+        // 해당 아이디의 회원이 있으면
         if (!findMember.isEmpty()) {
             throw new IllegalStateException("이미 존재하는 회원입니다.");
         }

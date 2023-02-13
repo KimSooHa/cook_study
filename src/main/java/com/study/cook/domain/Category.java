@@ -4,7 +4,6 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,5 +30,7 @@ public class Category {
     @OneToMany(mappedBy = "category")
     private List<Recipe> recipes = new ArrayList<>();
 
-    
+    @OneToMany(mappedBy = "category")
+    private List<Club> clubs = new ArrayList<>();
+
 }

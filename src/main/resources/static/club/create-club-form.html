@@ -71,14 +71,14 @@
                     <div class="info">
                         <div class="cooking-info">
                             <label class="detail-title" for="cooking-time">모집인원</label>
-                            <input type="number" name="" id="cooking-time" max="10" min="2">
+                            <input type="number" name="" id="cooking-time" max="10" min="2" required inputmode="numeric" onkeyup="preventText(this)">
                             <span class="detail-title">명</span>
                         </div>
                     </div>
                 </div>
                 <div class="info explanation input-content">
                     <span class="detail-title">재료</span>
-                    <textarea name="" id="" cols="30" rows="5" placeholder="내용을 입력해주세요." required></textarea>
+                    <textarea name="" id="" cols="30" rows="5" placeholder="내용을 입력해주세요."></textarea>
                 </div>
                 <div class="info price detail-title">
                     이용 비용: 12,000 원
@@ -88,5 +88,11 @@
                 </div>
             </form>
         </main>
+        <script>
+            function preventText(e) {
+                e.value = "";
+                console.log("pressed!");
+            }
+        </script>
     </body>
 </html>

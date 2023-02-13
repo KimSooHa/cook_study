@@ -127,6 +127,9 @@ main {
     margin-top: 70px;
 }
 
+.detail-container .detail-intro .title-box {
+    width: 100%;
+}
 
 .detail-container .detail-intro .detail-title {
     margin-top: 50px;
@@ -217,6 +220,12 @@ main {
     width: 100%;
     display: flex;
     justify-content: flex-end;
+}
+
+.detail-container .edits-box {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
 }
 
 
@@ -312,6 +321,24 @@ main {
         display: flex;
         justify-content: center;
     }
+
+
+/* -----------------------input-container ----------------------------*/
+.input-container {
+    padding: 50px 320px;
+}
+
+.input-container .form-group {
+    margin-top: 20px;
+}
+
+.input-container .edit-box {
+    margin-top: 70px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
 
 /* -----------------------modal ----------------------------*/
 .modal{
