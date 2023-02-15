@@ -1,6 +1,7 @@
 package com.study.cook.domain;
 
 import lombok.*;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -27,11 +28,13 @@ public class CookingRoom {
     @Column(columnDefinition = "TINYINT")
     private int roomNum;    // 요리실 번호
 
-    public CookingRoom(int roomNum) {
+    public CookingRoom(int maxCount, int roomNum) {
+        this.maxCount = maxCount;
         this.roomNum = roomNum;
     }
+
     @NotNull
-    @OneToMany(mappedBy = "cookingRoom")
+    @OneToMany(mappedBy = "cookingRoom", cascade = CascadeType.ALL)
     private List<Schedule> schedules = new ArrayList<>();
 
     @OneToMany(mappedBy = "cookingRoom")

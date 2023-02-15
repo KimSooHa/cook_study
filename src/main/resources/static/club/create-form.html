@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../../css/reset.css" rel="stylesheet" type="text/css" />
+    <link href="../../css/style.css" rel="stylesheet" type="text/css" />
+    <link href="../../css/layout.css" rel="stylesheet" type="text/css" />
+    <link href="../../css/component.css" rel="stylesheet" type="text/css" />
+    <link href="../../css/buttons.css" rel="stylesheet" type="text/css" />
+    <link href="../../css/utils.css" rel="stylesheet" type="text/css">
+    <title>레시피 등록 페이지</title>
+</head>
+<header class="header">
+    <div class="header-top">
+        <div class="d-flex align-items-center">
+            <h1 class="header-title">요리모여</h1>
+        </div>
+
+        <nav class="nav-login">
+
+            <div class="btn btn-strong">
+                <a href="/recipe/create-form.html">레시피 등록</a>
+            </div>
+            <div class="btn btn-strong">
+                <a href="/club/reserv-cooking_room-form.html">쿡스터디 등록</a>
+            </div>
+
+            <div class="btn btn-default">
+                <a href="">로그인</a>
+            </div>
+
+            <div class="btn btn-strong">
+                <a href="">회원가입</a>
+            </div>
+        </nav>
+    </div>
+
+    <div class="header-bottom">
+        <nav>
+            <ul class="d-flex">
+                <li><a href="/recipe/list.html">레시피</a></li>
+                <li><a href="/club/list.html">쿡스터디</a></li>
+                <li><a href="">요리실</a></li>
+                <li><a href="">마이페이지</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<body>
+    <main>
+        <form role="form" class="detail-container create-container" action="=/clubs" method="post">
+            <div class="detail-container-title">쿡스터디 등록</div>
+
+            <div class="detail-intro">
+                <!-- <label class="d-none" for="select">예약된 요리실 선택</label>
+                    <select id="select" class="form-control" multiple>
+                        <option value="">요리실 선택</option>
+                        <option>예약일: 2023.3.24 10:00 ~ 11:00 / 요리실 101호</option>
+                        <option>예약일: 2023.3.24 11:00 ~ 12:00 / 요리실 101호</option>
+                        <option>예약일: 2023.3.24 10:00 ~ 11:00 / 요리실 101호</option>
+                        <option>예약일: 2023.3.24 11:00 ~ 12:00 / 요리실 101호</option>
+                    </select> -->
+                <fieldset class="info checkbox-info">
+                    <legend class="detail-title">예약된 요리실 선택</legend>
+                    <div class="checkbox-container">
+                        <input class="checkbox" type="checkbox" name="selected-time" id="reserv1" disabled>
+                        <label for="reserv1">예약일: 2023.3.24 10:00 ~ 11:00 / 요리실 101호</label>
+
+                        <input class="checkbox" type="checkbox" name="selected-time" id="reserv2" s>
+                        <label for="reserv2">예약일: 2023.3.24 11:00 ~ 12:00 / 요리실 101호</label>
+                    </div>
+                    <div class="checkbox-container">
+                        <input class="checkbox" type="checkbox" name="selected-time" id="reserv1" disabled>
+                        <label for="reserv1">예약일: 2023.3.24 10:00 ~ 11:00 / 요리실 101호</label>
+
+                        <input class="checkbox" type="checkbox" name="selected-time" id="reserv2" s>
+                        <label for="reserv2">예약일: 2023.3.24 11:00 ~ 12:00 / 요리실 101호</label>
+                    </div>
+                </fieldset>
+
+                <div class="detail-input-box d-flex-md">
+                    <label th:for="name" class="detail-title">제목</label>
+                    <input type="text" th:field="*{clubForm.name}" placeholder="내용을 입력해주세요." required
+                        th:class="${#fields.hasErrors('name')}? 'form-control fieldError' : 'form-control'">
+                </div>
+                <div class="category-select">
+                    <label class="detail-title" for="select">카테고리 선택</label>
+                    <select id="select" class="form-control" required>
+                        <option value="">카테고리</option>
+                        <option>한식</option>
+                        <option>양식</option>
+                        <option>일식</option>
+                        <option>중식</option>
+                        <option>디저트</option>
+                    </select>
+                </div>
+                <div class="info explanation input-content">
+                    <span class="detail-title">그룹 설명글</span>
+                    <textarea th:field="*{clubForm.introduction}" cols="30" rows="7" placeholder="내용을 입력해주세요."
+                        required></textarea>
+                </div>
+                <div class="info">
+                    <div class="cooking-info">
+                        <label class="detail-title" for="cooking-time">모집인원</label>
+                        <input type="number" th:field="*{clubForm.maxCount}" value="2" name="" id="cooking-time"
+                            max="10" min="2" required inputmode="numeric" onkeyup="preventText(this)">
+                        <span class="detail-title">명</span>
+                    </div>
+                </div>
+            </div>
+            <div class="info explanation input-content">
+                <span class="detail-title">재료</span>
+                <textarea th:field="*{clubForm.ingredients}" name="" id="" cols="30" rows="5"
+                    placeholder="내용을 입력해주세요."></textarea>
+            </div>
+            <div class="info price detail-title">
+                이용 비용: 12,000 원
+            </div>
+            <div class="edit-box">
+                <input class="btn btn-default btn-strong" type="submit" value="등록하기">
+            </div>
+        </form>
+    </main>
+    <script>
+        function preventText(e) {
+            e.value = "";
+        }
+    </script>
+</body>
+
+</html>

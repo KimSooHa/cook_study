@@ -11,5 +11,5 @@ public class RecipeSearchCondition {
     private String title;
     private String categoryName;
     @Enumerated
-    private RecipeSortStatus orderStatus;
+    private RecipeSortStatus sortStatus;
 }

@@ -29,10 +29,16 @@ main {
     display: flex;
     flex-direction: column;
     align-items: center;
+    /* width: 20%; */
 }
 
 .best-container .best-list .list-element .title {
     margin-top: 20px;
+    white-space: nowrap;
+    word-break: break-all;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 250px;
 }
 
 /* -----------------------list-container ----------------------------*/
@@ -170,6 +176,28 @@ main {
     margin-top: 70px;
 }
 
+.checkbox-info {
+    margin-bottom: 50px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.checkbox-container {
+    margin-top: 30px;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.category-select {
+    
+    margin-top: 100px;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+}
+
 
 .detail-container .ingredients {
     width: 100%;
@@ -209,6 +237,13 @@ main {
     /* flex-direction: column;
     align-items: flex-start; */
     justify-content: space-between;
+}
+
+.writer-info {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 50px;
 }
 
 .detail-container .price {

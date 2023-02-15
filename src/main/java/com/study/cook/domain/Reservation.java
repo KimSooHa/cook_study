@@ -46,6 +46,10 @@ public class Reservation {
     @JoinColumn(name = "cooking_room_id")
     private CookingRoom cookingRoom;
 
+    @OneToOne(mappedBy = "club", fetch = LAZY)
+    private Club club;
+
+
     public Reservation(LocalDateTime startDateTime, LocalDateTime endDateTime, ReservationStatus status) {
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;

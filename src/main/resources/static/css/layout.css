@@ -74,6 +74,11 @@ header .nav-menu div{
     cursor: pointer;
 }
 
+.main-title {
+    font-size: var(--text-title1);
+    font-weight: bold;
+}
+
 footer {
     /* layout */
     position: relative;
@@ -197,6 +202,7 @@ footer section .copyright {
     border: none;
     padding: 0px;
 }
+
 
 /*
     로그인 내비

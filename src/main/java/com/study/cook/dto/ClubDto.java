@@ -16,8 +16,15 @@ public class ClubDto {
     private int price;
     private String ingredients;
 
+    private Long reservationId;
+    private String date;
+    private String startTime;
+    private String endTime;
+    private int cookingRoomNum;
+
     @QueryProjection
-    public ClubDto(String name, String introduction, ClubStatus status, int maxCount, int restCount, int price, String ingredients) {
+
+    public ClubDto(String name, String introduction, ClubStatus status, int maxCount, int restCount, int price, String ingredients, Long reservationId, String date, String startTime, String endTime, int cookingRoomNum) {
         this.name = name;
         this.introduction = introduction;
         this.status = status;
@@ -25,5 +32,10 @@ public class ClubDto {
         this.restCount = restCount;
         this.price = price;
         this.ingredients = ingredients;
+        this.reservationId = reservationId;
+        this.date = date;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.cookingRoomNum = cookingRoomNum;
     }
 }
