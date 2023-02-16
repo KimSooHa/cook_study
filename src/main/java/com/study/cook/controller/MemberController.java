@@ -1,6 +1,5 @@
 package com.study.cook.controller;
 
-import com.study.cook.domain.Club;
 import com.study.cook.domain.Member;
 import com.study.cook.dto.MemberLoginIdSearchCondition;
 import com.study.cook.dto.MemberPwdSearchCondition;
@@ -12,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 @Controller
@@ -29,15 +29,27 @@ public class MemberController {
     }
 
     @PostMapping
-    public String create(@Valid MemberForm form, BindingResult result) {
+    public String create(Model model, @Valid MemberForm form, BindingResult result, HttpServletResponse response) {
         if (result.hasErrors()) {
+            log.info("errors={}", result);
             return "member/create-form";
         }
 
         Member member = new Member(form.getName(), form.getLoginId(), form.getPwd(), form.getEmail(), form.getPhoneNum());
+        try {
+            memberService.join(member);
+        } catch (Exception e) {
 
-        memberService.join(member);
-        return "redirect:/";
+            model.addAttribute("msg", e.getMessage());
+            model.addAttribute("url", "/members");
+            return "member/create-form";
+        }
+
+        model.addAttribute("msg", "회원가입되었습니다!");
+        model.addAttribute("url", "/");
+        return "member/create-form";
+
+//        return "redirect:/";
     }
 
     @GetMapping("/search-id")
@@ -75,6 +87,7 @@ public class MemberController {
     public String update(@PathVariable Long memberId, @Valid MemberForm form, BindingResult result) {
 
         if (result.hasErrors()) {
+            log.info("errors={}", result);
             return "member/update-form";
         }
         memberService.update(memberId, form.getName(), form.getLoginId(), form.getPwd(), form.getEmail(), form.getPhoneNum());

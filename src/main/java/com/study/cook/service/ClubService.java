@@ -3,8 +3,11 @@ package com.study.cook.service;
 import com.study.cook.domain.Category;
 import com.study.cook.domain.Club;
 import com.study.cook.domain.Reservation;
+import com.study.cook.dto.ClubListDto;
 import com.study.cook.repository.ClubRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,16 +55,19 @@ public class ClubService {
 //    public Member findOne(MemberPwdSearchCondition condition) {
 //        return clubRepository.findByLoginIdAndEmail(condition.getLoginId(), condition.getEmail());
 //    }
+    public Page<ClubListDto> findByParticipant(Long memberId, Pageable pageable) {
+        return clubRepository.findByParticipant(memberId, pageable);
+    }
 
     @Transactional
-    public void update(Long id, String name, String introduction, int maxCount, String ingredients, Category category, Reservation reservation) {
+    public void update(Long id, String name, String introduction, int maxCount, String ingredients, Category category, List<Reservation> reservations) {
         Club club = clubRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("no such data"));
         club.setName(name);
         club.setIntroduction(introduction);
         club.setMaxCount(maxCount);
         club.setCategory(category);
         club.setIngredients(ingredients);
-        club.setReservation(reservation);
+        club.setReservations(reservations);
     }
 
     @Transactional

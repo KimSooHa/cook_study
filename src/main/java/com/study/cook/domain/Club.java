@@ -64,10 +64,8 @@ public class Club {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @NotNull
-    @OneToOne(cascade = CascadeType.ALL, fetch = LAZY)
-    @JoinColumn(name = "reservation_id")
-    private Reservation reservation;
+    @OneToMany(mappedBy = "club")
+    private List<Reservation> reservations = new ArrayList<>();
 
 
     public Club(String name, String introduction, int maxCount, String ingredients) {
@@ -88,12 +86,12 @@ public class Club {
         category.getClubs().add(this);
     }
 
-    public void setReservation(Reservation reservation) {
-        this.reservation = reservation;
+    public void addReservation(Reservation reservation) {
+        reservations.add(reservation);
         reservation.setClub(this);
     }
 
-    public static Club createClub(Club club, Member member, Category category, Reservation reservation) {
+    public static Club createClub(Club club, Member member, Category category, List<Reservation> reservations) {
 
         club.setStatus(POS);
         club.setPrice(12000);
@@ -101,7 +99,10 @@ public class Club {
 
         club.setMember(member);
         club.setCategory(category);
-        club.setReservation(reservation);
+
+        for (Reservation reservation : reservations) {
+            club.addReservation(reservation);
+        }
 
         return club;
     }

@@ -15,4 +15,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     Optional<List<Reservation>> findByStartDateTimeAndCookingRoom(LocalDateTime startDateTime, CookingRoom cookingRoom);
 
     Optional<List<Reservation>> findByMemberId(Long memberId);
+
+    Optional<List<Reservation>> findByClubId(Long clubId);
 }

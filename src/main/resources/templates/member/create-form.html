@@ -1,0 +1,167 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="inc/layout">
+<main layout:fragment="content">
+    <section class="input-container">
+        <h1 class="detail-title">회원가입</h1>
+        <form role="form" action="/members" th:object="${memberForm}" method="post" autocomplete="off">
+            <div class="form-group">
+                <div class="input-box">
+                    <label th:for="name">이름</label>
+                    <input type="text" th:field="*{name}" class="form-control" placeholder="이름을 입력하세요"
+                        th:class="${#fields.hasErrors('name')}? 'form-control fieldError' : 'form-control'" required>
+                </div>
+                <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Incorrect date</p>
+            </div>
+            <div class="form-group">
+                <div class="input-box">
+                    <label th:for="loginId">아이디</label>
+                    <input type="text" th:field="*{loginId}" class="form-control" placeholder="아이디를 입력하세요"
+                        th:class="${#fields.hasErrors('loginId')}? 'form-control fieldError' : 'form-control'" required oninput="checkLoginId()">
+                </div>
+                <p class="id-valid d-none">사용 가능한 아이디입니다.</p>
+                <p class="id-invalid d-none">이미 사용중인 아이디입니다.</p>
+                <p th:if="${#fields.hasErrors('loginId')}" th:errors="*{loginId}">존재하는 아이디입니다.</p>
+            </div>
+            <div class="form-group">
+                <div class="input-box">
+                    <label th:for="pwd">비밀번호</label>
+                    <input type="text" th:field="*{pwd}" class="form-control" placeholder="비밀번호를 입력하세요"
+                        th:class="${#fields.hasErrors('pwd')}? 'form-control fieldError' : 'form-control'" required>
+                </div>
+                <p th:if="${#fields.hasErrors('pwd')}" th:errors="*{pwd}">비밀번호가 형식에 맞지 않습니다.</p>
+            </div>
+            <div class="form-group">
+                <div class="input-box">
+                    <label th:for="email">이메일</label>
+                    <input type="email" th:field="*{email}" class="form-control" placeholder="이메일을 입력하세요"
+                        th:class="${#fields.hasErrors('email')}? 'form-control fieldError' : 'form-control'" required oninput="checkEmail()">
+                </div>
+                <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}">이메일 형식에 맞지 않습니다.</p>
+                <p class="email-valid d-none">사용 가능한 이메일입니다.</p>
+                <p class="email-invalid d-none">이미 사용중인 이메일입니다.</p>
+            </div>
+            <div class="form-group">
+                <div class="input-box">
+                    <label th:for="phoneNum">휴대폰 번호</label>
+                    <input type="tel" th:field="*{phoneNum}" class="form-control" placeholder="휴대폰 번호를 입력하세요"
+                        th:class="${#fields.hasErrors('phoneNum')}? 'form-control fieldError' : 'form-control'"
+                        required>
+                </div>
+                <p th:if="${#fields.hasErrors('phoneNum')}" th:errors="*{phoneNum}">휴대폰 번호 형식에 맞지 않습니다.</p>
+            </div>
+            <div class="edit-box">
+                <button type="submit" class="btn btn-strong btn-default btn-submit">회원가입</button>
+            </div>
+        </form>
+        <br />
+    </section> <!-- /container -->
+</main>
+<script th:inline="javascript" layout:fragment="script">
+
+    /* <![CDATA[ */
+    window.onload = () => {
+
+        let message = [[${ msg }]];
+        let url = [[${ url }]];
+        if (message == null)
+            return;
+
+        alert(message);
+        location.href = url;
+    }
+
+    /* ]]> */
+
+    function checkLoginId() {
+        let loginId = document.querySelector("#loginId").value;
+        // console.log(email);
+        const request = new XMLHttpRequest();
+        let type = "GET";
+        let url = "/valid-loginId?loginId=" + loginId;
+        // let emailJson = new Object();
+        // emailJson.email = email;
+        // let json = JSON.stringify(emailJson);
+
+        const valid = document.querySelector(".id-valid");
+        const invalid = document.querySelector(".id-invalid");
+
+        request.onreadystatechange = () => {
+            if (request.readyState != XMLHttpRequest.DONE)
+                return;
+            let response = request.responseText;
+
+            console.log(response);
+
+            if (response == 1) {
+                invalid.classList.remove("d-none");
+                valid.classList.add("d-none");
+            }
+            else {
+                valid.classList.remove("d-none");
+                invalid.classList.add("d-none");
+            }
+
+
+        }
+
+        /* Post 방식으로 요청 */
+        request.open(type, url);    // 요청 초기화
+        /* Response Type을 Json으로 사전 정의 */
+        // request.responseType = "json";
+        /* 요청 Header에 컨텐츠 타입은 Json으로 사전 정의 */
+        // request.setRequestHeader('content-type', 'application/json');
+        /* 정의된 서버에 Json 형식의 요청 Data를 포함하여 요청을 전송 */
+        request.send();
+
+    }
+
+    function checkEmail() {
+        let email = document.querySelector("input[type=email]").value;
+        // console.log(email);
+        const request = new XMLHttpRequest();
+        let type = "GET";
+        let url = "/valid-email?email=" + email;
+        // let emailJson = new Object();
+        // emailJson.email = email;
+        // let json = JSON.stringify(emailJson);
+
+        const valid = document.querySelector(".email-valid");
+        const invalid = document.querySelector(".email-invalid");
+
+        request.onreadystatechange = () => {
+            if (request.readyState != XMLHttpRequest.DONE)
+                return;
+            let response = request.responseText;
+
+            console.log(response);
+
+            if (response == 1) {
+                invalid.classList.remove("d-none");
+                valid.classList.add("d-none");
+            }
+            else {
+                valid.classList.remove("d-none");
+                invalid.classList.add("d-none");
+            }
+
+
+        }
+
+        /* Post 방식으로 요청 */
+        request.open(type, url);    // 요청 초기화
+        /* Response Type을 Json으로 사전 정의 */
+        // request.responseType = "json";
+        /* 요청 Header에 컨텐츠 타입은 Json으로 사전 정의 */
+        // request.setRequestHeader('content-type', 'application/json');
+        /* 정의된 서버에 Json 형식의 요청 Data를 포함하여 요청을 전송 */
+        request.send();
+    }
+
+
+    
+
+
+</script>
+
+</html>

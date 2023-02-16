@@ -5,6 +5,8 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+import java.time.LocalDateTime;
+
 import static javax.persistence.FetchType.LAZY;
 
 @Entity
@@ -23,6 +25,9 @@ public class RecipeField {
     @NotNull
     @Column(length = 200)
     private String content;
+
+    @NotNull
+    private LocalDateTime regDate;
 
     @NotNull
     @ManyToOne(fetch = LAZY)

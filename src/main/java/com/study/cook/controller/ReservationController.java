@@ -70,7 +70,7 @@ public class ReservationController {
             LocalDateTime startDateTime = parseToDateTime(date, startTime);
             LocalDateTime endDateTime = parseToDateTime(date, endTime);
 
-            Reservation reservation = new Reservation(startDateTime, endDateTime, ReservationStatus.WAIT);
+            Reservation reservation = new Reservation(startDateTime, endDateTime);
             CookingRoom cookingRoom = cookingRoomService.findOneByRoomNum(form.getCookingRoomNum());
 
             Member member = getMember(request);

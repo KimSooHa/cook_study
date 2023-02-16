@@ -38,10 +38,10 @@ public class InitDb {
     @Transactional
     public void init() {
         // member
-        for (int i = 0; i < 20; i++) {
-            Member member = new Member("멤버", "member" + i, "member1234**", "member" + i + "@email.com", "010-1234-1234");
-            memberService.join(member);
-        }
+//        for (int i = 0; i < 20; i++) {
+//            Member member = new Member("멤버", "member" + i, "member1234**", "member" + i + "@email.com", "010-1234-1234");
+//            memberService.join(member);
+//        }
 
         // schedule
         List<Schedule> schedules = new ArrayList<>();

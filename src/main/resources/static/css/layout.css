@@ -75,8 +75,13 @@ header .nav-menu div{
 }
 
 .main-title {
-    font-size: var(--text-title1);
+    font-size: var(--text-title0);
     font-weight: bold;
+}
+
+.fieldError {
+    border-color: #bd2130;
+    color: #dc3545;
 }
 
 footer {

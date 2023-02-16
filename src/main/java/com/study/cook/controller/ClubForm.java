@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 @Getter
 @Setter
@@ -20,6 +21,6 @@ public class ClubForm {
     private String ingredients;
     private Category category;
     private Long memberId;
-    private Reservation reservation;
+    private List<Reservation> reservations;
 
 }

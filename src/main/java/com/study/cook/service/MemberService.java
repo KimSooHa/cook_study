@@ -36,11 +36,18 @@ public class MemberService {
     private void validateDuplicateMember(Member member) {
         Optional<Member> findMember = memberRepository.findByLoginId(member.getLoginId());   // 로그인 아이디로 회원 찾기
 //        Optional<Member> findMember = Optional.empty();
-
+        Long emailCnt = validDuplicateEmail(member.getEmail());
         // 해당 아이디의 회원이 있으면
-        if (!findMember.isEmpty()) {
+        if (!findMember.isEmpty() || emailCnt != 0) {
             throw new IllegalStateException("이미 존재하는 회원입니다.");
         }
+    }
+    public Long validDuplicateLoginId(String loginId) {
+        return memberRepository.countByLoginId(loginId);
+    }
+
+    public Long validDuplicateEmail(String email) {
+        return memberRepository.countByEmail(email);
     }
 
     // 회원 전체 조회
@@ -52,6 +59,11 @@ public class MemberService {
     public Member findOneById(Long memberId) {
         return memberRepository.findById(memberId).orElse(null);
     }
+
+    public Member findOneByEmail(String email) {
+        return memberRepository.findByEmail(email).orElse(null);
+    }
+
 
     public Member findOne(MemberLoginIdSearchCondition condition) {
         return memberRepository.findByEmailAndPhoneNum(condition.getEmail(), condition.getPhoneNum());

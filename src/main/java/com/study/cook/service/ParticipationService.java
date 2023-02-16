@@ -2,6 +2,7 @@ package com.study.cook.service;
 
 import com.study.cook.domain.*;
 import com.study.cook.repository.CookingRoomRepository;
+import com.study.cook.repository.ParticipationRepository;
 import com.study.cook.repository.ReservationRepository;
 import com.study.cook.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,51 +16,48 @@ import java.util.Optional;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class ReservationService {
+public class ParticipationService {
 
     private final CookingRoomRepository cookingRoomRepository;
-    private final ScheduleRepository scheduleRepository;
     private final ReservationRepository reservationRepository;
+    private final ParticipationRepository participationRepository;
 
     /**
-     * 요리실 등록
+     * 참여자 등록
      */
     @Transactional  // 변경해야 하기 때문에 읽기, 쓰기가 가능해야 함
-    public Long create(Reservation reservation, Member member, CookingRoom cookingRoom) {
+    public Long create(Participation participation) {
 
-        Reservation.createReservation(reservation, member, cookingRoom);
+        participationRepository.save(participation);
 
-        reservationRepository.save(reservation);
-
-        return reservation.getId();
+        return participation.getId();
     }
 
 
     /**
      * 전체 조회
      */
-    public List<Reservation> findList() {
-        return reservationRepository.findAll();
+    public List<Participation> findList() {
+        return participationRepository.findAll();
     }
 
     /**
      * 단건 조회
      */
-    public Reservation findOneById(Long reservationId) {
-        return reservationRepository.findById(reservationId).orElse(null);
+    public Participation findOneById(Long participationId) {
+        return participationRepository.findById(participationId).orElse(null);
     }
 
-    public Optional<List<Reservation>> findByDateAndCookingRoom(LocalDateTime startDateTime, int cookingRoomNum) {
-        CookingRoom cookingRoom = cookingRoomRepository.findByRoomNum(cookingRoomNum).orElseThrow(() -> new IllegalArgumentException("no such data"));
-        return reservationRepository.findByStartDateTimeAndCookingRoom(startDateTime, cookingRoom);
+    public Long countByClub(Club club) {
+        return participationRepository.countByClub(club.getId());
     }
 
-    public Optional<List<Reservation>> findByMember(Member member) {
-        return reservationRepository.findByMemberId(member.getId());
+    public Optional<List<Participation>> findByMember(Member member) {
+        return participationRepository.findByMember(member.getId());
     }
 
-    public Optional<List<Reservation>> findByClub(Club club) {
-        return reservationRepository.findByClubId(club.getId());
+    public Participation findByClubAndMember(Club club, Member member) {
+        return participationRepository.findByClubAndMember(club.getId(), member.getId()).orElseThrow(() -> new IllegalArgumentException("no such data"));
     }
 
 
@@ -73,8 +71,8 @@ public class ReservationService {
     }
 
     @Transactional
-    public void delete(Reservation reservation) {
-        reservationRepository.delete(reservation);
+    public void delete(Participation participation) {
+        participationRepository.delete(participation);
     }
 
 }

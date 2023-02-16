@@ -10,13 +10,12 @@ public class ClubListDto {
 
     private Long clubId;
     private String name;
-    private String memberName;
 
 
     @QueryProjection
-    public ClubListDto(Long clubId, String name, String memberName) {
+
+    public ClubListDto(Long clubId, String name) {
         this.clubId = clubId;
         this.name = name;
-        this.memberName = memberName;
     }
 }

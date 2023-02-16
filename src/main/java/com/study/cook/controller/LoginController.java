@@ -30,7 +30,7 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public String login(@Valid @ModelAttribute LoginForm form, BindingResult result,
+    public String login(Model model, @Valid @ModelAttribute LoginForm form, BindingResult result,
                         @RequestParam(defaultValue = "/") String redirectURL,
                         HttpServletRequest request) {
         if (result.hasErrors()) {
@@ -41,6 +41,7 @@ public class LoginController {
 
         if (loginMember == null) {
             result.reject("loginFail", "아이디 또는 비밀번호가 맞지 않습니다.");
+            model.addAttribute("msg", "아이디 또는 비밀번호가 맞지 않습니다.");
             return "login/login-form";
         }
 

@@ -28,11 +28,6 @@ public class Reservation {
     @NotNull
     private LocalDateTime endDateTime;
 
-    @Enumerated
-    @NotNull
-    @Column(length = 10)
-    private ReservationStatus status;
-
     @NotNull
     private LocalDateTime regDate;
 
@@ -46,14 +41,13 @@ public class Reservation {
     @JoinColumn(name = "cooking_room_id")
     private CookingRoom cookingRoom;
 
-    @OneToOne(mappedBy = "club", fetch = LAZY)
+    @ManyToOne(fetch = LAZY)
     private Club club;
 
 
-    public Reservation(LocalDateTime startDateTime, LocalDateTime endDateTime, ReservationStatus status) {
+    public Reservation(LocalDateTime startDateTime, LocalDateTime endDateTime) {
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
-        this.status = status;
         this.regDate = LocalDateTime.now();
     }
 
