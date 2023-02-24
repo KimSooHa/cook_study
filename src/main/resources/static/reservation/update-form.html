@@ -1,91 +1,197 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="../../css/reset.css" rel="stylesheet" type="text/css" />
-        <link href="../../css/style.css" rel="stylesheet" type="text/css" />
-        <link href="../../css/layout.css" rel="stylesheet" type="text/css" />
-        <link href="../../css/component.css" rel="stylesheet" type="text/css" />
-        <link href="../../css/buttons.css" rel="stylesheet" type="text/css" />
-        <link href="../../css/utils.css" rel="stylesheet" type="text/css">
-        <title>쿡스터디 등록 페이지</title>
-    </head>
-    <header class="header">
-        <div class="header-top">
-            <div class="d-flex align-items-center">
-                <h1 class="header-title">요리모여</h1>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="inc/layout">
+<main layout:fragment="content">
+    <form class="detail-container create-container">
+        <div class="detail-container-title">요리실 수정</div>
+        <!-- id -->
+        <input type="hidden" th:field="*{reservationForm.id}" />
+        <div class="detail-intro">
+
+            <div class="detail-input-box d-flex-md">
+                <label for="select-date" class="detail-title">날짜 선택</label>
+                <input th:field="*{reservationForm.date}" class="date" type="date" th:name="${reservationForm.date}"
+                    id="select-date" required th:onchange="getTimeList()">
             </div>
-    
-            <nav class="nav-login">
-    
-                <div class="btn btn-strong">
-                    <a href="">레시피 등록</a>
+
+            <div class="info">
+                <label class="detail-title">요리실 선택</label>
+                <select th:field="*{cookingRooms}" required class="form-control"
+                    th:onchange="getTimeList()">
+                    <option value="">요리실 선택</option>
+                    <option th:each="cookingRoom : ${cookingRooms}" th:value="${cookingRoom.id}"
+                        th:text="|${cookingRoom.roomNum}호(${cookingRoom.maxCount}명)|">101호(10명)
+                    </option>
+                </select>
+            </div>
+            <fieldset class="info checkbox-info">
+                <legend class="detail-title">시간 선택</legend>
+                <div th:each="schedule : ${schedules}" class="checkbox-container">
+                    <input th:field="*{schedules}" th:value="${schedule.scheduleId}" class="checkbox" type="checkbox"
+                        name="selected-time" disabled>
+                    <label th:for="${schedule.scheduleId}" th:text="|${schedule.startDate} ~ ${schedule.endDate}|">10:00
+                        ~ 11:00
+                    </label>
                 </div>
-                <div class="btn btn-strong">
-                    <a href="">쿡스터디 등록</a>
-                </div>
-    
-                <div class="btn btn-default">
-                    <a href="">로그인</a>
-                </div>
-    
-                <div class="btn btn-strong">
-                    <a href="">회원가입</a>
-                </div>
-            </nav>
+
+            </fieldset>
         </div>
-    
-        <div class="header-bottom">
-            <nav>
-                <ul class="d-flex">
-                    <li><a href="">레시피</a></li>
-                    <li><a href="">쿡스터디</a></li>
-                    <li><a href="">요리실</a></li>
-                    <li><a href="">마이페이지</a></li>
-                </ul>
-            </nav>
+
+        <div class="edit-box">
+            <input class="btn btn-default btn-basic" type="submit" value="저장">
         </div>
-    </header>
-    
-    <body>
-        <main>
-            <form class="detail-container create-container">
-                <div class="detail-container-title">요리실 수정</div>
-    
-                <div class="detail-intro">
-    
-                    <div class="detail-input-box d-flex-md">
-                        <label for="select-date" class="detail-title">날짜 선택</label>
-                        <input class="date" type="date" name="" id="select-date">
-                    </div>
-    
-                    <div class="info">
-                        <label class="detail-title" for="select">요리실 선택</label>
-                        <select id="select" class="form-control">
-                            <option value="">요리실 선택</option>
-                            <optgroup label="101호(10명)">
-                                <option>101호(10명) 10:00~12:00</option>
-                                <option>101호(10명) 14:00~16:00</option>
-                            </option>
-                            <optgroup label="102호(10명)">
-                                <option>102호(10명) 10:00~12:00</option>
-                                <option>102호(10명) 14:00~16:00</option>
-                            </option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="edit-box">
-                    <input class="btn btn-default btn-basic" type="submit" value="저장">
-                </div>
-            </form>
-        </main>
-        <script>
-            let now_utc = Date.now(); //지금 날짜를 밀리초로
-            let timeOff = new Date().getTimezoneOffset()/(60*24)+(1000*60*60*24*7); // 로캘 시간과의 차이를 분단위로 반환
-            let laterWeek = new Date(now_utc+timeOff).toISOString().split("T")[0];  // new Date(now_utc-timeOff).toISOString()은 '2022-05-11T18:09:38.134Z'를 반환
-            document.querySelector(".date").setAttribute("min", laterWeek);
-        </script>
-    </body>
+    </form>
+</main>
+<script th:inline="javascript" layout:fragment="script">
+
+    function getTimeList() {
+        let date = document.querySelector("input[type=date]").value;
+        let cookingRoomId = document.querySelector("select").value;
+        // let checkboxContainer = document.querySelector(".checkbox-container");
+        let checkboxes = document.querySelectorAll(".checkbox");
+
+        if (date == null || date == "" || cookingRoomId == null || cookingRoomId == "")
+            return;
+
+        const request = new XMLHttpRequest();
+        let type = "GET";
+        let url = "/reserved-time?date=" + date + "&cookingRoomId=" + cookingRoomId;
+
+        request.onreadystatechange = () => {
+            if (request.readyState != XMLHttpRequest.DONE)
+                return;
+            let results = request.response;
+            // let obj = JSON.parse(result);
+            console.log(results);
+
+            for (let i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].disabled = true;
+                checkboxes[i].checked = false;
+            }
+
+
+            console.log("read");
+
+
+            for (let i = 0; i < checkboxes.length; i++) {
+
+                if (results.length == 0) {
+                    checkboxes[i].disabled = false;
+                    continue;
+                }
+
+                for (const result of results) {
+                    if (result == checkboxes[i].value) {
+                        checkboxes[i].disabled = true;
+                    }
+
+                }
+            }
+
+
+        }
+
+        /* Post 방식으로 요청 */
+        request.open(type, url);    // 요청 초기화
+        /* Response Type을 Json으로 사전 정의 */
+        request.responseType = "json";
+        /* 요청 Header에 컨텐츠 타입은 Json으로 사전 정의 */
+        // request.setRequestHeader('content-type', 'application/json');
+        /* 정의된 서버에 Json 형식의 요청 Data를 포함하여 요청을 전송 */
+        request.send();
+
+    }
+
+    let now_utc = Date.now(); //지금 날짜를 밀리초로
+    let timeOff = new Date().getTimezoneOffset() / (60 * 24) + (1000 * 60 * 60 * 24 * 7); // 로캘 시간과의 차이를 분단위로 반환
+    let laterWeek = new Date(now_utc + timeOff).toISOString().split("T")[0];  // new Date(now_utc-timeOff).toISOString()은 '2022-05-11T18:09:38.134Z'를 반환
+    document.querySelector(".date").setAttribute("min", laterWeek);
+
+    /* <![CDATA[ */
+    window.onload = () => {
+
+        let message = [[${ msg }]];
+        let url = [[${ url }]];
+        if (message == null)
+            return;
+
+        alert(message);
+        location.href = url;
+    }
+
+    /* ]]> */
+
+    const submitBtn = document.querySelector("input[type=submit]");
+
+    /* <![CDATA[ */
+    submitBtn.onclick = (e) => {
+        let checkboxes = document.querySelectorAll(".checkbox");
+        let cnt = 0;
+        for (let i = 0; i < checkboxes.length; i++) {
+            if (checkboxes[i].checked) {
+                cnt++;
+            }
+        }
+
+        if (cnt > 1) {
+            e.preventDefault();
+            alert("시간은 1개만 선택 가능합니다.");
+        } else if (cnt == 0) {
+            e.preventDefault();
+            alert("예약하실 시간을 선택해주세요.");
+        }
+
+        const request = new XMLHttpRequest();
+        let type = "PUT";
+        let url = "/cooking-rooms/reservation/[[${ reservationForm.id }]]";
+        let inputDate = document.querySelector("input[type=date]").value;
+        let cookingRoomId = document.querySelector("select").value;
+        // let formData = new FormData();
+
+
+        // let document.querySelector(".")
+        let scheduleId = [];
+        let form = {
+            // date: [[${ reservationForm.date }]],
+            date: inputDate,
+            // cookingRoom: [[${ reservationForm.cookingRoomId }]]
+            cookingRoomId: cookingRoomId
+        };
+
+        for (let i = 0; i < checkboxes.length; i++) {
+            if (checkboxes[i].checked) {
+                scheduleId.push(checkboxes[i].value);
+            }
+        }
+
+        form.scheduleIds = scheduleId;
+        
+
+        // formData.append('form', [JSON.stringify(data)]);
+        let data = JSON.stringify(form);
+
+        request.onreadystatechange = () => {
+            if (request.readyState != XMLHttpRequest.DONE)
+                return;
+            let results = request.response;
+            // let obj = JSON.parse(result);
+
+        }
+
+        /* Post 방식으로 요청 */
+        request.open(type, url);    // 요청 초기화
+        /* Response Type을 Json으로 사전 정의 */
+        request.responseType = "json";
+        /* 요청 Header에 컨텐츠 타입은 Json으로 사전 정의 */
+        request.setRequestHeader('content-type', 'application/json');
+        // request.setRequestHeader('content-type', 'multipart/formed-data');
+        // request.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
+
+        /* 정의된 서버에 Json 형식의 요청 Data를 포함하여 요청을 전송 */
+        request.send(data);
+
+    };
+     /* ]]> */
+</script>
+
 </html>

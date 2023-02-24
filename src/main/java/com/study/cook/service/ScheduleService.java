@@ -37,7 +37,7 @@ public class ScheduleService {
 
     @Transactional  // 변경해야 하기 때문에 읽기, 쓰기가 가능해야 함
     public Long createAndMatchAll(LocalTime startTime, LocalTime endTime) {
-        // 생성하는 시간 모든 요리실과 매칭
+        // 생성하는 시간 모든 요리실과 매칭해서 추가
         List<CookingRoom> cookingRooms = cookingRoomRepository.findAll();
 
         for (CookingRoom cookingRoom : cookingRooms) {
@@ -58,7 +58,11 @@ public class ScheduleService {
     }
 
     public List<Schedule> findListByCookingRoom(CookingRoom cookingRoom) {
-        return scheduleRepository.findByCookingRoom(cookingRoom);
+        return scheduleRepository.findByCookingRoomId(cookingRoom.getId());
+    }
+
+    public Schedule findListByCookingRoomAndStartTime(CookingRoom cookingRoom, LocalTime time) {
+        return scheduleRepository.findByCookingRoomIdAndStartTime(cookingRoom.getId(), time);
     }
 
     /**

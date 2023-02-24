@@ -35,21 +35,24 @@ public class MemberController {
             return "member/create-form";
         }
 
-        Member member = new Member(form.getName(), form.getLoginId(), form.getPwd(), form.getEmail(), form.getPhoneNum());
         try {
-            memberService.join(member);
-        } catch (Exception e) {
+            memberService.join(form);
+        } catch (IllegalStateException e) {
 
             model.addAttribute("msg", e.getMessage());
             model.addAttribute("url", "/members");
             return "member/create-form";
         }
+//        catch (Exception e) {
+//
+//            model.addAttribute("msg", e.getMessage());
+//            model.addAttribute("url", "/members");
+//            return "member/create-form";
+//        }
 
         model.addAttribute("msg", "회원가입되었습니다!");
         model.addAttribute("url", "/");
         return "member/create-form";
-
-//        return "redirect:/";
     }
 
     @GetMapping("/search-id")
@@ -70,6 +73,7 @@ public class MemberController {
 
     @GetMapping("/{memberId}")
     public String update(@PathVariable Long memberId, Model model) {
+
         Member member = memberService.findOneById(memberId);
 
         MemberForm form = new MemberForm();
@@ -90,15 +94,16 @@ public class MemberController {
             log.info("errors={}", result);
             return "member/update-form";
         }
+
         memberService.update(memberId, form.getName(), form.getLoginId(), form.getPwd(), form.getEmail(), form.getPhoneNum());
+
         return "redirect:/mypage";
     }
 
     // 탈퇴
     @DeleteMapping("/{memberId}")
     public String delete(@PathVariable Long memberId) {
-        Member member = memberService.findOneById(memberId);
-        memberService.delete(member);
+        memberService.delete(memberId);
 
         return "redirect:/";
     }

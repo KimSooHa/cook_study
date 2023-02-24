@@ -4,6 +4,7 @@ import com.study.cook.SessionConst;
 import com.study.cook.domain.Member;
 import com.study.cook.dto.MemberLoginIdSearchCondition;
 import com.study.cook.dto.MemberPwdSearchCondition;
+import com.study.cook.exception.LoginFailException;
 import com.study.cook.service.LoginService;
 import com.study.cook.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -32,84 +33,29 @@ public class LoginController {
     @PostMapping("/login")
     public String login(Model model, @Valid @ModelAttribute LoginForm form, BindingResult result,
                         @RequestParam(defaultValue = "/") String redirectURL,
-                        HttpServletRequest request) {
+                        HttpSession session) {
         if (result.hasErrors()) {
             return "login/login-form";
         }
 
-        Member loginMember = loginService.login(form.getLoginId(), form.getPwd());
-
-        if (loginMember == null) {
+        try {
+            loginService.login(form, session);
+        } catch (LoginFailException e) {
             result.reject("loginFail", "아이디 또는 비밀번호가 맞지 않습니다.");
-            model.addAttribute("msg", "아이디 또는 비밀번호가 맞지 않습니다.");
+            model.addAttribute("msg", e.getMessage());
             return "login/login-form";
         }
 
         // 로그인 성공 처리
 
-        // 세션이 있으면 있는 세션 반환, 없으면 신규 세션을 생성
-        HttpSession session = request.getSession(); // 세션이 없으면 새로운 세션을 생성해서 반환한다.
-        // 세션에 로그인 회원 정보 보관
-        session.setAttribute(SessionConst.LOGIN_MEMBER, loginMember);
-
         return "redirect:" + redirectURL;
     }
 
     @PostMapping("/logout")
-    public String logout(HttpServletRequest request) {
-        // 세션 삭제
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            session.invalidate();   // 세션 제거
-        }
+    public String logout(HttpSession session) {
+
+        loginService.logout(session);
 
         return "redirect:/";
     }
-
-//    @GetMapping("/searchId")
-//    public String searchLoginId(MemberLoginIdSearchCondition condition, Model model) {
-//        Member findMember = memberService.findOne(condition);
-//        String loginId = findMember.getLoginId();
-//        model.addAttribute("loginId", loginId);
-//        return "member/find-id";
-//    }
-//
-//    @GetMapping("/searchPwd")
-//    public String searchPwd(MemberPwdSearchCondition condition, Model model) {
-//        Member findMember = memberService.findOne(condition);
-//        String pwd = findMember.getPwd();
-//        model.addAttribute("pwd", pwd);
-//        return "member/find-pwd";
-//    }
-//
-//    @GetMapping("/{memberId}/edit")
-//    public String update(@PathVariable Long memberId, Model model) {
-//        Member member = memberService.findOneById(memberId);
-//
-//        MemberForm form = new MemberForm();
-//        form.setName(member.getName());
-//        form.setLoginId(member.getLoginId());
-//        form.setEmail(member.getEmail());
-//        form.setPwd(member.getPwd());
-//        form.setPhoneNum(member.getPhoneNum());
-//
-//        model.addAttribute("form", form);
-//        return "/update-form";
-//    }
-//
-//    @PostMapping("/{memberId}/edit")
-//    public String update(@PathVariable Long memberId, @Valid MemberForm form, BindingResult result) {
-//
-//        if (result.hasErrors()) {
-//            return "member/update-form";
-//        }
-//
-//        memberService.update(memberId, form.getName(), form.getLoginId(), form.getPwd(), form.getEmail(), form.getPhoneNum());
-//        return "redirect:/mypage";
-//    }
-
-
-
-
-
 }

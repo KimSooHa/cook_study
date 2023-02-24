@@ -30,7 +30,9 @@ public class Recipe {
     private String introduction;
 
     @NotNull
-    private String img;
+    @OneToOne(cascade = CascadeType.ALL, fetch=LAZY)
+    @JoinColumn(name = "photo_id")
+    private Photo photo;
 
     @Column(length = 200)
     @NotNull
@@ -57,7 +59,7 @@ public class Recipe {
     private Category category;
 
     @NotNull
-    @OneToMany(mappedBy = "recipe")
+    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
     private List<RecipeField> recipeFields = new ArrayList<>();
 
     @OneToMany(mappedBy = "recipe")
@@ -66,9 +68,9 @@ public class Recipe {
     @OneToMany(mappedBy = "recipe")
     private List<Heart> hearts = new ArrayList<>();
 
-    public Recipe(String introduction, String img, String ingredients, int cookingTime, int servings) {
+    public Recipe(String introduction, Photo photo, String ingredients, int cookingTime, int servings) {
         this.introduction = introduction;
-        this.img = img;
+        this.photo = photo;
         this.ingredients = ingredients;
         this.cookingTime = cookingTime;
         this.servings = servings;
@@ -77,7 +79,7 @@ public class Recipe {
     //== 연관관계 메서드==//
     // 양방향으로 연관관계의 값을 세팅
     public void setMember(Member member) {
-        this.member = this.member;
+        this.member = member;
         member.getRecipes().add(this);
     }
 
@@ -86,22 +88,28 @@ public class Recipe {
         category.getRecipes().add(this);
     }
 
+    public void setPhoto(Photo photo) {
+        this.photo = photo;
+        photo.setRecipe(this);
+    }
+
     public void addRecipeField(RecipeField recipeField) {
         recipeFields.add(recipeField);
         recipeField.setRecipe(this);
     }
 
     //==생성 메서드==//
-    public static Recipe createRecipe(Recipe recipe, Member member, Category category, RecipeField... recipeFields) {
+    public static Recipe createRecipe(Recipe recipe, Member member, Category category, Photo photo) {
 
         recipe.setRegDate(LocalDateTime.now());
 
         recipe.setMember(member);
         recipe.setCategory(category);
+        recipe.setPhoto(photo);
 
-        for (RecipeField recipeField : recipeFields) {
-            recipe.addRecipeField(recipeField);
-        }
+//        for (RecipeField recipeField : recipeFields) {
+//            recipe.addRecipeField(recipeField);
+//        }
 
         return recipe;
 

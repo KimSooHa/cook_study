@@ -14,7 +14,7 @@ import static javax.persistence.FetchType.LAZY;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(of = {"id", "startTime", "endTime", "status", "regDate"})
+@ToString(of = {"id", "startDateTime", "endDateTime", "regDate"})
 public class Reservation {
 
     @Id

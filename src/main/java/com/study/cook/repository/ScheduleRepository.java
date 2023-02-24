@@ -10,9 +10,11 @@ import java.util.List;
 
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 
-    Schedule findByCookingRoomAndStartTime(int cookingRoomId, LocalTime startTime);
+    Schedule findByCookingRoomIdAndStartTime(Long cookingRoomId, LocalTime startTime);
 
-    List<Schedule> findByCookingRoom(CookingRoom cookingRoom);
+    Schedule findByStartTime(LocalTime startTime);
+
+    List<Schedule> findByCookingRoomId(Long cookingRoomId);
 
     Long countByStartTime(LocalTime startTime);
 

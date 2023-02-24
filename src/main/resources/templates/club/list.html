@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="inc/layout">
+<main layout:fragment="content" class="detail-container create-container">
+    <section class="list-container">
+        <header class="header-search">
+            <h1 class="d-none">그룹 목록</h1>
+            <form class="search-box">
+                <div class="input-search d-flex-md">
+                    <input class="icon icon-md icon-search" type="submit">
+                    <label for="search" class="d-none">
+                        검색
+                    </label>
+                    <input type="text" id="search">
+                </div>
+            </form>
+        </header>
+
+
+        <nav class="nav-category">
+            <ul>
+                <li class="nav-selected">
+                    <a class="btn btn-tag" href="/clubs/list">전체</a>
+                </li>
+                <li th:each="category : ${categories}" th:value="${category.id}">
+                    <a th:text="${category.name}" class="btn btn-tag" th:href="@{/clubs/list?categoryName={param1}(param1=${category.name})}">한식</a>
+                </li>
+                <!-- <li>
+                    <a class="btn btn-tag" href="">양식</a>
+                </li>
+                <li>
+                    <a class="btn btn-tag" href="">일식</a>
+                </li>
+                <li>
+                    <a class="btn btn-tag" href="">중식</a>
+                </li>
+                <li>
+                    <a class="btn btn-tag" href="">디저트</a>
+                </li> -->
+            </ul>
+        </nav>
+
+
+        <div class="intro">
+            <span>총 <span class="text-strong" th:text="${#lists.size('list')}">8</span>개의 그룹이 있습니다.</span>
+        </div>
+
+        <table>
+            <h1 class="d-none">그룹 목록</h1>
+
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>스터디명</th>
+                    <!-- <th></th>
+                        <th></th> -->
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="club : ${clubs}">
+                    <td th:text="${clubStat.count}">1</td>
+                    <td>
+                        <a th:href="@{{param1}/detail(param1=${club.clubId})}" th:text="${club.name}">
+                            그룹 제목
+                        </a>
+                    </td>
+
+                    <td>
+                        <form action="/cooking-rooms/${reservation.id}" method="put">
+                            <!-- <input type="submit" th:href="'javascript:cancel('+${reservation.id}+')'" -->
+                            <input type="submit" class="btn btn-default btn-basic" value="취소하기">
+                        </form>
+                    </td>
+                    <td>
+                        <form action="/cooking-rooms/${reservation.id}" method="delete">
+                            <!-- <a href="#"th:href="'javascript:edit('+${reservation.id}+')'" -->
+                            <input type="submit" class="btn btn-default btn-strong" value="수정하기">
+                        </form>
+                    </td>
+                </tr>
+
+                <!-- <tr th:each="reservation : ${reservations}">
+                    <td th:text="'${reservation.count}">1</td>
+                    <td th:text="${reservation.cookingRoomName}">102호</td>
+                    <td th:text="${reservation.date}">2023.03.20</td>
+                    <td th:text="|${reservation.startTime} ~ ${reservation.endTime}|">11:00 ~ 12:00</td>
+                </tr> -->
+            </tbody>
+
+            <!-- <section class="list-element">
+                <a href="/menu/detail?id=13">
+                    <img class="image-view-round food-list-img"
+                        src="https://images.unsplash.com/photo-1515442261605-65987783cb6a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+                        alt="">
+                </a>
+                <h1>그룹 제목</h1>
+            </section> -->
+        </table>
+
+        <div class="paging-box"
+            th:with="start=${(list.number/maxPage)*maxPage +1}, end=(${(list.totalPages == 0) ? 1 : (start + (maxPage -1) < list.totalPages ? start + (maxPage - 1) : list.totalPages)})">
+            <a th:if="${start > 1}" href="@{/list/created(page=${start - maxPage})}"
+                class="btn btn-tag btn-icon icon-arrow-left">왼쪽 버튼</a>
+            <a th:each="page: ${#numbers.sequence(start, end)}" th:href="@{/list/created(page=${page-1})}"
+                th:text="${page}" class="btn btn-default selected">1</a>
+            <!-- <a href="" class="btn btn-default">2</a>
+            <a href="" class="btn btn-default">3</a>
+            <a href="" class="btn btn-default">4</a> -->
+            <a th:if="${end < list.totalPages}" th:href="@{/list/created(page=${list.totalPages-1})}"
+                class="btn btn-tag btn-icon icon-arrow-right">오른쪽 버튼</a>
+        </div>
+    </section>
+</main>
+
+</html>

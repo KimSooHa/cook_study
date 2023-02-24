@@ -127,7 +127,7 @@ public class RecipeRepositoryImpl implements RecipeRepositoryCustom {
                 .select(new QRecipeListDto(
                         recipe.id,
                         recipe.title,
-                        recipe.img))
+                        recipe.photo))
                 .from(recipe)
                 .innerJoin(recipe.member, member)
                 .where(member.id.eq(memberId))

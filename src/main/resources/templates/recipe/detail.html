@@ -1,109 +1,64 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="../../css/reset.css" rel="stylesheet" type="text/css" />
-    <link href="../../css/style.css" rel="stylesheet" type="text/css" />
-    <link href="../../css/layout.css" rel="stylesheet" type="text/css" />
-    <link href="../../css/component.css" rel="stylesheet" type="text/css" />
-    <link href="../../css/buttons.css" rel="stylesheet" type="text/css" />
-    <link href="../../css/utils.css" rel="stylesheet" type="text/css">
-    <title>레시피 상세 페이지</title>
-</head>
-<header class="header">
-    <div class="header-top">
-        <div class="d-flex align-items-center">
-            <h1 class="header-title">요리모여</h1>
-        </div>
-
-        <nav class="nav-login">
-
-            <div class="btn btn-strong">
-                <a href="">레시피 등록</a>
-            </div>
-            <div class="btn btn-strong">
-                <a href="">쿡스터디 등록</a>
-            </div>
-
-            <div class="btn btn-default">
-                <a href="">로그인</a>
-            </div>
-
-            <div class="btn btn-strong">
-                <a href="">회원가입</a>
-            </div>
-        </nav>
-    </div>
-
-    <div class="header-bottom">
-        <nav>
-            <ul class="d-flex">
-                <li><a href="">레시피</a></li>
-                <li><a href="">쿡스터디</a></li>
-                <li><a href="">요리실</a></li>
-                <li><a href="">마이페이지</a></li>
-            </ul>
-        </nav>
-    </div>
-</header>
-
-<body>
-    <main>
-        <section class="detail-container">
-            <h1 class="d-none">레시피 상세정보</h1>
-            <div class="recipe-intro">
-                <img class="food-detail-img" src="https://www.menupan.com/cook/cookimg/004000.jpg" alt="">
-                <div class="detail-title">아망디오쇼콜라 만들기!</div>
-                <!-- <div class="likes-box">
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="inc/layout">
+<main layout:fragment="content">
+    <section class="detail-container">
+        <h1 class="d-none">레시피 상세정보</h1>
+        <div class="recipe-intro">
+            <img th:src="|/images/${imageFile.getStoreFileName()}|" class="food-detail-img" src="https://www.menupan.com/cook/cookimg/004000.jpg" alt="">
+            <div th:text="${recipeForm.title}" class="detail-title">아망디오쇼콜라 만들기!</div>
+            <!-- <div class="likes-box">
                     <div class="likes">24</div>
                 </div> -->
-                <p>초코쿠키의 대표라고 해도 과언이 아닌 아망디오쇼콜라쿠키. 많이 알려져 있기도 하구 많은 사람들이 좋아하기도하고 냉동쿠키라 만들기도 간단하고 굽기도 간편하고 아몬드슬라이스 듬뿍넣어 구우면
-                     초코쿠키이면서도 고소하니 영양적으로도 좋고 맛도 좋고 아이들간식으로도 딱 꼭 한 번 드셔보세요.</p>
-                <div class="info">
-                    <span class="serving-input"><span>2</span>인분</span>
-                    <span class="cooking-time"><span>1</span>시간</span>
-                </div>
+            <p>초코쿠키의 대표라고 해도 과언이 아닌 아망디오쇼콜라쿠키. 많이 알려져 있기도 하구 많은 사람들이 좋아하기도하고 냉동쿠키라 만들기도 간단하고 굽기도 간편하고 아몬드슬라이스 듬뿍넣어 구우면
+                초코쿠키이면서도 고소하니 영양적으로도 좋고 맛도 좋고 아이들간식으로도 딱 꼭 한 번 드셔보세요.</p>
+            <div class="info">
+                <span class="serving-input"><span>2</span>인분</span>
+                <span class="cooking-time"><span>1</span>시간</span>
             </div>
-            <div class="ingredients">
-                <span class="detail-sub-title">재료</span>
-                <p>버터 100g, 설탕 200g...</p>
+        </div>
+        <div class="ingredients">
+            <span class="detail-sub-title">재료</span>
+            <p>버터 100g, 설탕 200g...</p>
+        </div>
+        <section class="cooking-order">
+            <h1 class="detail-sub-title">조리순서</h1>
+            <div class="order-box">
+                <p class="detail-content-title"><span>1.</span>리스트 항목리스트 항목리스트 항목리스트 항목리스트 항목리스트 항목리스트 항목리스트 항목리스트 항목리스트
+                    항목리스트 항목리스트 항목리스트 항목</p>
+                <img class="food-detail-img" th:src="|/images/${imageFile.getStoreFileName()}|"
+                    src="https://bakeitwithlove.com/wp-content/uploads/2022/02/valentines-day-chocolate-covered-strawberries-sq.jpg"
+                    alt="요리사진">
             </div>
-            <section class="cooking-order">
-                <h1 class="detail-sub-title">조리순서</h1>
-                <div class="order-box">
-                    <p class="detail-content-title"><span>1.</span>리스트 항목리스트 항목리스트 항목리스트 항목리스트 항목리스트 항목리스트 항목리스트 항목리스트 항목리스트 항목리스트 항목리스트 항목리스트 항목</p>
-                    <img class="food-detail-img" src="https://bakeitwithlove.com/wp-content/uploads/2022/02/valentines-day-chocolate-covered-strawberries-sq.jpg" alt="요리사진">
-                </div>
-                <div class="order-box">
-                    <p class="detail-content-title"><span>1.</span>리스트 항목</p>
-                    <img class="food-detail-img" src="https://www.allrecipes.com/thmb/F-EluJr_7l4tdCKSuAsjWNcjUnA=/750x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/5112458-61ab2bab516346c5a02f78612c7823fe.jpg" alt="요리사진">
-                </div>
-                <div class="order-box">
-                    <p class="detail-content-title"><span>1.</span>리스트 항목</p>
-                    <img class="food-detail-img" src="https://www.menupan.com/cook/cookimg/pimg/003700_p01.jpg" alt="요리사진">
-                </div>
-            </section>
-            <div class="edit-box">
-                <a class="btn btn-default btn-basic" href="">수정하기</a>
+            <div class="order-box">
+                <p class="detail-content-title"><span>1.</span>리스트 항목</p>
+                <img class="food-detail-img"
+                    src="https://www.allrecipes.com/thmb/F-EluJr_7l4tdCKSuAsjWNcjUnA=/750x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/5112458-61ab2bab516346c5a02f78612c7823fe.jpg"
+                    alt="요리사진">
+            </div>
+            <div class="order-box">
+                <p class="detail-content-title"><span>1.</span>리스트 항목</p>
+                <img class="food-detail-img" src="https://www.menupan.com/cook/cookimg/pimg/003700_p01.jpg" alt="요리사진">
             </div>
         </section>
+        <div class="edit-box">
+            <a class="btn btn-default btn-basic" href="">수정하기</a>
+        </div>
+    </section>
 
 
-        <!-- comment-container -->
-        <section class="comment-container">
-            <header>
-                <h1 class="comment-container-title">댓글</h1>
-                <div class="comment-sum">총 1개</div>
-            </header>
-            <form class="input-content">
-                <textarea name="" id="" cols="30" rows="7"
-                    placeholder="내용을 입력해주세요." required></textarea>
-                <input class="btn btn-strong btn-hover" type="submit" value="등록하기">
-            </form>
+    <!-- comment-container -->
+    <section class="comment-container">
+        <header>
+            <h1 class="comment-container-title">댓글</h1>
+            <div class="comment-sum">총 1개</div>
+        </header>
+        <form class="input-content">
+            <textarea name="" id="" cols="30" rows="7" placeholder="내용을 입력해주세요." required></textarea>
+            <input class="btn btn-strong btn-hover" type="submit" value="등록하기">
+        </form>
 
-            <!-- <section class="filter-container">
+        <!-- <section class="filter-container">
                 <h1 class="d-none">필터</h1>
                 <nav class="sort-nav">
                     <h1 class="d-none">정렬</h1>
@@ -115,28 +70,27 @@
                 </nav>
             </section> -->
 
-            <section class="comment" v-for="comment of post.comments">
-                <!-- <header> -->
-                    <h1 class="user_id">asdfg</h1>
-                    <!-- <div><img class="btn btn-profile-sm" src="/image/newlec.jpg"></div> -->
-                <!-- </header> -->
-                <p>따라해보니 생각보다 쉽고 맛있어요!</p>
-                <div class="footer">
-                    <div class="reg-date">2022-12-10</div>
-                </div>
-            </section>
-            <section class="comment" v-for="comment of post.comments">
-                <!-- <header> -->
-                    <h1 class="user_id">asdfg</h1>
-                    <!-- <div><img class="btn btn-profile-sm" src="/image/newlec.jpg"></div> -->
-                <!-- </header> -->
-                <p>따라해보니 생각보다 쉽고 맛있어요!</p>
-                <div class="footer">
-                    <div class="reg-date">2022-12-10</div>
-                </div>
-            </section>
-        </section> 
-    </main>
-</body>
+        <section class="comment" v-for="comment of post.comments">
+            <!-- <header> -->
+            <h1 class="user_id">asdfg</h1>
+            <!-- <div><img class="btn btn-profile-sm" src="/image/newlec.jpg"></div> -->
+            <!-- </header> -->
+            <p>따라해보니 생각보다 쉽고 맛있어요!</p>
+            <div class="footer">
+                <div class="reg-date">2022-12-10</div>
+            </div>
+        </section>
+        <section class="comment" v-for="comment of post.comments">
+            <!-- <header> -->
+            <h1 class="user_id">asdfg</h1>
+            <!-- <div><img class="btn btn-profile-sm" src="/image/newlec.jpg"></div> -->
+            <!-- </header> -->
+            <p>따라해보니 생각보다 쉽고 맛있어요!</p>
+            <div class="footer">
+                <div class="reg-date">2022-12-10</div>
+            </div>
+        </section>
+    </section>
+</main>
 
 </html>

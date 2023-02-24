@@ -10,6 +10,6 @@ public class RecipeSearchCondition {
 
     private String title;
     private String categoryName;
-    @Enumerated
-    private RecipeSortStatus sortStatus;
+//    @Enumerated
+//    private RecipeSortStatus sortStatus;
 }

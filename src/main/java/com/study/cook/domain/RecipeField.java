@@ -21,7 +21,9 @@ public class RecipeField {
     @Column(name = "recipe_field_id")
     private Long id;
 
-    private String img;
+    @OneToOne(cascade = CascadeType.ALL, fetch=LAZY)
+    @JoinColumn(name = "photo_id")
+    private Photo photo;
     @NotNull
     @Column(length = 200)
     private String content;
@@ -39,8 +41,26 @@ public class RecipeField {
     @JoinColumn(name = "recipe_id")
     private Recipe recipe;
 
-    public RecipeField(String img, String content) {
-        this.img = img;
+    public void setRecipe(Recipe recipe) {
+        this.recipe = recipe;
+        recipe.getRecipeFields().add(this);
+    }
+
+    public RecipeField(Photo photo, String content) {
+        this.photo = photo;
         this.content = content;
+    }
+
+    //==생성 메서드==//
+    public static RecipeField createRecipeField(RecipeField recipeField, Member member, Recipe recipe) {
+
+        recipeField.setRegDate(LocalDateTime.now());
+
+        recipeField.setMember(member);
+
+        recipeField.setRecipe(recipe);
+
+        return recipeField;
+
     }
 }

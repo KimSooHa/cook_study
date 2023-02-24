@@ -51,46 +51,43 @@
 
 <body>
     <main>
-        <form class="detail-container create-container">
+        <form action="/cooking-rooms/reservation" method="post" class="detail-container create-container">
             <div class="detail-container-title">요리실 예약</div>
 
             <div class="detail-intro">
 
                 <div class="detail-input-box d-flex-md">
                     <label for="select-date" class="detail-title">날짜 선택</label>
-                    <input class="date" type="date" name="" id="select-date">
+                    <input class="date" type="date" name="" id="select-date" required>
                 </div>
 
                 <div class="info">
                     <label class="detail-title" for="select">요리실 선택</label>
-                    <select id="select" class="form-control">
+                    <select required name="reservationForm.cookingRoomNum" id="cookingRoom" class="form-control">
                         <option value="">요리실 선택</option>
-                        <optgroup label="101호(10명)">
-                            <option>101호(10명) 10:00~12:00</option>
-                            <option>101호(10명) 14:00~16:00</option>
-                        </option>
-                        <optgroup label="102호(10명)">
-                            <option>102호(10명) 10:00~12:00</option>
-                            <option>102호(10명) 14:00~16:00</option>
+                        <option th:each="cookingRoom : ${cookingRooms}"
+                            th:value="${cookingRoom.id}"
+                            th:text="${cookingRoom.roomNum}">101호(10명)
                         </option>
                     </select>
                 </div>
-                <fieldset class="info checkbox-info">
+                <fieldset th:each="schedule : ${schedules}" class="info checkbox-info">
                     <legend class="detail-title">시간 선택</legend>
                     <div class="checkbox-container">
-                        <input class="checkbox" type="checkbox" name="selected-time" id="time1" disabled>
-                        <label for="time1">10:00 ~ 11:00</label>
+                        <input th:field="*{schedules}" class="checkbox" type="checkbox" name="selected-time" id="time1" disabled>
+                        <label th:for="${#ids.prev('schedules')}"
+                        th:text="|${#temporals.format(schedule.startTime, 'HH:mm')} ~ ${#temporals.format(schedule.endTime, 'HH:mm')}|">10:00 ~ 11:00</label>
 
-                        <input class="checkbox" type="checkbox" name="selected-time" id="time2">
+                        <!-- <input class="checkbox" type="checkbox" name="selected-time" id="time2">
                         <label for="time2">11:00 ~ 12:00</label>
 
                         <input class="checkbox" type="checkbox" name="selected-time" id="time3" disabled>
                         <label for="time3">12:00 ~ 13:00</label>
 
                         <input class="checkbox" type="checkbox" name="selected-time" id="time4">
-                        <label for="time4">13:00 ~ 14:00</label>
+                        <label for="time4">13:00 ~ 14:00</label> -->
                     </div>
-                    <div class="checkbox-container">
+                    <!-- <div class="checkbox-container">
                         <input class="checkbox" type="checkbox" name="selected-time" id="time5" disabled>
                         <label for="time5">14:00 ~ 15:00</label>
 
@@ -102,12 +99,12 @@
 
                         <input class="checkbox" type="checkbox" name="selected-time" id="time8">
                         <label for="time8">17:00 ~ 18:00</label>
-                    </div>
+                    </div> -->
                 </fieldset>
             </div>
             
             <div class="edit-box">
-                <input class="btn btn-default btn-basic" type="submit" value="다음">
+                <input class="btn btn-default btn-basic" type="submit" value="예약하기">
             </div>
         </form>
     </main>

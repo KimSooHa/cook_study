@@ -37,7 +37,7 @@ public class CategoryService {
      * 카테고리 조회
      */
     public Category findOneById(Long categoryId) {
-        return categoryRepository.findById(categoryId).orElse(null);
+        return categoryRepository.findById(categoryId).orElseThrow(() -> new IllegalArgumentException("no such data"));
     }
 
 

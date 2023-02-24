@@ -8,10 +8,10 @@ import java.util.Optional;
 
 public interface ParticipationRepository extends JpaRepository<Participation, Long> {
 
-    Long countByClub(Long clubId);
+    Long countByClubId(Long clubId);
 
     Optional<List<Participation>> findByMember(Long memberId);
 
-    Optional<Participation> findByClubAndMember(Long clubId, Long memberId);
+    Optional<Participation> findByClubIdAndMemberId(Long clubId, Long memberId);
 
 }

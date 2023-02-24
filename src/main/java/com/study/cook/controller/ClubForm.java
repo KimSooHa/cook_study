@@ -19,8 +19,8 @@ public class ClubForm {
     private int maxCount;
     @NotBlank(message = "재료를 작성해주세요.")
     private String ingredients;
-    private Category category;
+    private Long categoryId;
     private Long memberId;
-    private List<Reservation> reservations;
+    private List<Long> reservationIds;
 
 }

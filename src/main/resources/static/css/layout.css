@@ -241,7 +241,39 @@ main {
     font-size: var(--text-content);
 }
 
-.learning-body{
+
+/*-------------table --------------*/
+table {
+    width: 700px;
+    border-spacing: 0 20px;
+}
+
+
+thead th, td {
+    text-align: center;
+}
+
+table thead {
+    margin-right: 20px;
+    font-size: 17px;
+    
+}
+
+table tbody {
+    border-top: 1px solid rosybrown;
+    font-size: 16px;
+}
+
+tbody tr {
+    margin-bottom: 20px;
+    vertical-align: center;
+    height: 30px;
+}
+
+
+
+
+/* .learning-body{
     display: flex;
     justify-content: center;
 
@@ -251,7 +283,6 @@ main {
 .learning-body-nav {
     display: flex;
     flex-direction: column;
-    /* position: fixed; */
 
     width: 200px;
     padding: 0 var(--layout-interval);
@@ -282,155 +313,5 @@ main {
 
     min-width: var(--mobile-min-width);
     padding: 0 var(--layout-interval);
-}
+} */
 
-/*---------------aside------------------*/
-
-.aside-menu{
-
-    /* layout */
-    width: 300px;
-    height: 100%;
-    background-color: var(--color-bg-white);
-    z-index: 999;
-
-    /* item-layout */
-    position: fixed;
-
-}
-
-.aside-menu::after{
-
-    /* layout */
-    background: rgba(0, 0, 0, 0.1);
-    z-index: -1;
-    content: "";
-
-    /* item-layout */
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-
-}
-
-.slide-fade-enter-active,
-.slide-fade-leave-active{
-    transition: left 0.5s;
-}
-
-/*초기 상태*/
-.slide-fade-enter-from{
-    left : -300px;
-}
-
-/*보여지는 상태*/
-.slide-fade-enter-to,
-.slide-fade-leave-from{
-    left: 0px;
-}
-
-/*소멸 상태*/
-.slide-fade-leave-to{
-    left: -300px;
-
-}
-
-/*aside-list*/
-
-.board-link-list{
-
-    /* layout */
-    background-color: var(--color-bg-white);
-    height: 100%;
-    padding: 70px 30px;
-
-}
-
-.board-link-list li{
-    border-bottom: 1px solid;
-}
-
-.board-link-list div a{
-
-    /* layout */
-    padding: 20px 0;
-
-    /* item-layout */
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-}
-
-.board-link-list div a:hover{
-    color: var(--color-text-emphasis-green);
-    cursor: pointer;
-}
-
-.board-link-list .open a{
-    color: var(--color-text-emphasis-green)
-}
-
-.board-link-list span{
-
-    /* text */
-    font-weight: bold;
-
-    /* item-layout */
-    align-self: center;
-
-}
-
-.board-link-list .btn-plus{
-    transition: transform 0.3s;
-}
-
-    .board-link-list .open .btn-plus{
-        transform: rotateZ(45deg);
-    }
-
-.board-link-list .items{
-    padding: 0 20px 20px 20px;
-}
-
-.items .sub-title{
-    font-size: var(--text-content);
-}
-
-.items .sub-title::before{
-    background-color: var(--color-text-emphasis-green);;
-    display: inline-block;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    content: '';
-    margin-right: 10px;
-    vertical-align: 2px;
-}
-
-.items div{
-    margin-top: 20px;
-}
-
-.items div:first-child{
-    margin: 0;
-}
-
-.items div a{
-    padding: 20px 0 0 20px;
-}
-
-@media screen and (min-width : 1024px) {
-    /*---------------header------------------*/
-    .nav-menu{
-        width: 300px;
-    }
-
-    /*---------------main------------------*/
-    .learning-body-content{
-        padding: 0;
-    }
-
-}

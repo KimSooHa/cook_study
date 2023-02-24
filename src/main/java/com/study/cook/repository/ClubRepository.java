@@ -2,13 +2,13 @@ package com.study.cook.repository;
 
 import com.study.cook.domain.Club;
 import com.study.cook.domain.Recipe;
+import com.study.cook.dto.ClubListDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ClubRepository extends JpaRepository<Club, Long>, ClubRepositoryCustom {
 
-
-//    Member findByEmailAndPhoneNum(String email, String phoneNum);
-//
-//    Member findByLoginIdAndEmail(String loginId, String email);
+    Page<ClubListDto> findByMemberId(Long memberId, Pageable pageable);
 
 }

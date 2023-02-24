@@ -1,0 +1,81 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="inc/layout">
+<main layout:fragment="content">
+    <div class="detail-container create-container">
+        <div class="detail-container-title">쿡스터디</div>
+        <div class="detail-intro"
+            th:class="${#lists.isEmpty(reservationDtos)} ? 'd-none detail-intro' : 'detail-intro'">
+            <div class="selected-room-info" th:each="reservation : ${reservationDtos}">
+                <span class="detail-title" th:text="|선택 날짜: ${reservation.date}|">선택 날짜: <span>2023.03.20</span></span>
+                <span class="detail-title"
+                    th:text="|선택 요리실: 요리실 ${reservation.cookingRoomNum}호 (${reservation.startTime} ~ ${reservation.endTime})|">선택
+                    요리실: <span>102호<span>(12:00 ~ 14:00)</span></span></span>
+            </div>
+
+            <div class="title-box d-flex-md">
+                <span for="" class="detail-title">제목</span>
+                <p th:text="${clubDto.name}">Non Lorem dolore ut Lorem sit dolor fugiat pariatur adipisicing Lorem.
+                    Non Lorem dolore ut Lorem sit dolor fugiat pariatur adipisicing Lorem.
+                </p>
+            </div>
+
+            <div class="writer-info">
+                <span class="detail-title" th:text="|운영자 : ${memberName}|">운영자: asddf</span>
+                <span class="detail-title" th:text="|카테고리 : ${categoryName}|">카테고리: 양식</span>
+            </div>
+
+            <div class="info explanation input-content">
+                <span class="detail-title">그룹 설명글</span>
+                <p th:text="${clubDto.introduction}"></p>
+            </div>
+            <div class="info">
+                <div class="cooking-info">
+                    <span class="detail-title" for="cooking-time">모집인원</span>
+                    <span class="detail-title" th:text="${clubDto.maxCount}">3</span>
+                    <span class="detail-title">명</span>
+                </div>
+                <div class="cooking-info">
+                    <span class="detail-title" for="cooking-time">남은인원</span>
+                    <span class="detail-title" th:text="${clubDto.restCount}">3</span>
+                    <span class="detail-title">명</span>
+                </div>
+            </div>
+        </div>
+        <div class="info explanation input-content">
+            <span class="detail-title">재료</span>
+            <p th:text="${clubDto.ingredients}"></p>
+        </div>
+        <div class="info price detail-title">
+            <span>이용 비용:</span>
+            <span>12,000 원</span>
+        </div>
+        <div class="edits-box">
+            <form method="post" th:action="@{participations}">
+                <input type="hidden" name="_method" value="delete"/>
+                <input th:class="${participated} ? 'btn btn-default btn-strong' : 'd-none btn btn-default btn-strong'" class="btn btn-default btn-basic" type="submit" value="탈퇴하기">
+            </form>
+            <form method="post" th:action="@{participations}">
+                <input th:class="${participated} ? 'd-none btn btn-default btn-strong' : 'btn btn-default btn-strong'" class="btn btn-default btn-strong" type="submit" value="참여하기">
+            </form>
+        </div>
+    </div>
+</main>
+<script th:inline="javascript" layout:fragment="script">
+
+    /* <![CDATA[ */
+    window.onload = () => {
+
+        let message = [[${ msg }]];
+        let url = [[${ url }]];
+        if (message == null)
+            return;
+
+        alert(message);
+        location.href = url;
+    }
+
+    /* ]]> */
+</script>
+
+</html>

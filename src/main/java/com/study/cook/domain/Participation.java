@@ -15,7 +15,7 @@ import static javax.persistence.FetchType.LAZY;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(of = {"id", "role", "useDate"})
+@ToString(of = {"id", "role", "regDate"})
 public class Participation {
 
     @Id
@@ -55,12 +55,11 @@ public class Participation {
     public static Participation createParticipation(Member member, Club club) {
         Participation participation = new Participation();
 
-        if(member.getId() == club.getMember().getId()) {
+        if(member.getId() == club.getMember().getId())
             participation.setRole(MANAGER);
-        }
-        else {
+        else
             participation.setRole(PARTICIPANT);
-        }
+
 
         participation.setRegDate(LocalDateTime.now());
 

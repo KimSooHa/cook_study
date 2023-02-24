@@ -13,6 +13,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static com.study.cook.domain.ClubStatus.COMP;
+import static com.study.cook.domain.ClubStatus.POS;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -26,11 +29,16 @@ public class ParticipationService {
      * 참여자 등록
      */
     @Transactional  // 변경해야 하기 때문에 읽기, 쓰기가 가능해야 함
-    public Long create(Participation participation) {
+    public Long create(Club club, Member member) {
 
+        Participation participation = Participation.createParticipation(member, club);
         participationRepository.save(participation);
 
-        return participation.getId();
+        Long participantCount = countByClub(club);
+        if (club.getMaxCount() <= participantCount) {
+            club.setStatus(COMP);
+        }
+            return participation.getId();
     }
 
 
@@ -49,7 +57,7 @@ public class ParticipationService {
     }
 
     public Long countByClub(Club club) {
-        return participationRepository.countByClub(club.getId());
+        return participationRepository.countByClubId(club.getId());
     }
 
     public Optional<List<Participation>> findByMember(Member member) {
@@ -57,7 +65,7 @@ public class ParticipationService {
     }
 
     public Participation findByClubAndMember(Club club, Member member) {
-        return participationRepository.findByClubAndMember(club.getId(), member.getId()).orElseThrow(() -> new IllegalArgumentException("no such data"));
+        return participationRepository.findByClubIdAndMemberId(club.getId(), member.getId()).orElseThrow(() -> new IllegalArgumentException("no such data"));
     }
 
 
@@ -73,6 +81,10 @@ public class ParticipationService {
     @Transactional
     public void delete(Participation participation) {
         participationRepository.delete(participation);
+        Club club = participation.getClub();
+
+        if(club.getStatus() == COMP || club.getMaxCount() > countByClub(club))
+            club.setStatus(POS);
     }
 
 }

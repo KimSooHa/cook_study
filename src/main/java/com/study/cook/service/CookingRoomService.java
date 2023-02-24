@@ -46,8 +46,8 @@ public class CookingRoomService {
     /**
      * 단건 조회
      */
-    public CookingRoom findOneById(Long scheduleId) {
-        return cookingRoomRepository.findById(scheduleId).orElse(null);
+    public CookingRoom findOneById(Long cookingRoomId) {
+        return cookingRoomRepository.findById(cookingRoomId).orElse(null);
     }
 
     public CookingRoom findOneByRoomNum(int roomNum) {
