@@ -23,17 +23,14 @@
                     <td>
                         <form th:action="@{/cooking-rooms/reservation/{param1}(param1=${reservation.id})}" method="post">
                             <input type="hidden" name="_method" value="delete"/>
-                            <input type="submit" class="btn btn-default btn-strong" value="취소하기"/>
-                            <!-- <a href="#" class="btn btn-default btn-strong"
-                            th:href="'javascript:cancel('+${reservation.id}+')'">취소하기</a> -->
+                            <!-- <input onclick="cancel(this)" type="submit" class="btn btn-default btn-strong" value="취소하기"/> -->
+                            <a href="#" class="btn btn-default btn-strong"
+                            th:href="'javascript:cancel('+${reservation.id}+')'">취소하기</a>
                         </form>
-                            
-                            <!-- <input type="submit" class="btn btn-default btn-basic" value="취소하기"> -->
                         </td>
                         <td>
                             <a href="#" class="btn btn-default btn-strong"
                                 th:href="@{/cooking-rooms/reservation/{param1}(param1=${reservation.id})}">수정하기</a>
-                            <!-- <input type="submit" class="btn btn-default btn-strong" value="수정하기"> -->
                         </td>
                 </tr>
             </tbody>
@@ -44,25 +41,13 @@
 <script th:inline="javascript" layout:fragment="script">
     
     function cancel(id) {
+
         if(!confirm("삭제하시겠습니까?"))
             return;
 
-        const hidden = `<input type="hidden" name="_method" value="delete"/>`;
-        const form = document.createElement("form");
-        form.setAttribute("method", "delete");
-        form.setAttribute("action", "/cooking-rooms/reservation/" + id);
-        form.append(hidden);
-        document.body.appendChild(form);
+        const form = document.querySelector("form");
         form.submit();
     }
-
-    // function edit(id) {
-    //     var form = document.createElement("form");
-    //     form.setAttribute("method", "get");
-    //     form.setAttribute("action", "/cooking-rooms/reservation/" + id);
-    //     document.body.appendChild(form);
-    //     form.submit();
-    // }
 
     /* <![CDATA[ */
 
