@@ -42,8 +42,8 @@
     </div>
 </main>
 <script th:inline="javascript" layout:fragment="script">
+    
     function cancel(id) {
-
         if(!confirm("삭제하시겠습니까?"))
             return;
 
@@ -65,6 +65,7 @@
     // }
 
     /* <![CDATA[ */
+
     window.onload = () => {
 
         let message = [[${ msg }]];

@@ -44,7 +44,6 @@
     function getTimeList() {
         let date = document.querySelector("input[type=date]").value;
         let cookingRoomId = document.querySelector("select").value;
-        // let checkboxContainer = document.querySelector(".checkbox-container");
         let checkboxes = document.querySelectorAll(".checkbox");
 
         if (date == null || date == "" || cookingRoomId == null || cookingRoomId == "")
@@ -66,8 +65,6 @@
                 checkboxes[i].checked = false;
             }
 
-
-            console.log("read");
 
 
             for (let i = 0; i < checkboxes.length; i++) {
@@ -105,20 +102,6 @@
     let laterWeek = new Date(now_utc + timeOff).toISOString().split("T")[0];  // new Date(now_utc-timeOff).toISOString()은 '2022-05-11T18:09:38.134Z'를 반환
     document.querySelector(".date").setAttribute("min", laterWeek);
 
-    /* <![CDATA[ */
-    // window.onload = () => {
-
-    //     let message = [[${ msg }]];
-    //     let url = [[${ url }]];
-    //     if (message == null)
-    //         return;
-
-    //     alert(message);
-    //     location.href = url;
-    // }
-
-    /* ]]> */
-
 
 
 
@@ -126,6 +109,8 @@
 
     /* <![CDATA[ */
     submitBtn.onclick = (e) => {
+        e.preventDefault();
+
         let checkboxes = document.querySelectorAll(".checkbox");
         let cnt = 0;
         for (let i = 0; i < checkboxes.length; i++) {
@@ -135,8 +120,8 @@
         }
 
         if (cnt > 3) {
-            e.preventDefault();
             alert("시간은 최대 3개까지만 가능합니다.");
+            return;
         } else if (cnt == 0) {
             e.preventDefault();
             alert("예약하실 시간을 선택해주세요.");
@@ -147,14 +132,10 @@
         let url = "/cooking-rooms/reservation";
         let inputDate = document.querySelector("input[type=date]").value;
         let cookingRoomId = document.querySelector("select").value;
-        // let formData = new FormData();
-
 
         let scheduleId = [];
         let form = {
-            // date: [[${ reservationForm.date }]],
             date: inputDate,
-            // cookingRoom: [[${ reservationForm.cookingRoomId }]]
             cookingRoomId: cookingRoomId
         };
 
@@ -166,18 +147,13 @@
 
         form.scheduleIds = scheduleId;
 
-
-        // formData.append('form', [JSON.stringify(data)]);
         let data = JSON.stringify(form);
-        request.timeout = 100000;    // 타임아웃 설정
         request.onreadystatechange = () => {
             if (request.readyState != XMLHttpRequest.DONE)
                 return;
 
             
             let results = request.response;
-            // let obj = JSON.parse(results);
-            // console.log(obj);
             
             if (results.SUSSESS == false)
                 console.log("전송 실패!");
@@ -189,13 +165,6 @@
                 location.href = url;
                 console.log("전송 성공!");
             }
-
-            console.log("read");
-
-        }
-
-        request.ontimeout = (e) => {
-            console.log("전송 실패!");    
         }
 
         /* Post 방식으로 요청 */
@@ -204,12 +173,9 @@
         request.responseType = "json";
         /* 요청 Header에 컨텐츠 타입은 Json으로 사전 정의 */
         request.setRequestHeader('content-type', 'application/json');
-        // request.setRequestHeader('content-type', 'multipart/formed-data');
-        // request.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
 
         /* 정의된 서버에 Json 형식의 요청 Data를 포함하여 요청을 전송 */
         request.send(data);
-
     };
      /* ]]> */
 </script>
