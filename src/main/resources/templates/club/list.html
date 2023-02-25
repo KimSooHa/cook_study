@@ -60,7 +60,7 @@
                 <tr th:each="club : ${clubs}">
                     <td th:text="${clubStat.count}">1</td>
                     <td>
-                        <a th:href="@{{param1}/detail(param1=${club.clubId})}" th:text="${club.name}">
+                        <a th:href="@{/{param1}/detail(param1=${club.clubId})}" th:text="${club.name}">
                             그룹 제목
                         </a>
                     </td>

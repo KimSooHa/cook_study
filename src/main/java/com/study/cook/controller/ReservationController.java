@@ -1,7 +1,6 @@
 package com.study.cook.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.study.cook.domain.CookingRoom;
 import com.study.cook.domain.Member;
 import com.study.cook.domain.Reservation;
@@ -11,7 +10,6 @@ import com.study.cook.service.MemberService;
 import com.study.cook.service.ReservationService;
 import com.study.cook.service.ScheduleService;
 import com.study.cook.util.DateParser;
-import com.study.cook.util.JsonMaker;
 import com.study.cook.util.MemberFinder;
 import com.study.cook.util.ResultVO;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +24,9 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 @Controller
 @RequiredArgsConstructor
@@ -40,7 +40,6 @@ public class ReservationController {
     private final ScheduleService scheduleService;
     private final DateParser dateParser;
     private final MemberFinder memberFinder;
-    private final JsonMaker jsonMaker;
 
     @GetMapping("/reservations")
     public String list(HttpSession session, Model model, RedirectAttributes redirectAttributes) {

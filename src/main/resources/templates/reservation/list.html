@@ -18,20 +18,21 @@
                 <tr th:each="reservation : ${reservations}">
                     <td th:text="${reservationStat.count}">1</td>
                     <td th:text="|${reservation.cookingRoomName}호|">103호</td>
-                    <td th:text="${reservation.date}">2023.03.20</td>
+                    <td class="date" th:text="${reservation.date}">2023.03.20</td>
                     <td th:text="|${reservation.startTime} ~ ${reservation.endTime}|">11:00 ~ 12:00</td>
                     <td>
-                        <form th:action="@{/cooking-rooms/reservation/{param1}(param1=${reservation.id})}" method="post">
-                            <input type="hidden" name="_method" value="delete"/>
-                            <!-- <input onclick="cancel(this)" type="submit" class="btn btn-default btn-strong" value="취소하기"/> -->
+                        <form th:action="@{/cooking-rooms/reservation/{param1}(param1=${reservation.id})}"
+                            method="post">
+                            <input type="hidden" name="_method" value="delete" />
                             <a href="#" class="btn btn-default btn-strong"
-                            th:href="'javascript:cancel('+${reservation.id}+')'">취소하기</a>
+                                th:href="'javascript:cancel('+${reservation.id}+')'">취소하기</a>
                         </form>
-                        </td>
-                        <td>
-                            <a href="#" class="btn btn-default btn-strong"
-                                th:href="@{/cooking-rooms/reservation/{param1}(param1=${reservation.id})}">수정하기</a>
-                        </td>
+                    </td>
+                    <td>
+                        <a href="" class="btn btn-default btn-strong edit"
+                            th:href="@{/cooking-rooms/reservation/{param1}(param1=${reservation.id})}"
+                            onclick="dateCheck(this)">수정하기</a>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -39,30 +40,28 @@
     </div>
 </main>
 <script th:inline="javascript" layout:fragment="script">
-    
+    // 현재 날짜와 예약 날짜 비교
+    function dateCheck(e) {
+        let today = Date.now();
+        let tr = e.parentElement.parentElement;
+        let date = Date.parse(tr.querySelector(".date").innerText);
+        console.log(date);
+
+        if (date < today) {
+            // e.preventDefault();
+            e.href = "#";
+            alert("지난 날짜는 수정이 불가능합니다.");
+        }
+    }
+    // 취소
     function cancel(id) {
 
-        if(!confirm("삭제하시겠습니까?"))
+        if (!confirm("삭제하시겠습니까?"))
             return;
 
         const form = document.querySelector("form");
         form.submit();
     }
-
-    /* <![CDATA[ */
-
-    window.onload = () => {
-
-        let message = [[${ msg }]];
-        let url = [[${ url }]];
-        if (message == null)
-            return;
-
-        alert(message);
-        location.href = url;
-    }
-
-    /* ]]> */
 </script>
 
 </html>
