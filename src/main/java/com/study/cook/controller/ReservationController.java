@@ -13,6 +13,7 @@ import com.study.cook.service.ScheduleService;
 import com.study.cook.util.DateParser;
 import com.study.cook.util.JsonMaker;
 import com.study.cook.util.MemberFinder;
+import com.study.cook.util.ResultVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -105,40 +106,24 @@ public class ReservationController {
     @ResponseBody
     @PostMapping("/reservation")
     // , consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE} / , consumes = "application/json" / MediaType.APPLICATION_FORM_URLENCODED_VALUE
-    public String reserve(Model model,
-//            @RequestPart(value = "form") @Valid ReservationForm form,
+    public ResultVO reserve(Model model,
                           @RequestBody @Valid ReservationForm reservationForm,
                           HttpSession session, RedirectAttributes redirectAttributes) throws JsonProcessingException {
 
         log.info("reservationForm={}", reservationForm);
         Member member = memberFinder.getMember(session);
-        Map<String, Object> result = new HashMap<>();
-
+        ResultVO resultVO;
         try {
             List<Long> id = reservationService.create(reservationForm, member);
         } catch (NoSuchElementException e) {
-            result.put("SUCCESS", false);
-            result.put("msg", "등록에 실패했습니다.");
-            result.put("url", "/cooking-rooms/reservation");
-
-            // json으로 변환
-            String json = jsonMaker.getJson(result);
-            return json;
+            resultVO = new ResultVO("등록에 실패했습니다.", "/cooking-rooms/reservation", false);
         }
 
         log.info("예약 성공!");
+        resultVO = new ResultVO("등록에 성공했습니다.", "/cooking-rooms/reservations", true);
 
-        // result를 return 하면 ajax success에서 result.SUCCESS == true로 if문 사용가능
-        result.put("SUCCESS", true);
-        result.put("msg", "등록에 성공했습니다.");
-        result.put("url", "/cooking-rooms/reservations");
-        // json으로 변환
-        String json = jsonMaker.getJson(result);
-
-        return json;
+        return resultVO;
     }
-
-
 
 
     @GetMapping("/reservation/{reservationId}")
@@ -184,30 +169,32 @@ public class ReservationController {
         return "reservation/update-form";
     }
 
+    @ResponseBody
     @PutMapping("/reservation/{reservationId}")
-    public String update(Model model, @PathVariable Long reservationId, @RequestBody @Valid ReservationForm reservationForm,
-                         BindingResult result, RedirectAttributes redirectAttributes,
-                         HttpSession session) {
+    public ResultVO update(@PathVariable Long reservationId, @RequestBody @Valid ReservationForm reservationForm,
+                         BindingResult result, HttpSession session) {
 
+        ResultVO resultVO;
         if (result.hasErrors()) {
-            return "reservation/update-form";
+            resultVO = new ResultVO();
+            resultVO.setMsg("수정에 실패했습니다.");
+            resultVO.setUrl("/cooking-rooms/reservation/" + reservationId);
         }
 
         Member member = memberFinder.getMember(session);
-
         try {
             reservationService.update(reservationId, reservationForm, member);
         } catch (NoSuchElementException e) {
-            model.addAttribute("msg", "수정에 실패했습니다.");
-            model.addAttribute("url", "/cooking-rooms/reservation");
+            resultVO = new ResultVO();
+            resultVO.setMsg("수정에 실패했습니다.");
+            resultVO.setUrl("/cooking-rooms/reservation/" + reservationId);
         }
 
-        model.addAttribute("msg", "수정하였습니다!");
-        model.addAttribute("url", "/cooking-rooms/reservations");
+        resultVO = new ResultVO();
+        resultVO.setMsg("수정하였습니다!");
+        resultVO.setUrl("/cooking-rooms/reservations");
 
-//        redirectAttributes.addAttribute("reservationId", reservationId);
-//        redirectAttributes.addAttribute("status", true);
-        return "redirect:/cooking-rooms/reservations";
+        return resultVO;
     }
 
     @DeleteMapping("/reservation/{reservationId}")
