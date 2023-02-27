@@ -1,8 +1,6 @@
 package com.study.cook.service;
 
 import com.study.cook.controller.ReservationForm;
-import com.study.cook.controller.ScheduleForm;
-import com.study.cook.controller.ScheduleListForm;
 import com.study.cook.domain.*;
 import com.study.cook.repository.CookingRoomRepository;
 import com.study.cook.repository.ReservationRepository;
@@ -10,9 +8,10 @@ import com.study.cook.repository.ScheduleRepository;
 import com.study.cook.util.DateParser;
 import com.study.cook.util.MemberFinder;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -41,18 +40,14 @@ public class ReservationService {
     public List<Long> create(ReservationForm form, Member member) {
 
         List<Long> reservationIds = new ArrayList<>();
-//        List<ScheduleForm> schedules = scheduleListForm.getScheduleForms();
 
         for (Long scheduleId : form.getScheduleIds()) {
 
             // 문자를 날짜로 파싱
             LocalDate date = LocalDate.parse(form.getDate());
-//            LocalTime startTime = LocalTime.parse(time.get(0));
-//            LocalTime endTime = LocalTime.parse(time.get(1));
             Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(() -> new IllegalArgumentException("no such data"));
             LocalTime startTime = schedule.getStartTime();
             LocalTime endTime = schedule.getEndTime();
-
 
             LocalDateTime startDateTime = dateParser.parseToDateTime(date, startTime);
             LocalDateTime endDateTime = dateParser.parseToDateTime(date, endTime);
@@ -72,8 +67,8 @@ public class ReservationService {
     /**
      * 전체 조회
      */
-    public List<Reservation> findList() {
-        return reservationRepository.findAll();
+    public Page<Reservation> findList(Pageable pageable) {
+        return reservationRepository.findAll(pageable);
     }
 
     public Optional<List<Reservation>> findByCookingRoomIdAndDate(Long cookingRoomId, String date) {
@@ -93,8 +88,13 @@ public class ReservationService {
         return reservationRepository.findByStartDateTimeAndCookingRoom(startDateTime, cookingRoom);
     }
 
-    public Optional<List<Reservation>> findByMember(Member member) {
-        return reservationRepository.findByMemberId(member.getId());
+    public Optional<Page<Reservation>> findByMember(Member member, Pageable pageable) {
+        return reservationRepository.findByMemberId(member.getId(), pageable);
+    }
+
+    // 로그인한 멤버, 현재 날짜보다 뒤의 예약한 리스트 조회
+    public Optional<List<Reservation>> findByMemberAndDateGt(Member member, LocalDateTime today) {
+        return reservationRepository.findByMemberIdAndDateTime(member.getId(), today);
     }
 
     public Optional<List<Reservation>> findByClub(Club club) {
@@ -120,7 +120,6 @@ public class ReservationService {
         reservation.setEndDateTime(endDateTime);
         CookingRoom cookingRoom = cookingRoomRepository.findById(form.getCookingRoomId()).orElseThrow(() -> new IllegalArgumentException("no such data"));
         reservation.setCookingRoom(cookingRoom);
-
 
     }
 

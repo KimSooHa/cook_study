@@ -2,6 +2,8 @@ package com.study.cook.repository;
 
 import com.study.cook.domain.CookingRoom;
 import com.study.cook.domain.Reservation;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;
@@ -14,7 +16,9 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long>,
 
     Optional<List<Reservation>> findByStartDateTimeAndCookingRoom(LocalDateTime startDateTime, CookingRoom cookingRoom);
 
-    Optional<List<Reservation>> findByMemberId(Long memberId);
+    Optional<Page<Reservation>> findByMemberId(Long memberId, Pageable pageable);
 
     Optional<List<Reservation>> findByClubId(Long clubId);
+
+    Page<Reservation> findAll(Pageable pageable);
 }

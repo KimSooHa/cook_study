@@ -14,6 +14,10 @@ import com.study.cook.util.MemberFinder;
 import com.study.cook.util.ResultVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -42,26 +46,30 @@ public class ReservationController {
     private final MemberFinder memberFinder;
 
     @GetMapping("/reservations")
-    public String list(HttpSession session, Model model, RedirectAttributes redirectAttributes) {
-        List<Reservation> list = reservationService.findByMember(memberFinder.getMember(session)).orElseThrow();
-        List<ReservationListForm> reservations = new ArrayList<>();
+    public String list(HttpSession session, Model model,
+                       @PageableDefault(size = 10, sort = "regDate", direction = Sort.Direction.ASC) Pageable pageable) {
+        Page<Reservation> list = reservationService.findByMember(memberFinder.getMember(session), pageable).orElseThrow();
+
+        // 페이지 dto로 변환
+//        Page<ReservationListDto> reservations = list.map(ReservationListDto::toDtoList);
+        Page<ReservationListDto> reservations = list.map(m -> ReservationListDto.builder()
+                        .id(m.getId())
+                        .date(dateParser.getFormatDate(m.getStartDateTime()))
+                        .startTime(dateParser.getFormatTime(m.getStartDateTime()))
+                        .endTime(dateParser.getFormatTime(m.getEndDateTime()))
+                        .cookingRoomName(m.getCookingRoom().getRoomNum())
+                        .build());
+
+
         if (list.isEmpty()) {
             model.addAttribute("msg", "예약한 요리실이 없습니다.");
             model.addAttribute("url", "/");
             return "reservation/list";
         }
-        for (Reservation reservation : list) {
-            ReservationListForm reservationListForm = new ReservationListForm();
-            reservationListForm.setId(reservation.getId());
-            reservationListForm.setDate(dateParser.getFormatDate(reservation.getStartDateTime()));
-            reservationListForm.setStartTime(dateParser.getFormatTime(reservation.getStartDateTime()));
-            reservationListForm.setEndTime(dateParser.getFormatTime(reservation.getEndDateTime()));
-            reservationListForm.setCookingRoomName(reservation.getCookingRoom().getRoomNum());
-
-            reservations.add(reservationListForm);
-        }
 
         model.addAttribute("reservations", reservations);
+        model.addAttribute("maxPage", 4);   // 한 페이지 바 당 보여줄 최대 페이지 수
+
 
         // 예약 리스트 페이지 만들기!
         return "reservation/list";
