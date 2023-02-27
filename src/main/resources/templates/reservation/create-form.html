@@ -41,6 +41,19 @@
     </form>
 </main>
 <script th:inline="javascript" layout:fragment="script">
+    /* <![CDATA[ */
+    window.onload = () => {
+
+        let message = [[${ result.msg }]];
+        let url = [[${ result.url }]];
+        if (message == null)
+            return;
+
+        alert(message);
+        location.href = url;
+    }
+
+
     function getTimeList() {
         let date = document.querySelector("input[type=date]").value;
         let cookingRoomId = document.querySelector("select").value;
@@ -75,7 +88,7 @@
                 }
 
                 for (let result of results) {
-                    if ((result%8) == checkboxes[i].value) {
+                    if ((result % 8) == checkboxes[i].value) {
                         checkboxes[i].disabled = true;
                     }
 
@@ -107,7 +120,7 @@
 
     const submitBtn = document.querySelector("input[type=submit]");
 
-    /* <![CDATA[ */
+
     submitBtn.onclick = (e) => {
         e.preventDefault();
 
@@ -152,9 +165,9 @@
             if (request.readyState != XMLHttpRequest.DONE)
                 return;
 
-            
+
             let results = request.response;
-            
+
             if (results.SUSSESS == false)
                 console.log("전송 실패!");
             else {

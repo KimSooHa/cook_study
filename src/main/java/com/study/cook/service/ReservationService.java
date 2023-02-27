@@ -94,7 +94,7 @@ public class ReservationService {
 
     // 로그인한 멤버, 현재 날짜보다 뒤의 예약한 리스트 조회
     public Optional<List<Reservation>> findByMemberAndDateGt(Member member, LocalDateTime today) {
-        return reservationRepository.findByMemberIdAndDateTime(member.getId(), today);
+        return reservationRepository.findByMemberIdAndDateTimeGt(member.getId(), today);
     }
 
     public Optional<List<Reservation>> findByClub(Club club) {

@@ -5,6 +5,7 @@ import com.study.cook.domain.CookingRoom;
 import com.study.cook.domain.Member;
 import com.study.cook.domain.Reservation;
 import com.study.cook.domain.Schedule;
+import com.study.cook.dto.ReservationListDto;
 import com.study.cook.service.CookingRoomService;
 import com.study.cook.service.MemberService;
 import com.study.cook.service.ReservationService;
@@ -31,6 +32,8 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -50,28 +53,25 @@ public class ReservationController {
                        @PageableDefault(size = 10, sort = "regDate", direction = Sort.Direction.ASC) Pageable pageable) {
         Page<Reservation> list = reservationService.findByMember(memberFinder.getMember(session), pageable).orElseThrow();
 
+        if (list.isEmpty()) {
+            model.addAttribute("resultVO", new ResultVO("예약한 요리실이 없습니다.", "/", false));
+            return "reservation/list";
+        }
+
         // 페이지 dto로 변환
 //        Page<ReservationListDto> reservations = list.map(ReservationListDto::toDtoList);
         Page<ReservationListDto> reservations = list.map(m -> ReservationListDto.builder()
-                        .id(m.getId())
-                        .date(dateParser.getFormatDate(m.getStartDateTime()))
-                        .startTime(dateParser.getFormatTime(m.getStartDateTime()))
-                        .endTime(dateParser.getFormatTime(m.getEndDateTime()))
-                        .cookingRoomName(m.getCookingRoom().getRoomNum())
-                        .build());
-
-
-        if (list.isEmpty()) {
-            model.addAttribute("msg", "예약한 요리실이 없습니다.");
-            model.addAttribute("url", "/");
-            return "reservation/list";
-        }
+                .id(m.getId())
+                .date(dateParser.getFormatDate(m.getStartDateTime()))
+                .startTime(dateParser.getFormatTime(m.getStartDateTime()))
+                .endTime(dateParser.getFormatTime(m.getEndDateTime()))
+                .cookingRoomName(m.getCookingRoom().getRoomNum())
+                .build());
 
         model.addAttribute("reservations", reservations);
         model.addAttribute("maxPage", 4);   // 한 페이지 바 당 보여줄 최대 페이지 수
 
 
-        // 예약 리스트 페이지 만들기!
         return "reservation/list";
     }
 
@@ -79,32 +79,42 @@ public class ReservationController {
      * 요리실 예약
      */
     @GetMapping("/reservation")
-    public String reserveForm(Model model) {
+    public String reserveForm(Model model, HttpSession session) {
+
         List<CookingRoom> cookingRooms = cookingRoomService.findList();
         List<Schedule> scheduleList = scheduleService.findListByCookingRoom(cookingRooms.get(0));
+        List<ScheduleForm> schedules = scheduleList.stream().map(m -> {
+                    LocalTime startTime = m.getStartTime();
+                    LocalTime endTime = m.getEndTime();
 
-        ScheduleListForm scheduleListForm = new ScheduleListForm();
-        List<ScheduleForm> schedules = new ArrayList<>();
-        for (Schedule schedule : scheduleList) {
-            LocalTime startTime = schedule.getStartTime();
-            LocalTime endTime = schedule.getEndTime();
+                    String formatStartTime = dateParser.getFormatTime(startTime);
+                    String formatEndTime = dateParser.getFormatTime(endTime);
 
-            String formatStartTime = dateParser.getFormatTime(startTime);
-            String formatEndTime = dateParser.getFormatTime(endTime);
+                    ScheduleForm scheduleForm = new ScheduleForm();
+                    scheduleForm.setScheduleId(m.getId());
+                    scheduleForm.setStartDate(formatStartTime);
+                    scheduleForm.setEndDate(formatEndTime);
 
-            ScheduleForm scheduleForm = new ScheduleForm();
-            scheduleForm.setScheduleId(schedule.getId());
-            scheduleForm.setStartDate(formatStartTime);
-            scheduleForm.setEndDate(formatEndTime);
-            schedules.add(scheduleForm);
-        }
-//        scheduleListForm.setScheduleForms(schedules);
-//        scheduleListForm.setName("예약가능 시간");
+                    return scheduleForm;
+                }).collect(Collectors.toList());
+
 
         model.addAttribute("reservationForm", new ReservationForm());
         model.addAttribute("cookingRooms", cookingRooms);
-//        model.addAttribute("scheduleListForm", scheduleListForm);
         model.addAttribute("schedules", schedules);
+
+        // 예약 갯수 10개 이상이면 못함
+        Optional<List<Reservation>> recentReservations = reservationService.findByMemberAndDateGt(memberFinder.getMember(session), LocalDateTime.now());
+
+        if (recentReservations.isPresent()) {
+            if (recentReservations.get().size() >= 10) {
+                ResultVO resultVO = new ResultVO();
+                resultVO.setMsg("예약은 최대 10개까지만 가능합니다.");
+                resultVO.setUrl("/");
+                model.addAttribute("result", resultVO);
+                return "reservation/create-form";
+            }
+        }
 
         return "reservation/create-form";
     }
@@ -114,8 +124,8 @@ public class ReservationController {
     @PostMapping("/reservation")
     // , consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE} / , consumes = "application/json" / MediaType.APPLICATION_FORM_URLENCODED_VALUE
     public ResultVO reserve(Model model,
-                          @RequestBody @Valid ReservationForm reservationForm,
-                          HttpSession session, RedirectAttributes redirectAttributes) throws JsonProcessingException {
+                            @RequestBody @Valid ReservationForm reservationForm,
+                            HttpSession session, RedirectAttributes redirectAttributes) throws JsonProcessingException {
 
         log.info("reservationForm={}", reservationForm);
         Member member = memberFinder.getMember(session);
@@ -179,7 +189,7 @@ public class ReservationController {
     @ResponseBody
     @PutMapping("/reservation/{reservationId}")
     public ResultVO update(@PathVariable Long reservationId, @RequestBody @Valid ReservationForm reservationForm,
-                         BindingResult result, HttpSession session) {
+                           BindingResult result, HttpSession session) {
 
         ResultVO resultVO;
         if (result.hasErrors()) {

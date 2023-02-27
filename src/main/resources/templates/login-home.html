@@ -4,11 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="../../css/reset.css" rel="stylesheet" type="text/css" />
-    <link href="../../css/style.css" rel="stylesheet" type="text/css" />
-    <link href="../../css/layout.css" rel="stylesheet" type="text/css" />
-    <link href="../../css/component.css" rel="stylesheet" type="text/css" />
-    <link href="../../css/buttons.css" rel="stylesheet" type="text/css" />
+    <link href="../../css/reset.css" rel="stylesheet" type="text/css"/>
+    <link href="../../css/style.css" rel="stylesheet" type="text/css"/>
+    <link href="../../css/layout.css" rel="stylesheet" type="text/css"/>
+    <link href="../../css/component.css" rel="stylesheet" type="text/css"/>
+    <link href="../../css/buttons.css" rel="stylesheet" type="text/css"/>
     <link href="../../css/utils.css" rel="stylesheet" type="text/css">
     <title>요리모여</title>
 </head>
@@ -67,28 +67,28 @@
             <div class="list-element">
                 <a class="element-link" href="">
                     <img class="food-list-img" src="https://src.hidoc.co.kr/image/lib/2020/11/9/1604911318873_0.jpg"
-                        alt="">
+                         alt="">
                     <span class="title">레시피 제목</span>
                 </a>
             </div>
             <div class="list-element">
                 <a class="element-link" href="">
                     <img class="food-list-img" src="https://src.hidoc.co.kr/image/lib/2020/11/9/1604911318873_0.jpg"
-                        alt="">
+                         alt="">
                     <span class="title">레시피 제목</span>
                 </a>
             </div>
             <div class="list-element">
                 <a class="element-link" href="">
                     <img class="food-list-img" src="https://src.hidoc.co.kr/image/lib/2020/11/9/1604911318873_0.jpg"
-                        alt="">
+                         alt="">
                     <span class="title">레시피 제목</span>
                 </a>
             </div>
             <div class="list-element">
                 <a class="element-link" href="">
                     <img class="food-list-img" src="https://src.hidoc.co.kr/image/lib/2020/11/9/1604911318873_0.jpg"
-                        alt="">
+                         alt="">
                     <span class="title">레시피 제목</span>
                 </a>
             </div>
@@ -108,28 +108,28 @@
             <div class="list-element">
                 <a class="element-link" href="">
                     <img class="food-list-img" src="https://src.hidoc.co.kr/image/lib/2020/11/9/1604911318873_0.jpg"
-                        alt="">
+                         alt="">
                     <span class="title">쿡스터디 제목</span>
                 </a>
             </div>
             <div class="list-element">
                 <a class="element-link" href="">
                     <img class="food-list-img" src="https://src.hidoc.co.kr/image/lib/2020/11/9/1604911318873_0.jpg"
-                        alt="">
+                         alt="">
                     <span class="title">쿡스터디 제목</span>
                 </a>
             </div>
             <div class="list-element">
                 <a class="element-link" href="">
                     <img class="food-list-img" src="https://src.hidoc.co.kr/image/lib/2020/11/9/1604911318873_0.jpg"
-                        alt="">
+                         alt="">
                     <span class="title">쿡스터디 제목</span>
                 </a>
             </div>
             <div class="list-element">
                 <a class="element-link" href="">
                     <img class="food-list-img" src="https://src.hidoc.co.kr/image/lib/2020/11/9/1604911318873_0.jpg"
-                        alt="">
+                         alt="">
                     <span class="title">쿡스터디 제목</span>
                 </a>
             </div>
@@ -138,18 +138,24 @@
     </section>
 </main>
 <script th:inline="javascript" layout:fragment="script">
+/* <![CDATA[ */
     window.onload = () => {
 
         let message = [[${ msg }]];
         let url = [[${ url }]];
+
         if (message == null)
             return;
+        else
+            alert(message);
 
-        alert(message);
-
-        if(location != null)
+        if(location == null)
+            return;
+        else
             location.href = url;
     }
+    /* ]]> */
+
 </script>
 <div th:replace="inc/footer :: footer"></div>
 

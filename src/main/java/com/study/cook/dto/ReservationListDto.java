@@ -1,12 +1,10 @@
-package com.study.cook.controller;
+package com.study.cook.dto;
 
 import com.study.cook.domain.Reservation;
 import com.study.cook.util.DateParser;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.domain.Page;
 
 @Getter
 @Setter
