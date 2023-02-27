@@ -15,7 +15,7 @@
 <header class="header">
     <div class="header-top">
         <div class="d-flex align-items-center">
-            <h1 class="header-title">요리모여</h1>
+            <a class="header-title main-title" href="/">요리모여</a>
         </div>
 
         <div class="login-member" th:text="|${member.name}님|">로그인 회원 이름</div>
@@ -36,10 +36,6 @@
                     <input class="btn-submit" type="submit" value="로그아웃">
                 </div>
             </form>
-
-            <div class="btn btn-default">
-                <a href="" th:href="@{/members}">회원가입</a>
-            </div>
         </nav>
     </div>
 
