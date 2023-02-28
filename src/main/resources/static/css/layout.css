@@ -208,6 +208,10 @@ footer section .copyright {
     padding: 0px;
 }
 
+input:disabled {
+    cursor: not-allowed;
+}
+
 
 /*
     로그인 내비

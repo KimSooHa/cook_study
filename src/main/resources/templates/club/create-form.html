@@ -35,8 +35,7 @@
                 <span class="detail-title">그룹 설명글</span>
                 <textarea th:field="*{clubForm.introduction}" cols="30" rows="7" placeholder="내용을 입력해주세요." class="intro"
                     required></textarea>
-                <p th:if="${#fields.hasErrors('clubForm.introduction')}" th:errors="*{clubForm.introduction}">설명글을
-                    입력해주세요.</p>
+                <p th:if="${#fields.hasErrors('clubForm.introduction')}" th:errors="*{clubForm.introduction}">설명글을 입력해주세요.</p>
             </div>
             <div class="info">
                 <div class="cooking-info">

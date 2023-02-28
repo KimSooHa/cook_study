@@ -4,9 +4,8 @@
 <main layout:fragment="content">
     <div class="detail-container create-container">
         <div class="detail-container-title">쿡스터디</div>
-        <div class="detail-intro"
-            th:class="${#lists.isEmpty(reservationDtos)} ? 'd-none detail-intro' : 'detail-intro'">
-            <div class="selected-room-info" th:each="reservation : ${reservationDtos}">
+        <div class="detail-intro">
+            <div th:each="reservation : ${reservationDtos}" th:class="${#lists.isEmpty(reservationDtos)} ? 'd-none selected-room-info' : 'selected-room-info'" class="selected-room-info">
                 <span class="detail-title" th:text="|선택 날짜: ${reservation.date}|">선택 날짜: <span>2023.03.20</span></span>
                 <span class="detail-title"
                     th:text="|선택 요리실: 요리실 ${reservation.cookingRoomNum}호 (${reservation.startTime} ~ ${reservation.endTime})|">선택

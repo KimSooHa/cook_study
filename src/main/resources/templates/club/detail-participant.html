@@ -4,9 +4,9 @@
 <main layout:fragment="content">
     <div class="detail-container create-container">
         <div class="detail-container-title">쿡스터디</div>
-        <div class="detail-intro"
-            th:class="${#lists.isEmpty(reservationDtos)} ? 'd-none detail-intro' : 'detail-intro'">
-            <div class="selected-room-info" th:each="reservation : ${reservationDtos}">
+        <div class="detail-intro">
+            <div class="selected-room-info" th:each="reservation : ${reservationDtos}"
+                th:class="${#lists.isEmpty(reservationDtos)} ? 'd-none detail-intro' : 'detail-intro'">
                 <span class="detail-title" th:text="|선택 날짜: ${reservation.date}|">선택 날짜: <span>2023.03.20</span></span>
                 <span class="detail-title"
                     th:text="|선택 요리실: 요리실 ${reservation.cookingRoomNum}호 (${reservation.startTime} ~ ${reservation.endTime})|">선택
@@ -52,11 +52,14 @@
         </div>
         <div class="edits-box">
             <form method="post" th:action="@{participations}">
-                <input type="hidden" name="_method" value="delete"/>
-                <input th:class="${participated} ? 'btn btn-default btn-strong' : 'd-none btn btn-default btn-strong'" class="btn btn-default btn-basic" type="submit" value="탈퇴하기">
+                <input type="hidden" name="_method" value="delete" />
+                <button onclick="cancel(this)"
+                    th:class="${participated} ? 'btn btn-default btn-strong' : 'd-none btn btn-default btn-strong'"
+                    class="btn btn-default btn-basic" type="button" value="탈퇴하기">탈퇴하기</button>
             </form>
             <form method="post" th:action="@{participations}">
-                <input th:class="${participated} ? 'd-none btn btn-default btn-strong' : 'btn btn-default btn-strong'" class="btn btn-default btn-strong" type="submit" value="참여하기">
+                <input th:class="${participated} ? 'd-none btn btn-default btn-strong' : 'btn btn-default btn-strong'"
+                    class="btn btn-default btn-strong" type="submit" value="참여하기" th:disabled="${clubDto.restCount} == 0">
             </form>
         </div>
     </div>
@@ -70,9 +73,21 @@
         let url = [[${ url }]];
         if (message == null)
             return;
+        else
+            alert(message);
 
-        alert(message);
-        location.href = url;
+        if (url == null)
+            return;
+        else
+            location.href = url;
+    }
+
+    function cancel(e) {
+        if (!confirm("탈퇴하시겠습니까?")) 
+            return;
+        
+        const form = e.parentElement;
+        form.submit();
     }
 
     /* ]]> */
