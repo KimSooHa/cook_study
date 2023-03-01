@@ -49,13 +49,13 @@ public class ReservationController {
     private final MemberFinder memberFinder;
 
     @GetMapping("/reservations")
-    public String list(HttpSession session, Model model,
-                       @PageableDefault(size = 10, sort = "regDate", direction = Sort.Direction.ASC) Pageable pageable) {
+    public String list(HttpSession session, Model model, RedirectAttributes redirectAttributes,
+                       @PageableDefault(size = 10, sort = "startDateTime", direction = Sort.Direction.ASC) Pageable pageable) {
         Page<Reservation> list = reservationService.findByMember(memberFinder.getMember(session), pageable).orElseThrow();
 
         if (list.isEmpty()) {
-            model.addAttribute("resultVO", new ResultVO("예약한 요리실이 없습니다.", "/", false));
-            return "reservation/list";
+            redirectAttributes.addFlashAttribute("msg", "예약한 요리실이 없습니다.");
+            return "redirect:/";
         }
 
         // 페이지 dto로 변환
@@ -105,13 +105,10 @@ public class ReservationController {
 
         // 예약 갯수 10개 이상이면 못함
         Optional<List<Reservation>> recentReservations = reservationService.findByMemberAndDateGt(memberFinder.getMember(session), LocalDateTime.now());
-
         if (recentReservations.isPresent()) {
             if (recentReservations.get().size() >= 10) {
-                ResultVO resultVO = new ResultVO();
-                resultVO.setMsg("예약은 최대 10개까지만 가능합니다.");
-                resultVO.setUrl("/");
-                model.addAttribute("result", resultVO);
+                model.addAttribute("msg", "예약은 최대 10개까지만 가능합니다.");
+                model.addAttribute("url", "/");
                 return "reservation/create-form";
             }
         }
@@ -124,12 +121,15 @@ public class ReservationController {
     @PostMapping("/reservation")
     // , consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE} / , consumes = "application/json" / MediaType.APPLICATION_FORM_URLENCODED_VALUE
     public ResultVO reserve(Model model,
-                            @RequestBody @Valid ReservationForm reservationForm,
-                            HttpSession session, RedirectAttributes redirectAttributes) throws JsonProcessingException {
+                            @RequestBody @Valid ReservationForm reservationForm, BindingResult result,
+                            HttpSession session, RedirectAttributes redirectAttributes) {
 
-        log.info("reservationForm={}", reservationForm);
-        Member member = memberFinder.getMember(session);
         ResultVO resultVO;
+        if (result.hasErrors()) {
+            resultVO = new ResultVO("선택하지 않은 옵션이 존재합니다.", "/cooking-rooms/reservation", false);
+        }
+
+        Member member = memberFinder.getMember(session);
         try {
             List<Long> id = reservationService.create(reservationForm, member);
         } catch (NoSuchElementException e) {

@@ -44,8 +44,8 @@
     /* <![CDATA[ */
     window.onload = () => {
 
-        let message = [[${ result.msg }]];
-        let url = [[${ result.url }]];
+        let message = [[${ msg }]];
+        let url = [[${ url }]];
         if (message == null)
             return;
 
@@ -138,6 +138,7 @@
         } else if (cnt == 0) {
             e.preventDefault();
             alert("예약하실 시간을 선택해주세요.");
+            return;
         }
 
         const request = new XMLHttpRequest();

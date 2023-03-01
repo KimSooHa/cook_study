@@ -53,7 +53,6 @@
     function getTimeList() {
         let date = document.querySelector("input[type=date]").value;
         let cookingRoomId = document.querySelector("select").value;
-        // let checkboxContainer = document.querySelector(".checkbox-container");
         let checkboxes = document.querySelectorAll(".checkbox");
 
         if (date == null || date == "" || cookingRoomId == null || cookingRoomId == "")
@@ -71,7 +70,7 @@
             console.log(results);
 
             for (let i = 0; i < checkboxes.length; i++) {
-                checkboxes[i].disabled = true;
+                checkboxes[i].disabled = false;
                 checkboxes[i].checked = false;
             }
 
@@ -86,8 +85,8 @@
                     continue;
                 }
 
-                for (const result of results) {
-                    if (result == checkboxes[i].value) {
+                for (let result of results) {
+                    if ((result % 8) == checkboxes[i].value) {
                         checkboxes[i].disabled = true;
                     }
 
@@ -140,9 +139,7 @@
 
         let scheduleId = [];
         let form = {
-            // date: [[${ reservationForm.date }]],
             date: inputDate,
-            // cookingRoom: [[${ reservationForm.cookingRoomId }]]
             cookingRoomId: cookingRoomId
         };
 
