@@ -19,5 +19,5 @@ public class ReservationForm {
     @NotNull
     private Long cookingRoomId;
     @NotNull
-    private List<Long> scheduleIds;
+    private List<Long> scheduleIds = new ArrayList<>();
 }

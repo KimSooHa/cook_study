@@ -26,6 +26,10 @@ public class DateParser {
         return LocalDate.of(dateTime.getYear(), dateTime.getMonth(), dateTime.getDayOfMonth()).format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
     }
 
+    public String getFormatDateDash(LocalDateTime dateTime) {
+        return LocalDate.of(dateTime.getYear(), dateTime.getMonth(), dateTime.getDayOfMonth()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    }
+
     // Date + Time
     public LocalDateTime parseToDateTime(LocalDate date, LocalTime time) {
         LocalDateTime dateTime = LocalDateTime.of(date.getYear(), date.getMonth(), date.getDayOfMonth(), time.getHour(), time.getMinute());

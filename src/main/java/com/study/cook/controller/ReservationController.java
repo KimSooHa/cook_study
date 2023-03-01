@@ -151,15 +151,15 @@ public class ReservationController {
         form.setId(reservationId);
         // 날짜 세팅
         LocalDateTime startDateTime = reservation.getStartDateTime();
-        form.setDate(dateParser.getFormatDate(startDateTime));
+        form.setDate(dateParser.getFormatDateDash(startDateTime));
 
         // 요리실 세팅
         CookingRoom cookingRoom = reservation.getCookingRoom();
         form.setCookingRoomId(cookingRoom.getId());
 
         // 스케줄 세팅
-//        Schedule findSchedule = scheduleService.findListByCookingRoomAndStartTime(cookingRoom, dateParser.parseToTime(startDateTime));
-//        form.getScheduleIds().add(findSchedule.getId());
+        Schedule findSchedule = scheduleService.findListByCookingRoomAndStartTime(cookingRoom, dateParser.parseToTime(startDateTime));
+        form.getScheduleIds().add(findSchedule.getId());
 
         List<CookingRoom> cookingRooms = cookingRoomService.findList();
         List<Schedule> scheduleList = scheduleService.findListByCookingRoom(cookingRooms.get(0));
