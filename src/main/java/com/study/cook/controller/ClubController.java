@@ -1,7 +1,5 @@
 package com.study.cook.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.study.cook.domain.*;
 import com.study.cook.dto.ClubDto;
 import com.study.cook.dto.ClubListDto;
@@ -9,8 +7,8 @@ import com.study.cook.dto.RecipeSearchCondition;
 import com.study.cook.dto.ReservationDto;
 import com.study.cook.service.*;
 import com.study.cook.util.DateParser;
-import com.study.cook.util.JsonMaker;
 import com.study.cook.util.MemberFinder;
+import com.study.cook.util.ResultVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -27,8 +25,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import static java.util.stream.Collectors.toList;
 
 @Controller
 @RequiredArgsConstructor
@@ -43,20 +44,21 @@ public class ClubController {
     private final ParticipationService participationService;
     private final DateParser dateParser;
     private final MemberFinder memberFinder;
-    private final JsonMaker jsonMaker;
 
 
     @GetMapping("/list")
-    public String list(String categoryName, String title, HttpServletRequest request, Model model, @PageableDefault(size = 8, sort = "regDate", direction = Sort.Direction.ASC) Pageable pageable) {
+    public String list(String categoryName, String title, Model model, @PageableDefault(size = 8, sort = "regDate", direction = Sort.Direction.ASC) Pageable pageable) {
 
         RecipeSearchCondition condition = new RecipeSearchCondition();
-        condition.setTitle(title);
-        condition.setCategoryName(categoryName);
+        if (title != null || title != "")
+            condition.setTitle(title);
+        if (categoryName != null || categoryName != "")
+            condition.setCategoryName(categoryName);
 
         Page<ClubListDto> list = clubService.findList(condition, pageable);
         List<Category> categories = categoryService.findList();
 
-        model.addAttribute("clubs", list);
+        model.addAttribute("list", list);
         model.addAttribute("maxPage", 4);   // 한 페이지 바 당 보여줄 개수
         model.addAttribute("categories", categories);
 //        model.addAttribute("condition", condition);
@@ -122,18 +124,16 @@ public class ClubController {
         Category category = categoryService.findOneById(club.getCategory().getId());
 
         if (reservations.isPresent()) {
-            List<ReservationDto> reservationDtos = new ArrayList<>();
-            for (Reservation reservation : reservations.get()) {
-                LocalDateTime startDateTime = reservation.getStartDateTime();
-                LocalDateTime endDateTime = reservation.getEndDateTime();
+            List<ReservationDto> reservationDtos = reservations.get().stream().map(m -> {
+                LocalDateTime startDateTime = m.getStartDateTime();
+                LocalDateTime endDateTime = m.getEndDateTime();
 
                 String formatDate = dateParser.getFormatDate(startDateTime);
                 String formatStartTime = dateParser.getFormatTime(startDateTime);
                 String formatEndTime = dateParser.getFormatTime(endDateTime);
 
-                ReservationDto reservationDto = new ReservationDto(reservation.getId(), formatDate, formatStartTime, formatEndTime, reservation.getCookingRoom().getRoomNum());
-                reservationDtos.add(reservationDto);
-            }
+                return new ReservationDto(m.getId(), formatDate, formatStartTime, formatEndTime, m.getCookingRoom().getRoomNum());
+            }).collect(toList());
             model.addAttribute("reservationDtos", reservationDtos);
         }
 
@@ -147,11 +147,10 @@ public class ClubController {
         }
 
         model.addAttribute("clubDto", clubDto);
-        model.addAttribute("memberName", member.getName());
+        model.addAttribute("memberLoginId", member.getLoginId());
         model.addAttribute("categoryName", category.getName());
         model.addAttribute("clubId", clubId);
 //        model.addAttribute("loginMember", loginMember);
-
 
 
         if (member.getId().equals(loginMember.getId())) {    // 로그인한 회원이 쿡스터디 등록한 회원이라면
@@ -163,9 +162,9 @@ public class ClubController {
 
     @GetMapping
     public String createForm(Model model, HttpSession session) {
-        Optional<List<Reservation>> reservations = reservationService.findByMember(memberFinder.getMember(session));
+        Optional<List<Reservation>> reservations = reservationService.findByMemberAndDateGt(memberFinder.getMember(session), LocalDateTime.now());
         List<Category> categories = categoryService.findList();
-
+        log.info("reservations={}", reservations.get().size());
         if (reservations.isPresent()) {
             List<ReservationDto> reservationDtos = new ArrayList<>();
             for (Reservation reservation : reservations.get()) {
@@ -174,48 +173,33 @@ public class ClubController {
                 Long clubId = null;
                 try {
                     clubId = reservation.getClub().getId();
-                } catch(NullPointerException e) {
-                        continue;
+                } catch (NullPointerException e) {
+                    makeReservationListDto(reservationDtos, reservation);
                 }
-
-                LocalDateTime startDateTime = reservation.getStartDateTime();
-                LocalDateTime endDateTime = reservation.getEndDateTime();
-
-                if (LocalDateTime.now().isAfter(startDateTime))
-                    continue;
-
-                String formatDate = dateParser.getFormatDate(startDateTime);
-                String formatStartTime = dateParser.getFormatTime(startDateTime);
-                String formatEndTime = dateParser.getFormatTime(endDateTime);
-
-                ReservationDto reservationDto = new ReservationDto(reservation.getId(), formatDate, formatStartTime, formatEndTime, reservation.getCookingRoom().getRoomNum());
-                reservationDtos.add(reservationDto);
-
             }
             model.addAttribute("reservationDtos", reservationDtos);
-            model.addAttribute("clubForm", new ClubForm());
-            model.addAttribute("categories", categories);
         }
+        model.addAttribute("clubForm", new ClubForm());
+        model.addAttribute("categories", categories);
         return "club/create-form";
     }
 
 
+    @ResponseBody
     @PostMapping
-    public String create(@Valid @RequestBody ClubForm form, BindingResult result, RedirectAttributes redirectAttributes, HttpSession session) {
+    public ResultVO create(@Valid @RequestBody ClubForm form, BindingResult result, RedirectAttributes redirectAttributes, HttpSession session) {
         if (result.hasErrors()) {
-            return "club/create-form";
+            return new ResultVO("등록에 실패했습니다.", "/clubs", false);
         }
 
         Long clubId = clubService.create(form, session);
-        redirectAttributes.addAttribute("clubId", clubId);
-        redirectAttributes.addAttribute("status", true);
-        return "redirect:/clubs/{clubId}/detail";
+        return new ResultVO("등록하였습니다.", "/clubs/" + clubId + "/detail", true);
     }
 
     @GetMapping("/{clubId}/edit")
     public String update(@PathVariable Long clubId, Model model) {
         Club club = clubService.findOneById(clubId);
-        Optional<List<Reservation>> reservations = reservationService.findByMember(club.getMember());
+        Optional<List<Reservation>> reservations = reservationService.findByMemberAndDateGt(club.getMember(), LocalDateTime.now());
         List<Category> categories = categoryService.findList();
 
 
@@ -230,36 +214,26 @@ public class ClubController {
         if (reservations.isPresent()) {
             List<ReservationDto> reservationDtos = new ArrayList<>();
             for (Reservation reservation : reservations.get()) {
+                // 체크된 예약 요리실
+                Optional<List<Reservation>> checkedReservations = reservationService.findByClub(club);
+                if (checkedReservations.isPresent()) {
+                    form.setReservationIds(checkedReservations.get().stream().map((c) -> c.getId()).collect(toList()));
+                    for (Reservation cr : checkedReservations.get()) {
+                        // 기존에 선택한 예약 요리실
+                        if (cr.getId().equals(reservation.getId())) {
+                            makeReservationListDto(reservationDtos, reservation);
+                            continue;
+                        }
+                    }
+                }
 
-                Long id = null;
                 // 다른 쿡스터디에 지정된 예약은 제외
                 try {
-                    id = reservation.getClub().getId();
-                } catch(NullPointerException e) {
-                    continue;
+                    reservation.getClub().getId();
+                } catch (NullPointerException e) {
+                    makeReservationListDto(reservationDtos, reservation);
                 }
-                if (!(reservation.getClub().getId().equals(id)))
-                    continue;
-
-                LocalDateTime startDateTime = reservation.getStartDateTime();
-                LocalDateTime endDateTime = reservation.getEndDateTime();
-
-                // 현재 날짜보다 앞이면 제외
-                if (LocalDateTime.now().isAfter(startDateTime))
-                    continue;
-
-                String formatDate = dateParser.getFormatDate(startDateTime);
-                String formatStartTime = dateParser.getFormatTime(startDateTime);
-                String formatEndTime = dateParser.getFormatTime(endDateTime);
-
-                ReservationDto reservationDto = new ReservationDto(reservation.getId(), formatDate, formatStartTime, formatEndTime, reservation.getCookingRoom().getRoomNum());
-                reservationDtos.add(reservationDto);
             }
-            // 체크된 예약 요리실
-            List<Reservation> checkedReservations = reservationService.findByClub(club).orElse(null);
-            if (checkedReservations != null)
-                form.setReservationIds(checkedReservations.stream().map((c) -> c.getId()).collect(Collectors.toList()));
-
             model.addAttribute("reservationDtos", reservationDtos);
         }
 
@@ -270,42 +244,37 @@ public class ClubController {
         return "club/update-form";
     }
 
+
     @ResponseBody
     @PutMapping("/{clubId}")
-    public String update(@PathVariable Long clubId, @RequestBody @Valid ClubForm form, BindingResult result, RedirectAttributes redirectAttributes, Model model) throws JsonProcessingException {
+    public ResultVO update(@PathVariable Long clubId, @RequestBody @Valid ClubForm form, BindingResult result) {
 
+        if (result.hasErrors())
+            return new ResultVO("수정에 실패했습니다.", "/clubs/" + clubId + "/edit", false);
 
-        if (result.hasErrors()) {
-            return "club/update-form";
-        }
-        Map<String, Object> results = new HashMap<>();
 
         try {
             clubService.update(clubId, form);
         } catch (IllegalArgumentException e) {
-            results.put("SUCCESS", false);
-            results.put("msg", "수정에 실패했습니다.");
-            results.put("url", "/clubs/" + clubId + "/edit");
-
-            return jsonMaker.getJson(results);
+            return new ResultVO("수정에 실패했습니다.", "/clubs/" + clubId + "/edit", false);
         }
 
-        results.put("SUCCESS", true);
-        results.put("msg", "수정하였습니다!");
-        results.put("url", "/clubs/" + clubId + "/detail");
-
-        // json으로 변환
-        String json = jsonMaker.getJson(results);
-
-        return json;
+        return new ResultVO("수정하였습니다!", "/clubs/" + clubId + "/detail", true);
     }
 
     @DeleteMapping("/{clubId}")
-    public String delete(@PathVariable Long clubId) {
-
+    public String delete(@PathVariable Long clubId, RedirectAttributes redirectAttributes) {
         clubService.delete(clubId);
-
+        redirectAttributes.addFlashAttribute("msg", "삭제되었습니다!");
         return "redirect:/clubs/list";
     }
 
+    private void makeReservationListDto(List<ReservationDto> reservationDtos, Reservation reservation) {
+        String formatDate = dateParser.getFormatDate(reservation.getStartDateTime());
+        String formatStartTime = dateParser.getFormatTime(reservation.getStartDateTime());
+        String formatEndTime = dateParser.getFormatTime(reservation.getEndDateTime());
+
+        ReservationDto reservationDto = new ReservationDto(reservation.getId(), formatDate, formatStartTime, formatEndTime, reservation.getCookingRoom().getRoomNum());
+        reservationDtos.add(reservationDto);
+    }
 }

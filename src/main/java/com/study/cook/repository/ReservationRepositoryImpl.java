@@ -7,6 +7,8 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringTemplate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.study.cook.domain.Reservation;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
 
 import javax.persistence.EntityManager;
@@ -34,6 +36,7 @@ public class ReservationRepositoryImpl implements ReservationRepositoryCustom {
         return Optional.ofNullable(queryFactory.selectFrom(reservation)
                 .where(reservation.member.id.eq(memberId),
                         dateGoe(today))
+                        .orderBy(reservation.startDateTime.asc(), reservation.cookingRoom.id.asc())
                 .fetch());
     }
 

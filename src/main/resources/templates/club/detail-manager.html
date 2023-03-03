@@ -20,7 +20,7 @@
             </div>
 
             <div class="writer-info">
-                <span class="detail-title" th:text="|운영자 : ${memberName}|">운영자: asddf</span>
+                <span class="detail-title" th:text="|운영자 : ${memberLoginId}|">운영자: asddf</span>
                 <span class="detail-title" th:text="|카테고리 : ${categoryName}|">카테고리: 양식</span>
             </div>
 
@@ -49,12 +49,22 @@
             <span>이용 비용:</span>
             <span>12,000 원</span>
         </div>
-        <form class="edits-box" method="post" th:action="@{clubs/{param1}(param1=${clubId})}">
+        <form class="edits-box" method="post" th:action="@{/clubs/{param1}(param1=${clubId})}">
             <input type="hidden" name="_method" value="delete" />
-            <input th:method="post" class="btn btn-default btn-basic" type="submit" value="삭제하기">
+            <button th:method="post" class="btn btn-default btn-basic" type="button" value="삭제하기">삭제하기</button>
             <a class="btn btn-default btn-strong" th:href="@{edit}">수정하기</a>
         </form>
     </div>
 </main>
+<script th:inline="javascript" layout:fragment="script">
+    const submitBtn = document.querySelector("button");
+    submitBtn.onclick = (e) => {
+        e.preventDefault();
+        
+        if(!confirm("삭제하시겠습니까?"))
+            return;
 
+        document.querySelector("form").submit();
+    }
+</script>
 </html>

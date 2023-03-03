@@ -6,7 +6,7 @@
         <div class="detail-container-title">쿡스터디</div>
         <div class="detail-intro">
             <div class="selected-room-info" th:each="reservation : ${reservationDtos}"
-                th:class="${#lists.isEmpty(reservationDtos)} ? 'd-none detail-intro' : 'detail-intro'">
+                th:class="${#lists.isEmpty(reservationDtos)} ? 'd-none selected-room-info' : 'selected-room-info'">
                 <span class="detail-title" th:text="|선택 날짜: ${reservation.date}|">선택 날짜: <span>2023.03.20</span></span>
                 <span class="detail-title"
                     th:text="|선택 요리실: 요리실 ${reservation.cookingRoomNum}호 (${reservation.startTime} ~ ${reservation.endTime})|">선택
@@ -21,7 +21,7 @@
             </div>
 
             <div class="writer-info">
-                <span class="detail-title" th:text="|운영자 : ${memberName}|">운영자: asddf</span>
+                <span class="detail-title" th:text="|운영자 : ${memberLoginId}|">운영자: asddf</span>
                 <span class="detail-title" th:text="|카테고리 : ${categoryName}|">카테고리: 양식</span>
             </div>
 
@@ -59,7 +59,8 @@
             </form>
             <form method="post" th:action="@{participations}">
                 <input th:class="${participated} ? 'd-none btn btn-default btn-strong' : 'btn btn-default btn-strong'"
-                    class="btn btn-default btn-strong" type="submit" value="참여하기" th:disabled="${clubDto.restCount} == 0">
+                    class="btn btn-default btn-strong" type="submit" value="참여하기"
+                    th:disabled="${clubDto.restCount} == 0">
             </form>
         </div>
     </div>
@@ -83,9 +84,9 @@
     }
 
     function cancel(e) {
-        if (!confirm("탈퇴하시겠습니까?")) 
+        if (!confirm("탈퇴하시겠습니까?"))
             return;
-        
+
         const form = e.parentElement;
         form.submit();
     }

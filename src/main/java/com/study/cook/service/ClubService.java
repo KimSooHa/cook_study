@@ -16,6 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 @Transactional(readOnly = true)
@@ -41,11 +44,9 @@ public class ClubService {
         Member member = memberFinder.getMember(session);
         Category category = categoryService.findOneById(form.getCategoryId());
 
-        List<Reservation> reservations = new ArrayList<>();
-        for (Long id : form.getReservationIds()) {
-            Reservation reservation = reservationService.findOneById(id);
-            reservations.add(reservation);
-        }
+        List<Reservation> reservations = form.getReservationIds().stream().map(id -> {
+            return reservationService.findOneById(id);
+        }).collect(toList());
 
         Club createdClub = Club.createClub(club, member, category, reservations);
 
@@ -61,7 +62,7 @@ public class ClubService {
     /**
      * 그룹 전체 조회
      */
-    public Page<ClubListDto> findList(RecipeSearchCondition condition ,Pageable pageable) {
+    public Page<ClubListDto> findList(RecipeSearchCondition condition, Pageable pageable) {
         return clubRepository.findList(condition, pageable);
     }
 
@@ -100,21 +101,14 @@ public class ClubService {
         club.setCategory(category);
         club.setIngredients(form.getIngredients());
 
-        List<Reservation> reservations = new ArrayList<>();
-        if (form.getReservationIds().isEmpty()) {
-            List<Reservation> findReservations = club.getReservations();
-            for (Reservation findReservation : findReservations) {
-                findReservation.setClub(null);
-            }
+        List<Reservation> findReservations = club.getReservations();
+        findReservations.stream().forEach(fr -> fr.setClub(null));
 
-        }
-
-        else {
-            for (Long id : form.getReservationIds()) {
+        if (!(form.getReservationIds().isEmpty())) {
+            form.getReservationIds().stream().forEach(id -> {
                 Reservation reservation = reservationService.findOneById(id);
-                reservations.add(reservation);
-            }
-            club.setReservations(reservations);
+                club.addReservation(reservation);
+            });
         }
 
     }

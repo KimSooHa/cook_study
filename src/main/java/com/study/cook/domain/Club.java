@@ -56,7 +56,7 @@ public class Club {
     private Member member;
 
     @NotNull
-    @OneToMany(mappedBy = "club")
+    @OneToMany(mappedBy = "club", cascade = CascadeType.ALL)
     private List<Participation> participations = new ArrayList<>();
 
     @NotNull
@@ -64,7 +64,7 @@ public class Club {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @OneToMany(mappedBy = "club")
+    @OneToMany(mappedBy = "club", cascade = CascadeType.ALL)
     private List<Reservation> reservations = new ArrayList<>();
 
 

@@ -37,7 +37,8 @@ public class ClubRepositoryImpl implements ClubRepositoryCustom {
         List<ClubListDto> content = queryFactory
                 .select(new QClubListDto(
                         club.id,
-                        club.name))
+                        club.name,
+                        club.member.loginId))
                 .from(club)
                 .innerJoin(club, participationSub.club)
                 .where(club.id.eq(
@@ -66,7 +67,8 @@ public class ClubRepositoryImpl implements ClubRepositoryCustom {
         List<ClubListDto> content = queryFactory
                 .select(new QClubListDto(
                         club.id,
-                        club.name))
+                        club.name,
+                        club.member.loginId))
                 .from(club)
                 .where(titleEq(condition.getTitle()),
                         categoryNameEq(condition.getCategoryName()))

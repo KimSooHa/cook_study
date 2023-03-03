@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
     layout:decorate="inc/layout">
 <main layout:fragment="content">
-    <form role="form" class="detail-container create-container">
+    <form class="detail-container create-container">
 
         <div class="detail-container-title">쿡스터디 수정</div>
 
@@ -27,15 +27,13 @@
             </div>
             <div class="category-select">
                 <label class="detail-title" for="select">카테고리 선택</label>
-                <select id="select" class="form-control" th:field="*{categories}" required>
+                <select id="select" class="form-control" required th:field="${clubForm.categoryId}">
                     <option value="">카테고리 선택</option>
                     <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}">카테고리
                     </option>
-                    <!-- <option>양식</option>
-                    <option>일식</option>
-                    <option>중식</option>
-                    <option>디저트</option> -->
                 </select>
+                <p th:if="${#fields.hasErrors('clubForm.categoryId')}" th:errors="*{clubForm.categoryId}">설명글을
+                    입력해주세요.</p>
             </div>
 
             <div class="info explanation input-content">
@@ -52,6 +50,8 @@
                         min="2" required inputmode="numeric" onkeyup="preventText(this)">
                     <span class="detail-title">명</span>
                 </div>
+                <p th:if="${#fields.hasErrors('clubForm.maxCount')}" th:errors="*{clubForm.maxCount}">설명글을
+                    입력해주세요.</p>
             </div>
         </div>
         <div class="info explanation input-content">
@@ -71,11 +71,12 @@
 </main>
 <script th:inline="javascript" layout:fragment="script">
     /* <![CDATA[ */
+    let checkboxes = document.querySelectorAll(".checkbox");
 
 
     const submitBtn = document.querySelector("input[type=submit]");
     submitBtn.onclick = (e) => {
-        let checkboxes = document.querySelectorAll(".checkbox");
+
         let cnt = 0;
         for (let i = 0; i < checkboxes.length; i++) {
             if (checkboxes[i].checked) {
@@ -86,6 +87,7 @@
         if (cnt > 3) {
             e.preventDefault();
             alert("시간은 최대 3개까지만 가능합니다.");
+            return;
         }
 
         const request = new XMLHttpRequest();
@@ -102,6 +104,7 @@
         if (name == null || name == "" || category == null || category == "" || intro == null || intro == "" || maxCnt == null || ingredients == null || ingredients == "")
             return;
 
+        e.preventDefault();
         let reservationId = [];
         let form = {
             name: name,
@@ -130,16 +133,16 @@
             // let obj = JSON.parse(result);
             console.log(results);
 
-            if (results.SUSSESS == false)
-                console.log("전송 실패!");
-            else {
-                let message = results.msg;
-                let url = results.url;
+            let message = results.msg;
+            let url = results.url;
+            if (message == null)
+                return;
+            alert(message);
+            if (url == null)
+                return;
+            location.href = url;
+            console.log("전송 성공!");
 
-                alert(message);
-                location.href = url;
-                console.log("전송 성공!");
-            }
 
             console.log("read");
 
@@ -160,6 +163,15 @@
     };
 
     window.onload = () => {
+
+        for (let i = 0; i < checkboxes.length; i++) {
+            for (let reservationId of [[${ clubForm.reservationIds }]]) {
+                if (checkboxes[i].value == reservationId) {
+                    checkboxes[i].checked = true;
+                }
+            }
+        }
+
 
         let message = [[${ msg }]];
         let url = [[${ url }]];
