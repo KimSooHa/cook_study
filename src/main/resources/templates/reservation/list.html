@@ -38,7 +38,7 @@
         </table>
         <div class="paging-box"
             th:with="start=${(reservations.number/maxPage)*maxPage +1}, end=(${(reservations.totalPages == 0) ? 1 : (start + (maxPage -1) < reservations.totalPages ? start + (maxPage - 1) : reservations.totalPages)})">
-            <a th:if="${start > 1}" href="@{reservations(page=${start - maxPage})}"
+            <a th:if="${start > 1}" th:href="@{reservations(page=${start - maxPage})}"
                 class="btn btn-tag btn-icon icon-arrow-left">왼쪽 버튼</a>
             <a th:each="page: ${#numbers.sequence(start, end)}" th:href="@{reservations(page=${page-1})}"
                 th:text="${page}" th:class="${page == reservations.number + 1} ? 'btn btn-default selected' : 'btn btn-default'" class="btn btn-default selected">1</a>

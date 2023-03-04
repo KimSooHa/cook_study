@@ -70,7 +70,7 @@ public class ClubRepositoryImpl implements ClubRepositoryCustom {
                         club.name,
                         club.member.loginId))
                 .from(club)
-                .where(titleEq(condition.getTitle()),
+                .where(titleLike(condition.getTitle()),
                         categoryNameEq(condition.getCategoryName()))
                 .offset(pageable.getOffset())   // 시작 페이지
                 .limit(pageable.getPageSize())  // 한 페이지당 몇개씩 가져올건지
@@ -79,14 +79,16 @@ public class ClubRepositoryImpl implements ClubRepositoryCustom {
         // 카운트 쿼리
         JPAQuery<Long> countQuery = queryFactory
                 .select(club.count())
-                .from(club);
+                .from(club)
+                .where(titleLike(condition.getTitle()),
+                        categoryNameEq(condition.getCategoryName()));
 
         return PageableExecutionUtils.getPage(content, pageable, () -> countQuery.fetchOne());
 
     }
 
-    private BooleanExpression titleEq(String title) {
-        return StringUtils.hasText(title) ? club.name.like(title) : null;
+    private BooleanExpression titleLike(String title) {
+        return StringUtils.hasText(title) ? club.name.contains(title) : null;
     }
 
     private BooleanExpression categoryNameEq(String categoryName) {

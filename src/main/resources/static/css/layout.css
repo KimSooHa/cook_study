@@ -158,7 +158,7 @@ footer section .copyright {
     padding-left: 2px;
     border: solid var(--border-weight-light) var(--color-border);
     border-radius: 3px;
-    width: 40%;
+    width: 50%;
 }
 
 .input-search .icon-search {
@@ -188,7 +188,7 @@ footer section .copyright {
     /* margin-left: 30px; */
     border: 1px solid var(--color-border);
     border-radius: var(--border-radius-1);
-    padding: 10px;
+    padding: 20px;
 }
 
 .detail-container input[type="text"] {

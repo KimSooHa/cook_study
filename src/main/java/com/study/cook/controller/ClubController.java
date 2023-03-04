@@ -47,7 +47,7 @@ public class ClubController {
 
 
     @GetMapping("/list")
-    public String list(String categoryName, String title, Model model, @PageableDefault(size = 8, sort = "regDate", direction = Sort.Direction.ASC) Pageable pageable) {
+    public String list(String categoryName, @RequestParam(defaultValue = "") String title, Model model, @PageableDefault(size = 8, sort = "regDate", direction = Sort.Direction.DESC) Pageable pageable) {
 
         RecipeSearchCondition condition = new RecipeSearchCondition();
         if (title != null || title != "")
@@ -61,7 +61,8 @@ public class ClubController {
         model.addAttribute("list", list);
         model.addAttribute("maxPage", 4);   // 한 페이지 바 당 보여줄 개수
         model.addAttribute("categories", categories);
-//        model.addAttribute("condition", condition);
+        model.addAttribute("title", title);
+        model.addAttribute("categoryName", categoryName);
 
         return "club/list";
     }

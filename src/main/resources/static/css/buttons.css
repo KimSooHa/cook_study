@@ -38,10 +38,10 @@
     color: white !important;
 }
 
-.btn-strong{
-    padding: var(--btn-p-v) var(--btn-p-h);
-    border : solid var(--border-weight-light) var(--color-border);
-    border-radius: var(--border-radius-1);
+.btn-strong {
+    padding: var(--btn-p-v) var(--btn-p-h) !important;
+    border : solid var(--border-weight-light) var(--color-border) !important;
+    border-radius: var(--border-radius-1) !important;
     background-color: var(--color-strong);
 
     font-size: var(--text-content);
