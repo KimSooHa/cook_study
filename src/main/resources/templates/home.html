@@ -95,37 +95,15 @@
         <div class="cook_study-best-header best-container-header">
             <h1>쿡스터디</h1>
             <div class="btn btn-strong">
-                <a href="">더보기</a>
+                <a href="/clubs/list">더보기</a>
             </div>
         </div>
         <section class="best-list">
             <h1 class="d-none">best 쿡스터디 목록</h1>
-            <div class="list-element">
-                <a class="element-link" href="">
-                    <img class="food-list-img" src="https://src.hidoc.co.kr/image/lib/2020/11/9/1604911318873_0.jpg"
-                         alt="">
-                    <span class="title">쿡스터디 제목</span>
-                </a>
-            </div>
-            <div class="list-element">
-                <a class="element-link" href="">
-                    <img class="food-list-img" src="https://src.hidoc.co.kr/image/lib/2020/11/9/1604911318873_0.jpg"
-                         alt="">
-                    <span class="title">쿡스터디 제목</span>
-                </a>
-            </div>
-            <div class="list-element">
-                <a class="element-link" href="">
-                    <img class="food-list-img" src="https://src.hidoc.co.kr/image/lib/2020/11/9/1604911318873_0.jpg"
-                         alt="">
-                    <span class="title">쿡스터디 제목</span>
-                </a>
-            </div>
-            <div class="list-element">
-                <a class="element-link" href="">
-                    <img class="food-list-img" src="https://src.hidoc.co.kr/image/lib/2020/11/9/1604911318873_0.jpg"
-                         alt="">
-                    <span class="title">쿡스터디 제목</span>
+            <div class="list-element" th:each="club : ${list}">
+                <a class="element-link" th:href="@{clubs/{param1}/detail(param1=${club.clubId})}">
+                    <span class="title" th:text="${club.name}">쿡스터디 제목</span>
+                    <span class="writer" th:text="${club.memberLoginId}">작성자</span> 
                 </a>
             </div>
         </section>

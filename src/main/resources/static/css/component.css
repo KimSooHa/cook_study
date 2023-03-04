@@ -8,6 +8,7 @@ main {
 .best-container {
     display: flex;
     flex-direction: column;
+    margin-top: 30px;
     /* width: 100%; */
 
     /* padding: 50px 160px; */
@@ -33,13 +34,18 @@ main {
     /* width: 20%; */
 }
 
-.best-container .best-list .list-element .title {
+.best-container .best-list .list-element .title,
+.best-container .best-list .list-element .writer {
     margin-top: 20px;
     white-space: nowrap;
     word-break: break-all;
     text-overflow: ellipsis;
     overflow: hidden;
     width: 250px;
+}
+
+.best-container .best-list .list-element .title {
+    font-weight: bold;
 }
 
 .element-link {

@@ -3,7 +3,7 @@ package com.study.cook.controller;
 import com.study.cook.domain.*;
 import com.study.cook.dto.ClubDto;
 import com.study.cook.dto.ClubListDto;
-import com.study.cook.dto.RecipeSearchCondition;
+import com.study.cook.dto.SearchCondition;
 import com.study.cook.dto.ReservationDto;
 import com.study.cook.service.*;
 import com.study.cook.util.DateParser;
@@ -49,7 +49,7 @@ public class ClubController {
     @GetMapping("/list")
     public String list(String categoryName, @RequestParam(defaultValue = "") String title, Model model, @PageableDefault(size = 8, sort = "regDate", direction = Sort.Direction.DESC) Pageable pageable) {
 
-        RecipeSearchCondition condition = new RecipeSearchCondition();
+        SearchCondition condition = new SearchCondition();
         if (title != null || title != "")
             condition.setTitle(title);
         if (categoryName != null || categoryName != "")

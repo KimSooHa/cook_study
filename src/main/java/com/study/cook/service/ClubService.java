@@ -3,8 +3,7 @@ package com.study.cook.service;
 import com.study.cook.controller.ClubForm;
 import com.study.cook.domain.*;
 import com.study.cook.dto.ClubListDto;
-import com.study.cook.dto.RecipeSearchCondition;
-import com.study.cook.dto.ReservationDto;
+import com.study.cook.dto.SearchCondition;
 import com.study.cook.repository.ClubRepository;
 import com.study.cook.util.MemberFinder;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -62,8 +59,12 @@ public class ClubService {
     /**
      * 그룹 전체 조회
      */
-    public Page<ClubListDto> findList(RecipeSearchCondition condition, Pageable pageable) {
+    public Page<ClubListDto> findList(SearchCondition condition, Pageable pageable) {
         return clubRepository.findList(condition, pageable);
+    }
+
+    public List<ClubListDto> findLimitList(int length) {
+        return clubRepository.findList(length);
     }
 
     /**

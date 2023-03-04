@@ -7,7 +7,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.study.cook.domain.QParticipation;
 import com.study.cook.dto.ClubListDto;
 import com.study.cook.dto.QClubListDto;
-import com.study.cook.dto.RecipeSearchCondition;
+import com.study.cook.dto.SearchCondition;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
@@ -28,7 +28,6 @@ public class ClubRepositoryImpl implements ClubRepositoryCustom {
     }
 
 
-
     // 회원이 참여하고 있는 쿡스터디 목록
     @Override
     public Page<ClubListDto> findByParticipant(Long memberId, Pageable pageable) {
@@ -45,9 +44,9 @@ public class ClubRepositoryImpl implements ClubRepositoryCustom {
                         JPAExpressions.select(participationSub.club.id)
                                 .from(participationSub)
                                 .where(participationSub.member.id.eq(memberId))))
-                                .offset(pageable.getOffset())   // 시작 페이지
-                                .limit(pageable.getPageSize())  // 한 페이지당 몇개씩 가져올건지
-                                .fetch();// 컨텐츠만 반환
+                .offset(pageable.getOffset())   // 시작 페이지
+                .limit(pageable.getPageSize())  // 한 페이지당 몇개씩 가져올건지
+                .fetch();// 컨텐츠만 반환
 
         // 카운트 쿼리
         JPAQuery<Long> countQuery = queryFactory
@@ -61,8 +60,7 @@ public class ClubRepositoryImpl implements ClubRepositoryCustom {
 
     // 쿡스터디 목록
     @Override
-    public Page<ClubListDto> findList(RecipeSearchCondition condition, Pageable pageable) {
-        QParticipation participationSub = new QParticipation("participationSub");
+    public Page<ClubListDto> findList(SearchCondition condition, Pageable pageable) {
 
         List<ClubListDto> content = queryFactory
                 .select(new QClubListDto(
@@ -85,6 +83,22 @@ public class ClubRepositoryImpl implements ClubRepositoryCustom {
 
         return PageableExecutionUtils.getPage(content, pageable, () -> countQuery.fetchOne());
 
+    }
+
+    @Override
+    public List<ClubListDto> findList(int length) {
+
+        List<ClubListDto> content = queryFactory.select(new QClubListDto(
+                        club.id,
+                        club.name,
+                        club.member.loginId))
+                .from(club)
+                .orderBy(club.participations.size().desc())
+                .offset(0)
+                .limit(length)
+                .fetch();
+
+        return content;
     }
 
     private BooleanExpression titleLike(String title) {
