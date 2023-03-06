@@ -65,7 +65,7 @@
         </div>
         <div class="edit-box">
             <!-- <input type="hidden" name="_method" value="put" /> -->
-            <input class="btn btn-default btn-strong" type="submit" value="저장하기">
+            <input class="btn btn-default btn-strong edit" type="submit" value="저장하기">
         </div>
     </form>
 </main>
@@ -74,7 +74,7 @@
     let checkboxes = document.querySelectorAll(".checkbox");
 
 
-    const submitBtn = document.querySelector("input[type=submit]");
+    const submitBtn = document.querySelector(".edit");
     submitBtn.onclick = (e) => {
 
         let cnt = 0;

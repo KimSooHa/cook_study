@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
     layout:decorate="inc/layout">
 <main layout:fragment="content">
-    <form action="/cooking-rooms/reservation" method="post" class="detail-container create-container">
+    <form class="detail-container create-container">
         <div class="detail-container-title">요리실 예약</div>
 
         <div class="detail-intro">
@@ -36,7 +36,7 @@
         </div>
 
         <div class="edit-box">
-            <input class="btn btn-default btn-basic" type="submit" value="예약하기">
+            <button class="btn btn-default btn-basic" type="button" value="예약하기">예약하기</button>
         </div>
     </form>
 </main>
@@ -118,7 +118,8 @@
 
 
 
-    const submitBtn = document.querySelector("input[type=submit]");
+    // const submitBtn = document.querySelector("input[type=submit]");
+    const submitBtn = document.querySelector("button");
 
 
     submitBtn.onclick = (e) => {
@@ -136,7 +137,7 @@
             alert("시간은 최대 3개까지만 가능합니다.");
             return;
         } else if (cnt == 0) {
-            e.preventDefault();
+            // e.preventDefault();
             alert("예약하실 시간을 선택해주세요.");
             return;
         }

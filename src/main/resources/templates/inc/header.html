@@ -15,9 +15,14 @@
                 <a href="/clubs">쿡스터디 등록</a>
             </div>
 
-           <div class="btn btn-strong">
-               <a href="/cooking-rooms/reservation">요리실 대여</a>
-           </div>
+            <div class="btn btn-strong">
+                <a href="/cooking-rooms/reservation">요리실 대여</a>
+            </div>
+            <form th:action="@{/logout}" method="post">
+                <div class="btn btn-default">
+                    <input class="btn-submit" type="submit" value="로그아웃">
+                </div>
+            </form>
         </nav>
     </div>
 
@@ -27,7 +32,7 @@
                 <li><a href="/recipes/list">레시피</a></li>
                 <li><a href="/clubs/list">쿡스터디</a></li>
                 <li><a href="/cooking-rooms/reservations">요리실</a></li>
-                <li><a href="">마이페이지</a></li>
+                <li><a href="/mypage">마이페이지</a></li>
             </ul>
         </nav>
     </div>
