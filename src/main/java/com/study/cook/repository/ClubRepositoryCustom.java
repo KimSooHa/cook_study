@@ -9,10 +9,9 @@ import java.util.List;
 
 public interface ClubRepositoryCustom {
 
-//    Page<ClubListDto> findAll(RecipeSearchCondition condition, Pageable pageable);
-
     // 마이페이지에서 조회
-    Page<ClubListDto> findByParticipant(Long memberId, Pageable pageable);
+    Page<ClubListDto> findByParticipant(Long memberId, SearchCondition condition, Pageable pageable);
+    Page<ClubListDto> findByMemberId(Long memberId, SearchCondition condition, Pageable pageable);
     Page<ClubListDto> findList(SearchCondition condition, Pageable pageable);
     List<ClubListDto> findList(int length);
 

@@ -138,12 +138,17 @@ main {
     justify-self: flex-start;
 }
 
-.detail-container .detail-intro {
+.detail-container .detail-intro,
+.detail-container .link-box {
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     margin-top: 70px;
+}
+
+.detail-container .link-box .detail-title {
+    margin-top: 20px !important;
 }
 
 .detail-container .detail-intro .title-box {

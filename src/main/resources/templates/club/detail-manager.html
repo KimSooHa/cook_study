@@ -49,7 +49,7 @@
             <span>이용 비용:</span>
             <span>12,000 원</span>
         </div>
-        <form class="edits-box" method="post" th:action="@{/clubs/{param1}(param1=${clubId})}">
+        <form class="edits-box" method="post" th:action="@{/clubs/{param1}(param1=${clubId}, redirectURL=${redirectURL})}">
             <input type="hidden" name="_method" value="delete" />
             <button th:method="post" class="btn btn-default btn-basic" type="button" value="삭제하기">삭제하기</button>
             <a class="btn btn-default btn-strong" th:href="@{edit}">수정하기</a>
@@ -64,7 +64,7 @@
         if(!confirm("삭제하시겠습니까?"))
             return;
 
-        document.querySelector("form").submit();
+        document.querySelector(".edits-box").submit();
     }
 </script>
 </html>

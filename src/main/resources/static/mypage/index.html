@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../../css/reset.css" rel="stylesheet" type="text/css" />
+    <link href="../../css/style.css" rel="stylesheet" type="text/css" />
+    <link href="../../css/layout.css" rel="stylesheet" type="text/css" />
+    <link href="../../css/component.css" rel="stylesheet" type="text/css" />
+    <link href="../../css/buttons.css" rel="stylesheet" type="text/css" />
+    <link href="../../css/utils.css" rel="stylesheet" type="text/css">
+    <title>요리모여</title>
+</head>
+<header class="header">
+    <div class="header-top">
+        <div class="d-flex align-items-center">
+            <!-- <h1 ></h1> -->
+            <a class="header-title main-title" href="/login-home.html">요리모여</a>
+        </div>
+
+        <div class="login-member" th:text="|${member.name}님|">로그인 회원 이름</div>
+
+        <nav class="nav-login">
+
+            <div class="btn btn-strong">
+                <a href="">레시피 등록</a>
+            </div>
+            <div class="btn btn-strong">
+                <a href="">쿡스터디 등록</a>
+            </div>
+            <form th:action="@{/logout}" method="post">
+                <div class="btn btn-default">
+                    <input class="btn-submit" type="submit" value="로그아웃">
+                </div>
+            </form>
+
+            <div class="btn btn-default">
+                <a href="" th:href="@{/members}">회원가입</a>
+            </div>
+        </nav>
+    </div>
+
+    <div class="header-bottom">
+        <nav>
+            <ul class="d-flex">
+                <li><a href="">레시피</a></li>
+                <li><a href="">쿡스터디</a></li>
+                <li><a href="">요리실</a></li>
+                <li><a href="">마이페이지</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+<body>
+    <main layout:fragment="content" class="detail-container create-container">
+        <section class="detail-container">
+            <h1 class="detail-container-title">마이 페이지</h1>
+            <div class="link-box">
+                <div class="detail-title"><a class="btn btn-basic btn-default" th:href="@{/clubs/list/created}">등록한 쿡스터디</a></div>
+                <div class="detail-title"><a class="btn btn-basic btn-default" th:href="@{/clubs/list/joined}">참여하는 쿡스터디</a></div>
+                <div class="detail-title"><a class="btn btn-basic btn-default" th:href="">등록한 레시피</a></div>
+                <div class="detail-title"><a class="btn btn-basic btn-default" th:href="@{members/{param1}(param1=${session.sessionData})">프로필 수정</a></div>
+            </div>
+        </section>
+    </main>
+</body>
+<div th:replace="inc/footer :: footer"></div>
+</html>

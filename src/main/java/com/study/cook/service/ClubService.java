@@ -63,6 +63,9 @@ public class ClubService {
         return clubRepository.findList(condition, pageable);
     }
 
+    /**
+     * 정해진 갯수의 그룹 리스트 조회(참여자 많은 순)
+     */
     public List<ClubListDto> findLimitList(int length) {
         return clubRepository.findList(length);
     }
@@ -75,21 +78,17 @@ public class ClubService {
     }
 
     /**
-     * 그룹 리스트 조회
+     * 참여하는 그룹 리스트 조회
      */
-//    public Member findOne(MemberLoginIdSearchCondition condition) {
-//        return clubRepository.findByEmailAndPhoneNum(condition.getEmail(), condition.getPhoneNum());
-//    }
-//
-//    public Member findOne(MemberPwdSearchCondition condition) {
-//        return clubRepository.findByLoginIdAndEmail(condition.getLoginId(), condition.getEmail());
-//    }
-    public Page<ClubListDto> findByParticipant(Long memberId, Pageable pageable) {
-        return clubRepository.findByParticipant(memberId, pageable);
+    public Page<ClubListDto> findByParticipant(Long memberId, SearchCondition condition, Pageable pageable) {
+        return clubRepository.findByParticipant(memberId, condition, pageable);
     }
 
-    public Page<ClubListDto> findByMember(Long memberId, Pageable pageable) {
-        return clubRepository.findByMemberId(memberId, pageable);
+    /**
+     * 등록한 그룹 리스트 조회
+     */
+    public Page<ClubListDto> findByMember(Long memberId, SearchCondition condition, Pageable pageable) {
+        return clubRepository.findByMemberId(memberId, condition, pageable);
     }
 
     @Transactional

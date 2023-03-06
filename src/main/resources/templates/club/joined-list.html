@@ -4,8 +4,8 @@
 <main layout:fragment="content" class="detail-container create-container">
     <section class="list-container">
         <header class="header-search">
-            <h1>등록한 쿡스터디</h1>
-            <form class="search-box" th:action="@{/clubs/list/created}" method="GET">
+            <h1>참여하는 쿡스터디</h1>
+            <form class="search-box" th:action="@{/clubs/list/joined}" method="GET">
                 <div class="input-search d-flex-md">
                     <input class="icon icon-md icon-search" type="submit">
                     <label for="search" class="d-none">
@@ -21,12 +21,11 @@
             <ul>
                 <li class="nav-selected">
                     <a th:class="${categoryName} == null ? 'btn btn-tag selected' : 'btn btn-tag'"
-                        th:href="@{/clubs/list/created(title=${title})}">전체</a>
+                        th:href="@{/clubs/list/joined(title=${title})}">전체</a>
                 </li>
                 <li th:each="category : ${categories}" th:value="${category.id}">
-                    <a th:text="${category.name}" class="btn btn-tag"
-                        th:class="${categoryName} == ${category.name} ? 'btn btn-tag selected' : 'btn btn-tag'"
-                        th:href="@{/clubs/list/created(categoryName=${category.name}, title=${title})}">한식</a>
+                    <a th:text="${category.name}" class="btn btn-tag" th:class="${categoryName} == ${category.name} ? 'btn btn-tag selected' : 'btn btn-tag'"
+                        th:href="@{/clubs/list/joined(categoryName=${category.name}, title=${title})}">한식</a>
                 </li>
             </ul>
         </nav>
@@ -52,7 +51,7 @@
                 <tr th:each="club : ${list}">
                     <td th:text="${clubStat.count}">1</td>
                     <td>
-                        <a th:href="@{/clubs/{param1}/detail?redirectURL=/clubs/list/created(param1=${club.clubId})}" th:text="${club.name}">
+                        <a th:href="@{/clubs/{param1}/detail?redirectURL=/clubs/list/joined(param1=${club.clubId})}" th:text="${club.name}">
                             그룹 제목
                         </a>
                     </td>
@@ -63,12 +62,12 @@
 
         <div class="paging-box"
             th:with="start=${(list.number/maxPage)*maxPage +1}, end=(${(list.totalPages == 0) ? 1 : (start + (maxPage -1) < list.totalPages ? start + (maxPage - 1) : list.totalPages)})">
-            <a th:if="${start > 1}" th:href="@{created(page=${start - maxPage - 1})}"
+            <a th:if="${start > 1}" th:href="@{joined(page=${start - maxPage - 1})}"
                 class="btn btn-tag btn-icon icon-arrow-left">왼쪽 버튼</a>
-            <a th:each="page: ${#numbers.sequence(start, end)}" th:href="@{created(page=${page-1})}" th:text="${page}"
+            <a th:each="page: ${#numbers.sequence(start, end)}" th:href="@{joined(page=${page-1})}" th:text="${page}"
                 th:class="${page == list.number + 1} ? 'btn btn-default selected' : 'btn btn-default'"
                 class="btn btn-default selected">1</a>
-            <a th:if="${end < list.totalPages}" th:href="@{created(page=${list.totalPages-1})}"
+            <a th:if="${end < list.totalPages}" th:href="@{joined(page=${list.totalPages-1})}"
                 class="btn btn-tag btn-icon icon-arrow-right">오른쪽 버튼</a>
         </div>
     </section>

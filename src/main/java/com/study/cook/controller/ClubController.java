@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @Controller
 @RequiredArgsConstructor
@@ -47,7 +48,7 @@ public class ClubController {
 
 
     @GetMapping("/list")
-    public String list(String categoryName, @RequestParam(defaultValue = "") String title, Model model, @PageableDefault(size = 8, sort = "regDate", direction = Sort.Direction.DESC) Pageable pageable) {
+    public String list(String categoryName, @RequestParam(defaultValue = "") String title, Model model, @PageableDefault(size = 8, sort = "regDate", direction = DESC) Pageable pageable) {
 
         SearchCondition condition = new SearchCondition();
         if (title != null || title != "")
@@ -71,46 +72,54 @@ public class ClubController {
      * 등록한 리스트
      */
     @GetMapping("/list/created")
-    public String createdList(HttpServletRequest request, HttpSession session, Model model, @PageableDefault(size = 8, sort = "regDate", direction = Sort.Direction.DESC) Pageable pageable) {
+    public String createdList(String categoryName, @RequestParam(defaultValue = "") String title, HttpSession session, Model model, @PageableDefault(size = 8, sort = "regDate", direction = Sort.Direction.ASC) Pageable pageable) {
+
+        SearchCondition condition = new SearchCondition();
+        if (title != null || title != "")
+            condition.setTitle(title);
+        if (categoryName != null || categoryName != "")
+            condition.setCategoryName(categoryName);
+
         Member member = memberFinder.getMember(session);
         List<Category> categories = categoryService.findList();
-        Page<ClubListDto> list = clubService.findByMember(member.getId(), pageable);
-        model.addAttribute("maxPage", 4);   // 한 페이지 바 당 보여줄 개수
-        model.addAttribute("clubs", list);
-        model.addAttribute("categories", categories);
+        Page<ClubListDto> list = clubService.findByMember(member.getId(), condition, pageable);
 
-        return "club/list";
+        model.addAttribute("maxPage", 4);
+        model.addAttribute("list", list);
+        model.addAttribute("categories", categories);
+        model.addAttribute("title", title);
+        model.addAttribute("categoryName", categoryName);
+
+        return "club/created-list";
     }
 
     /**
      * 참여하는 리스트
      */
     @GetMapping("/list/joined")
-    public String joinedList(HttpServletRequest request, HttpSession session, Model model, @PageableDefault(size = 8, sort = "regDate", direction = Sort.Direction.DESC) Pageable pageable) {
+    public String joinedList(String categoryName, @RequestParam(defaultValue = "") String title, HttpSession session, Model model, @PageableDefault(size = 8, sort = "regDate", direction = DESC) Pageable pageable) {
+
+        SearchCondition condition = new SearchCondition();
+        if (title != null || title != "")
+            condition.setTitle(title);
+        if (categoryName != null || categoryName != "")
+            condition.setCategoryName(categoryName);
+
         Member member = memberFinder.getMember(session);
         List<Category> categories = categoryService.findList();
-        Page<ClubListDto> list = clubService.findByMember(member.getId(), pageable);
-        model.addAttribute("maxPage", 4);   // 한 페이지 바 당 보여줄 개수
-        model.addAttribute("clubs", list);
+        Page<ClubListDto> list = clubService.findByParticipant(member.getId(), condition, pageable);
+        model.addAttribute("maxPage", 4);
+        model.addAttribute("list", list);
         model.addAttribute("categories", categories);
+        model.addAttribute("title", title);
+        model.addAttribute("categoryName", categoryName);
 
-        return "club/list";
+        return "club/joined-list";
     }
 
-    @GetMapping("/participations")
-    public String joinList(HttpSession session, Model model, Pageable pageable) {
-
-        Member member = memberFinder.getMember(session);
-        Page<ClubListDto> participateClubs = clubService.findByParticipant(member.getId(), pageable);
-
-        model.addAttribute("participateClubs", participateClubs);
-
-        // 참여하는 스터디 리스트 페이지 만들기!
-        return "";
-    }
 
     @GetMapping("/{clubId}/detail")
-    public String detail(@PathVariable Long clubId, Model model, HttpSession session) {
+    public String detail(@PathVariable Long clubId, @RequestParam(defaultValue = "/clubs/list") String redirectURL, Model model, HttpSession session) {
         Club club = clubService.findOneById(clubId);
 
         int restCount = club.getMaxCount();
@@ -151,8 +160,7 @@ public class ClubController {
         model.addAttribute("memberLoginId", member.getLoginId());
         model.addAttribute("categoryName", category.getName());
         model.addAttribute("clubId", clubId);
-//        model.addAttribute("loginMember", loginMember);
-
+        model.addAttribute("redirectURL", redirectURL);
 
         if (member.getId().equals(loginMember.getId())) {    // 로그인한 회원이 쿡스터디 등록한 회원이라면
             return "club/detail-manager";
@@ -264,10 +272,11 @@ public class ClubController {
     }
 
     @DeleteMapping("/{clubId}")
-    public String delete(@PathVariable Long clubId, RedirectAttributes redirectAttributes) {
+    public String delete(@PathVariable Long clubId, RedirectAttributes redirectAttributes, @RequestParam(defaultValue = "/clubs/list") String redirectURL) {
         clubService.delete(clubId);
         redirectAttributes.addFlashAttribute("msg", "삭제되었습니다!");
-        return "redirect:/clubs/list";
+        log.info("redirectURL={}", redirectURL);
+        return "redirect:" + redirectURL;
     }
 
     private void makeReservationListDto(List<ReservationDto> reservationDtos, Reservation reservation) {

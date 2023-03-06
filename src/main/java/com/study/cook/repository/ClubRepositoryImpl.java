@@ -1,10 +1,8 @@
 package com.study.cook.repository;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.study.cook.domain.QParticipation;
 import com.study.cook.dto.ClubListDto;
 import com.study.cook.dto.QClubListDto;
 import com.study.cook.dto.SearchCondition;
@@ -17,6 +15,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 import static com.study.cook.domain.QClub.club;
+import static com.study.cook.domain.QParticipation.participation;
 
 
 public class ClubRepositoryImpl implements ClubRepositoryCustom {
@@ -28,10 +27,15 @@ public class ClubRepositoryImpl implements ClubRepositoryCustom {
     }
 
 
-    // 회원이 참여하고 있는 쿡스터디 목록
+    /**
+     * 회원이 참여하고 있는 club 목록
+     */
     @Override
-    public Page<ClubListDto> findByParticipant(Long memberId, Pageable pageable) {
-        QParticipation participationSub = new QParticipation("participationSub");
+    public Page<ClubListDto> findByParticipant(Long memberId, SearchCondition condition, Pageable pageable) {
+
+        List<Long> clubIds = queryFactory.select(participation.club.id)
+                .from(participation)
+                .where(participation.member.id.eq(memberId)).fetch();
 
         List<ClubListDto> content = queryFactory
                 .select(new QClubListDto(
@@ -39,11 +43,10 @@ public class ClubRepositoryImpl implements ClubRepositoryCustom {
                         club.name,
                         club.member.loginId))
                 .from(club)
-                .innerJoin(club, participationSub.club)
-                .where(club.id.eq(
-                        JPAExpressions.select(participationSub.club.id)
-                                .from(participationSub)
-                                .where(participationSub.member.id.eq(memberId))))
+                .where(club.id.in(clubIds),
+                        titleLike(condition.getTitle()),
+                        categoryNameEq(condition.getCategoryName()))
+                .orderBy(club.regDate.desc())
                 .offset(pageable.getOffset())   // 시작 페이지
                 .limit(pageable.getPageSize())  // 한 페이지당 몇개씩 가져올건지
                 .fetch();// 컨텐츠만 반환
@@ -52,13 +55,48 @@ public class ClubRepositoryImpl implements ClubRepositoryCustom {
         JPAQuery<Long> countQuery = queryFactory
                 .select(club.count())
                 .from(club)
-                .innerJoin(club, participationSub.club)
-                .where(participationSub.member.id.eq(memberId));
+                .where(club.id.in(clubIds),
+                        titleLike(condition.getTitle()),
+                        categoryNameEq(condition.getCategoryName()))
+                .orderBy(club.regDate.desc());
 
         return PageableExecutionUtils.getPage(content, pageable, () -> countQuery.fetchOne());
     }
 
-    // 쿡스터디 목록
+    /**
+     * 등록한 club 목록
+     */
+    @Override
+    public Page<ClubListDto> findByMemberId(Long memberId, SearchCondition condition, Pageable pageable) {
+        List<ClubListDto> content = queryFactory
+                .select(new QClubListDto(
+                        club.id,
+                        club.name,
+                        club.member.loginId))
+                .from(club)
+                .where(titleLike(condition.getTitle()),
+                        categoryNameEq(condition.getCategoryName()),
+                        club.member.id.eq(memberId))
+                .orderBy(club.regDate.desc())
+                .offset(pageable.getOffset())   // 시작 페이지
+                .limit(pageable.getPageSize())  // 한 페이지당 몇개씩 가져올건지
+                .fetch();// 컨텐츠만 반환
+
+        // 카운트 쿼리
+        JPAQuery<Long> countQuery = queryFactory
+                .select(club.count())
+                .from(club)
+                .where(titleLike(condition.getTitle()),
+                        categoryNameEq(condition.getCategoryName()),
+                        club.member.id.eq(memberId))
+                .orderBy(club.regDate.desc());
+
+        return PageableExecutionUtils.getPage(content, pageable, () -> countQuery.fetchOne());
+    }
+
+    /**
+     * club 목록
+     */
     @Override
     public Page<ClubListDto> findList(SearchCondition condition, Pageable pageable) {
 
@@ -70,6 +108,7 @@ public class ClubRepositoryImpl implements ClubRepositoryCustom {
                 .from(club)
                 .where(titleLike(condition.getTitle()),
                         categoryNameEq(condition.getCategoryName()))
+                .orderBy(club.regDate.desc())
                 .offset(pageable.getOffset())   // 시작 페이지
                 .limit(pageable.getPageSize())  // 한 페이지당 몇개씩 가져올건지
                 .fetch();// 컨텐츠만 반환
@@ -79,12 +118,17 @@ public class ClubRepositoryImpl implements ClubRepositoryCustom {
                 .select(club.count())
                 .from(club)
                 .where(titleLike(condition.getTitle()),
-                        categoryNameEq(condition.getCategoryName()));
+                        categoryNameEq(condition.getCategoryName()))
+                .orderBy(club.regDate.desc());
 
         return PageableExecutionUtils.getPage(content, pageable, () -> countQuery.fetchOne());
 
     }
 
+    /**
+     * length: 반환할 목록 갯수
+     * club 목록(participation 많은 순으로 정렬)
+     */
     @Override
     public List<ClubListDto> findList(int length) {
 
