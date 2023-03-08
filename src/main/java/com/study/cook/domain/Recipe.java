@@ -14,7 +14,7 @@ import static javax.persistence.FetchType.LAZY;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(of = {"id", "title", "introduction", "img", "ingredients", "cookingTime", "servings", "likes", "regDate"})
+@ToString(of = {"id", "title", "introduction", "img", "ingredients", "cookingTime", "servings", "regDate"})
 public class Recipe {
 
     @Id
@@ -68,7 +68,8 @@ public class Recipe {
     @OneToMany(mappedBy = "recipe")
     private List<Heart> hearts = new ArrayList<>();
 
-    public Recipe(String introduction, Photo photo, String ingredients, int cookingTime, int servings) {
+    public Recipe(String title, String introduction, Photo photo, String ingredients, int cookingTime, int servings) {
+        this.title = title;
         this.introduction = introduction;
         this.photo = photo;
         this.ingredients = ingredients;

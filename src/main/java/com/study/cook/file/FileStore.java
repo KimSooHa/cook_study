@@ -7,6 +7,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -39,6 +41,7 @@ public class FileStore {
         String originalFilename = multipartFile.getOriginalFilename();  // 업로드 파일명
         String storeFileName = createStoreFileName(originalFilename);   // 서버 파일명 생성
         multipartFile.transferTo(new File(getFullPath(storeFileName))); // 서버에 파일 저장
+
         return new Photo(originalFilename, storeFileName);
     }
 

@@ -5,7 +5,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.study.cook.dto.QRecipeListDto;
 import com.study.cook.dto.RecipeListDto;
-import com.study.cook.dto.RecipeSearchCondition;
+import com.study.cook.dto.SearchCondition;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
@@ -117,7 +117,7 @@ public class RecipeRepositoryImpl implements RecipeRepositoryCustom {
 
 
     @Override
-    public Page<RecipeListDto> findAll(RecipeSearchCondition condition, Pageable pageable) {
+    public Page<RecipeListDto> findAll(SearchCondition condition, Pageable pageable) {
         return null;
     }
 

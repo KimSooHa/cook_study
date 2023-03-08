@@ -1,15 +1,13 @@
 package com.study.cook.service;
 
-import com.study.cook.controller.*;
-import com.study.cook.domain.*;
+import com.study.cook.controller.RecipeForm;
+import com.study.cook.domain.Category;
+import com.study.cook.domain.Member;
+import com.study.cook.domain.Photo;
+import com.study.cook.domain.Recipe;
 import com.study.cook.exception.StoreFailException;
 import com.study.cook.file.FileStore;
-import com.study.cook.repository.CookingRoomRepository;
 import com.study.cook.repository.RecipeRepository;
-import com.study.cook.repository.ReservationRepository;
-import com.study.cook.repository.ScheduleRepository;
-import com.study.cook.util.DateParser;
-import com.study.cook.util.MemberFinder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,20 +20,14 @@ import java.util.List;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class RecipeService {
-
-    private final CookingRoomRepository cookingRoomRepository;
-    private final ScheduleRepository scheduleRepository;
-    private final CookingRoomService cookingRoomService;
-    private final ReservationRepository reservationRepository;
+    private final CategoryService categoryService;
     private final RecipeRepository recipeRepository;
-    private final DateParser dateParser;
-    private final MemberFinder memberFinder;
     private final FileStore fileStore;
 
     /**
      * 레시피 등록
      */
-    @Transactional  // 변경해야 하기 때문에 읽기, 쓰기가 가능해야 함
+    @Transactional
     public Long create(RecipeForm form, MultipartFile file, Member member) throws StoreFailException {
 
         Photo photo = null;
@@ -45,10 +37,10 @@ public class RecipeService {
             throw new StoreFailException(e);
         }
 
-        Recipe recipe = new Recipe(form.getIntroduction(), photo, form.getIngredients(), form.getCookingTime(), form.getServings());
-
-        Recipe.createRecipe(recipe, member, form.getCategory(), photo);
-        recipeRepository.save(recipe);
+        Category category = categoryService.findOneById(form.getCategoryId());
+        Recipe recipe = new Recipe(form.getTitle(), form.getIntroduction(), photo, form.getIngredients(), form.getCookingTime(), form.getServings());
+        Recipe createdRecipe = Recipe.createRecipe(recipe, member, category, photo);
+        recipeRepository.save(createdRecipe);
 
         return recipe.getId();
     }
@@ -61,14 +53,6 @@ public class RecipeService {
         return recipeRepository.findAll();
     }
 
-//    public Optional<List<Recipe>> findByCookingRoomIdAndDate(Long cookingRoomId, String date) {
-//        return recipeRepository.findAll();
-//    }
-
-
-//    public Optional<List<Recipe>> findByMember(Member member) {
-//        return recipeRepository.findByMemberId(member.getId());
-//    }
 
     /**
      * 단건 조회
@@ -89,8 +73,8 @@ public class RecipeService {
         }
 
         Recipe recipe = recipeRepository.findById(id).orElseThrow();
-
-        recipe.setCategory(form.getCategory());
+        Category category = categoryService.findOneById(form.getCategoryId());
+        recipe.setCategory(category);
         recipe.setPhoto(photo);
         recipe.setServings(form.getServings());
         recipe.setIngredients(form.getIngredients());

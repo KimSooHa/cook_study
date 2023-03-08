@@ -21,6 +21,7 @@ public class RecipeField {
     @Column(name = "recipe_field_id")
     private Long id;
 
+    @NotNull
     @OneToOne(cascade = CascadeType.ALL, fetch=LAZY)
     @JoinColumn(name = "photo_id")
     private Photo photo;

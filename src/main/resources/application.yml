@@ -15,9 +15,11 @@ spring:
       pageable:
         default-page-size: 20 # 기본 페이지 사이즈
 
-    servlet:
-      multipart:
-        max-file-size: 1MB
+  servlet:
+    multipart:
+      max-file-size: 20MB
+
+      #enabled: false
 
   jpa:
     hibernate:
@@ -41,4 +43,4 @@ server:
       tracking-modes: cookie # url 전달 방식 끄고 항상 쿠키를 통해서만 세션 유지
 
 file:
-  dir: /Users/sooha/SpringWorkspace/file/cook
+  dir: /Users/sooha/SpringWorkspace/cook/files/
