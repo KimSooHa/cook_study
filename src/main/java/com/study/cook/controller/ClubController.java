@@ -28,6 +28,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 import static org.springframework.data.domain.Sort.Direction.DESC;
@@ -175,17 +176,28 @@ public class ClubController {
         List<Category> categories = categoryService.findList();
         log.info("reservations={}", reservations.get().size());
         if (reservations.isPresent()) {
+//            List<ReservationDto> reservationDtos = new ArrayList<>();
+//            for (Reservation reservation : reservations.get()) {
+//
+//                // 다른 쿡스터디에 지정된 예약은 제외
+//                Long clubId = null;
+//                try {
+//                    clubId = reservation.getClub().getId();
+//                } catch (NullPointerException e) {
+//                    makeReservationListDto(reservationDtos, reservation);
+//                }
+//            }
             List<ReservationDto> reservationDtos = new ArrayList<>();
-            for (Reservation reservation : reservations.get()) {
-
+            reservations.get().stream().forEach(r -> {
                 // 다른 쿡스터디에 지정된 예약은 제외
                 Long clubId = null;
                 try {
-                    clubId = reservation.getClub().getId();
+                    clubId = r.getClub().getId();
                 } catch (NullPointerException e) {
-                    makeReservationListDto(reservationDtos, reservation);
+                    makeReservationListDto(reservationDtos, r);
                 }
-            }
+            });
+
             model.addAttribute("reservationDtos", reservationDtos);
         }
         model.addAttribute("clubForm", new ClubForm());

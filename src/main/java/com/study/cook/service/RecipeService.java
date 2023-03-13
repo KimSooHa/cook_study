@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -63,19 +64,28 @@ public class RecipeService {
 
 
     @Transactional
-    public void update(Long id, RecipeForm form) throws StoreFailException {
+    public void update(Long id, RecipeForm form, Optional<MultipartFile> file) throws StoreFailException {
+
+        Recipe recipe = recipeRepository.findById(id).orElseThrow();
 
         Photo photo = null;
         try {
-            photo = fileStore.storeFile(form.getImageFile());
+            // 파일이 존재하며 기존 이미지와 같지 않으면
+            if (file.isPresent()) {
+                photo = fileStore.storeFile(file.get());
+            }
         } catch (IOException e) {
             throw new StoreFailException(e);
         }
 
-        Recipe recipe = recipeRepository.findById(id).orElseThrow();
+        // 기존 파일 삭제
+        if (photo != null) {
+            fileStore.deleteFile(recipe.getPhoto().getStoreFileName());
+            recipe.setPhoto(photo);
+        }
+
         Category category = categoryService.findOneById(form.getCategoryId());
         recipe.setCategory(category);
-        recipe.setPhoto(photo);
         recipe.setServings(form.getServings());
         recipe.setIngredients(form.getIngredients());
         recipe.setIntroduction(form.getIntroduction());

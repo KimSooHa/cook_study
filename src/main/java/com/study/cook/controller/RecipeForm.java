@@ -1,5 +1,6 @@
 package com.study.cook.controller;
 
+import com.study.cook.domain.Photo;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +21,8 @@ public class RecipeForm {
     private String introduction;
 
     private MultipartFile imageFile;
+
+    private Photo img;
 
     @NotBlank(message = "레시피에 필요한 재료를 작성해주세요.")
     @Size(max = 200, message = "최대 200자까지 가능합니다.")

@@ -1,142 +1,353 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="../../css/reset.css" rel="stylesheet" type="text/css" />
-        <link href="../../css/style.css" rel="stylesheet" type="text/css" />
-        <link href="../../css/layout.css" rel="stylesheet" type="text/css" />
-        <link href="../../css/component.css" rel="stylesheet" type="text/css" />
-        <link href="../../css/buttons.css" rel="stylesheet" type="text/css" />
-        <link href="../../css/utils.css" rel="stylesheet" type="text/css">
-        <title>레시피 수정 페이지</title>
-    </head>
-    <header class="header">
-        <div class="header-top">
-            <div class="d-flex align-items-center">
-                <h1 class="header-title">요리모여</h1>
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="inc/layout">
+<main layout:fragment="content">
+    <form class="detail-container create-container update-form" enctype="multipart/form-data">
+        <div class="detail-container-title">레시피 수정</div>
+        <div class="detail-intro">
+
+            <div class="detail-input-box d-flex-md">
+                <label th:for="recipeForm.title" class="detail-title">레시피 제목</label>
+                <input th:field="*{recipeForm.title}" type="text" name="" id="title" placeholder="내용을 입력해주세요."
+                    th:class="${#fields.hasErrors('recipeForm.title')}? 'form-control fieldError' : 'form-control'"
+                    required>
+                <p th:if="${#fields.hasErrors('recipeForm.title')}" th:errors="*{recipeForm.title}">Incorrect date</p>
             </div>
-    
-            <nav class="nav-login">
-    
-                <div class="btn btn-strong">
-                    <a href="">레시피 등록</a>
+            <div class="category-box info">
+                <label for="select" class="detail-title">카테고리</label>
+                <select th:field="*{recipeForm.categoryId}" name="" id="select" class="form-control" required>
+                    <option value="">카테고리 선택</option>
+                    <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}">한식
+                    </option>
+                </select>
+            </div>
+
+            <div class="img-box cooking-box mt-16">
+                <label class="detail-title" for="image-file">메인 이미지</label>
+                <input type="file" th:name="imageFile" id="image-file" accept="image/*">
+                <span class="original-file" th:text="${recipeForm.img.getUploadFileName()}"></span>
+                <img class="d-none food-detail-img" th:src="|/recipes/images/${recipeForm.img.getStoreFileName()}|"
+                    alt="요리사진">
+            </div>
+            <div class="info explanation input-content">
+                <span class="detail-title">요리 설명</span>
+                <textarea th:field="*{recipeForm.introduction}" name="" id="introduction" cols="30" rows="7"
+                    placeholder="내용을 입력해주세요."
+                    th:class="${#fields.hasErrors('recipeForm.introduction')}? 'form-control fieldError' : 'form-control'"
+                    required></textarea>
+                <p th:if="${#fields.hasErrors('recipeForm.introduction')}" th:errors="*{recipeForm.introduction}">
+                    Incorrect date</p>
+            </div>
+            <div class="info">
+                <div class="serving-info">
+                    <label th:for="${recipeForm.servings}" class="detail-title" for="serving-input">인분</label>
+                    <input th:field="*{recipeForm.servings}" type="number" name="" id="servings" min="1" max="10"
+                        value="1" inputmode="numeric"
+                        th:class="${#fields.hasErrors('recipeForm.servings')}? 'form-control fieldError' : 'form-control'"
+                        required onkeypress="preventText(this)">
+                    <p th:if="${#fields.hasErrors('recipeForm.servings')}" th:errors="*{recipeForm.servings}">Incorrect
+                        date</p>
                 </div>
-                <div class="btn btn-strong">
-                    <a href="">쿡스터디 등록</a>
+                <div class="cooking-info">
+                    <label th:for="${recipeForm.cookingTime}" class="detail-title" for="cooking-time">조리시간</label>
+                    <input th:field="*{recipeForm.cookingTime}" type="number" name="" id="cooking-time" min="1" max="5"
+                        value="1" inputmode="numeric"
+                        th:class="${#fields.hasErrors('recipeForm.cookingTime')}? 'form-control fieldError' : 'form-control'"
+                        required onkeypress="preventText(this)">
+                    <p th:if="${#fields.hasErrors('recipeForm.cookingTime')}" th:errors="*{recipeForm.cookingTime}">
+                        Incorrect date</p>
                 </div>
-    
-                <div class="btn btn-default">
-                    <a href="">로그인</a>
-                </div>
-    
-                <div class="btn btn-strong">
-                    <a href="">회원가입</a>
-                </div>
-            </nav>
+            </div>
         </div>
-    
-        <div class="header-bottom">
-            <nav>
-                <ul class="d-flex">
-                    <li><a href="">레시피</a></li>
-                    <li><a href="">쿡스터디</a></li>
-                    <li><a href="">요리실</a></li>
-                    <li><a href="">마이페이지</a></li>
-                </ul>
-            </nav>
+        <div class="info explanation input-content">
+            <span class="detail-title">재료</span>
+            <textarea th:field="*{recipeForm.ingredients}" name="" id="ingredients" cols="30" rows="5"
+                placeholder="내용을 입력해주세요."
+                th:class="${#fields.hasErrors('recipeForm.ingredients')}? 'form-control fieldError' : 'form-control'"
+                required></textarea>
+            <p th:if="${#fields.hasErrors('recipeForm.ingredients')}" th:errors="*{recipeForm.ingredients}">Incorrect
+                date</p>
         </div>
-    </header>
-    
-    <body>
-        <main>
-            <form class="detail-container create-container">
-                <div class="detail-container-title">레시피 수정</div>
-                <div class="detail-intro">
-    
-                    <div class="detail-input-box d-flex-md">
-                        <label for="" class="detail-title">레시피 제목</label>
-                        <input type="text" name="" id="" placeholder="내용을 입력해주세요." required>
-                    </div>
-    
-                    <!-- <img class="food-detail-img" src="https://www.menupan.com/cook/cookimg/004000.jpg" alt=""> -->
-                    <div class="img-input-box">
-                        <label class="detail-title" for="image">메인 이미지</label>
-                        <input type="file" name="" id="image">
-                    </div>
-                    <div class="info explanation input-content">
-                        <span class="detail-title">요리 설명</span>
-                        <textarea name="" id="" cols="30" rows="7"
-                            placeholder="내용을 입력해주세요." required></textarea>                    
-                    </div>
-                    <div class="info">
-                        <div class="serving-info">
-                            <label class="detail-title" for="serving-input">인분</label>
-                            <input type="text" name="" id="serving-input" required>
-                        </div>
-                        <div class="cooking-info">
-                            <label class="detail-title" for="cooking-time">조리시간</label>
-                            <input type="number" name="" id="cooking-time" max="5" required>
-                        </div>
-                    </div>
+        <section class="cooking-order">
+            <h1 class="detail-sub-title">조리순서</h1>
+
+            <div th:each="fieldForm : ${fieldForms}" class="info explanation input-content order-box cooking-box">
+
+                <div>
+                    <span th:text="|${fieldFormStat.count}.|" class="order-num">1.</span>
+                    <label class="detail-title" for="image-file"></label>
+                    <input type="file" id="image-file" th:name="imageFile" accept="image/*">
+                    <span class="original-file" th:text="${fieldForm.img.getUploadFileName()}"></span>
                 </div>
-                <div class="info explanation input-content">
-                    <span class="detail-title">재료</span>
-                    <textarea name="" id="" cols="30" rows="5"
-                        placeholder="내용을 입력해주세요." required></textarea>                    
-                </div>
-                <section class="cooking-order">
-                    <h1 class="detail-sub-title">조리순서</h1>
-                    
-                    <div class="info explanation input-content order-box">
-                        
-                        <div class="img-input-box">
-                            <span class="order-num">1.</span>
-                            <label class="detail-title" for="image"></label>
-                            <input type="file" name="" id="image">
-                        </div>
-                        <img class="food-detail-img"
-                            src="https://bakeitwithlove.com/wp-content/uploads/2022/02/valentines-day-chocolate-covered-strawberries-sq.jpg"
-                            alt="요리사진">
-                        
-                        <textarea name="" id="" cols="30" rows="5"
-                            placeholder="내용을 입력해주세요." required></textarea>                    
-                    </div>
-                    <div class="info explanation input-content order-box">
-                        
-                        <div class="img-input-box">
-                            <span class="order-num">2.</span>
-                            <label class="detail-title" for="image"></label>
-                            <input type="file" name="" id="image">
-                        </div>
-                        <img class="food-detail-img"
-                            src="https://www.allrecipes.com/thmb/F-EluJr_7l4tdCKSuAsjWNcjUnA=/750x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/5112458-61ab2bab516346c5a02f78612c7823fe.jpg"
-                            alt="요리사진">
-                        
-                        <textarea name="" id="" cols="30" rows="5"
-                            placeholder="내용을 입력해주세요." required></textarea>                    
-                    </div><div class="info explanation input-content order-box">
-                        
-                        <div class="img-input-box">
-                            <span class="order-num">3.</span>
-                            <label class="detail-title" for="image"></label>
-                            <input type="file" name="" id="image">
-                        </div>
-                        <img class="food-detail-img" src="https://www.menupan.com/cook/cookimg/pimg/003700_p01.jpg"
-                            alt="요리사진">
-                        
-                        <textarea name="" id="" cols="30" rows="5"
-                            placeholder="내용을 입력해주세요." required></textarea>                    
-                    </div>
-    
-                    <div class="add-form">
-                        <span class="btn btn-strong">추가</span>
-                    </div>
-                </section>
-                <div class="edit-box">
-                    <input class="btn btn-default btn-basic" type="submit" value="저장">
-                </div>
-            </form>
-        </main>
-    </body>
+                <img class="d-none food-detail-img" th:src="|/recipes/images/${fieldForm.img.getStoreFileName()}|"
+                    name="imageFile" id="imageFile" alt="요리사진">
+                <textarea th:text="*{fieldForm.content}" class="content" name="content" id="content" cols="30" rows="5"
+                    placeholder="내용을 입력해주세요." required></textarea>
+            </div>
+        </section>
+        <div class="add-form">
+            <span class="btn btn-strong plus">➕</span>
+            <span class="btn btn-strong minus">➖</span>
+        </div>
+        <div class="edit-box">
+            <button class="btn btn-default btn-basic update" type="submit">저장</button>
+        </div>
+    </form>
+</main>
+<script th:inline="javascript" layout:fragment="script">
+    const form = document.querySelector(".update-form");
+    const plusBtn = form.querySelector(".plus");
+    const minusBtn = form.querySelector(".minus");
+    const cookingOrder = form.querySelector(".cooking-order");
+    let orderBoxList;
+
+    /* <![CDATA[ */
+
+
+    const html =
+        `<div class="info explanation input-content order-box cooking-box">
+            <div class="">
+                <span class="order-num">1.</span>
+                <label class="detail-title" for="image-file"></label>
+                <input type="file" id="image-file" th:name="imageFile">
+            </div>
+            <img class="d-none food-detail-img" src="" name="imageFile" id="imageFile" accept="image/*" alt="요리사진">
+
+            <!-- <textarea th:field="*{fieldForm.content}" class="content" name="content" id="content" cols="30" rows="5" -->
+            <textarea class="content" name="content" id="content" cols="30" rows="5"
+                placeholder="내용을 입력해주세요." required></textarea>
+        </div>`;
+
+    plusBtn.addEventListener("click", () => {
+        let textarea = cookingOrder.lastElementChild.querySelector("textarea");
+
+        if (textarea.value == null || textarea.value == "" || textarea.value == " ")
+            return;
+
+        cookingOrder.insertAdjacentHTML("beforeend", html);
+        addNum();
+    });
+
+    minusBtn.addEventListener("click", () => {
+        // let cookingOrder = form.querySelector(".cooking-box");
+        cookingOrder.lastElementChild.remove();
+    });
+
+
+    function addNum() {
+        orderBoxList = cookingOrder.querySelectorAll(".order-box");
+        let orderIdx = orderBoxList.length;
+        console.log(orderIdx);
+        let orderBox = cookingOrder.lastElementChild;
+        let orderNum = orderBox.querySelector(".order-num");
+        orderNum.innerText = orderIdx + ".";
+    }
+
+
+
+
+    orderBoxList = cookingOrder.querySelectorAll(".cooking-box");
+
+    cookingOrder.addEventListener("click", (e) => {
+        for (let i = 0; i < orderBoxList.length; i++) {
+            const originalFileName = orderBoxList[i].querySelector(".original-file");
+            const image = orderBoxList[i].querySelector("img");
+            const fileInput = orderBoxList[i].querySelector("input[type=file]");
+            let cloneArr;
+
+            showImg(originalFileName, image, fileInput, cloneArr, e);
+        }
+        // addFileName();
+    });
+
+    const imgBox = document.querySelector(".img-box");
+
+    imgBox.addEventListener("click", (e) => {
+
+        const originalFileName = imgBox.querySelector(".original-file");
+        const image = imgBox.querySelector("img");
+        const fileInput = imgBox.querySelector("input[type=file]");
+        let cloneArr;
+
+        showImg(originalFileName, image, fileInput, cloneArr, e);
+
+    });
+
+    function showImg(originalFileName, image, fileInput, cloneArr, e) {
+
+
+        if (e.target == fileInput) {
+
+            if (image.src != "")
+                init();
+
+
+            // 이미지 변경
+            fileInput.onchange = (e) => {
+
+                let file = fileInput.files[0];  // files: File 객체의 컬렉션
+
+                if (file) {
+                    // FileReader 객체 생성
+                    var reader = new FileReader();
+
+                    reader.onload = (e) => {
+                        // memberPhoto.style.backgroundImage = `url(${e.target.result})`;
+                        image.src = e.target.result;
+                        image.classList.remove("d-none");
+                        originalFileName.innerText = "";
+                    }
+                    // reader가 이미지 읽도록 하기
+                    reader.readAsDataURL(file);
+                } else {
+
+                    image.classList.add("d-none");
+
+                }
+            };
+        }
+        function init() {
+            cloneArr = [fileInput.cloneNode(true)];
+        }
+    }
+
+
+    const submitBtn = document.querySelector(".update");
+    submitBtn.addEventListener("click", (e) => {
+
+
+        const request = new XMLHttpRequest();
+        let type = "PUT";
+        let url = "/recipes/[[ ${recipeId} ]]";
+        let file = imgBox.querySelector("#image-file").files[0];
+        const title = form.querySelector("#title").value;
+        const category = form.querySelector("select").value;
+        const intro = form.querySelector("#introduction").value;
+        const serving = form.querySelector("#servings").value;
+        const cookingTime = form.querySelector("#cooking-time").value;
+        const ingredients = form.querySelector("#ingredients").value;
+        let orderBoxes = form.querySelectorAll(".order-box");
+        let originalFileName = imgBox.querySelector(".original-file").innerText;
+
+        if (file == null && (originalFileName == null || originalFileName == "")) {
+            alert("파일을 선택해주세요.");
+            return;
+        }
+
+        if (title == null || category == null || intro == null || intro == "" || serving == null || cookingTime == null || ingredients == null || ingredients == "")
+            return;
+
+
+        let formData = new FormData();
+        let recipeForm = {
+            title: title,
+            categoryId: category,
+            introduction: intro,
+            servings: serving,
+            cookingTime: cookingTime,
+            ingredients: ingredients
+        };
+
+
+        // 레시피 메인 이미지
+        if (file) {
+            formData.append("imageFile", file);
+        }
+
+        // 레시피 속성
+        let data = JSON.stringify(recipeForm);
+        formData.append("recipeForm", new Blob([data], { type: "application/json" }));
+
+        //-------------- 레시피 필드 ------------------------
+        // let multipartFiles = [];
+        let fieldForms = [];
+        let imgIndexes = [];
+        for (let i = 0; i < orderBoxes.length; i++) {
+            // 레시피 필드 이미지
+            let fieldFile = orderBoxes[i].querySelector("#image-file").files[0];
+            // 레시피 필드 내용
+            let content = orderBoxes[i].querySelector(".content").value;
+            fieldForms.push(content);
+
+
+            if (fieldFile) {
+                formData.append("multipartFiles", fieldFile);
+                imgIndexes.push(i);
+            }
+            if (content == null || content == "" || content == " ")
+                return;
+        }
+
+        e.preventDefault();
+
+
+        let fieldData = JSON.stringify(fieldForms);
+        let imgData = JSON.stringify(imgIndexes);
+        formData.append("fieldForms", new Blob([fieldData], { type: "application/json" }));
+        formData.append("imgIndexes", new Blob([imgData], { type: "application/json" }));
+        console.log(formData.get('imgIndexes'));
+        console.log(formData.get('fieldForms'));
+        console.log(formData.get('multipartFiles'));
+
+        request.onreadystatechange = () => {
+            if (request.readyState < 4)
+                return;
+            let results = request.response;
+
+            let message = results.msg;
+            let url = results.url;
+
+            if (message == null)
+                return;
+            alert(message);
+
+            if (url == null)
+                return;
+            location.href = url;
+        }
+
+
+        /* Post 방식으로 요청 */
+        request.open(type, url);    // 요청 초기화
+        /* Response Type을 Json으로 사전 정의 */
+        request.responseType = "json";
+
+        /* 정의된 서버에 Json 형식의 요청 Data를 포함하여 요청을 전송 */
+
+        request.send(formData);
+    });
+
+
+
+    // 타이핑 막기
+    function preventText(e) {
+        e.preventDefault();
+
+    }
+
+    window.onload = () => {
+        addFileName();
+
+        let message = [[${ msg }]];
+        let url = [[${ url }]];
+        if (message == null)
+            return;
+
+        alert(message);
+        location.href = url;
+
+    }
+
+    function addFileName() {
+        const image = imgBox.querySelector("img");
+        image.classList.remove("d-none");
+
+        for (let i = 0; i < orderBoxList.length; i++) {
+            let image = orderBoxList[i].querySelector("img");
+            image.classList.remove("d-none");
+        }
+    }
+            /* ]]> */
+</script>
+
 </html>

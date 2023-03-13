@@ -73,16 +73,37 @@ public class RecipeFieldService {
 
 
     @Transactional
-    public void update(Long id, RecipeFieldForm form) throws StoreFailException {
-        RecipeField recipeField = recipeFieldRepository.findById(id).orElseThrow();
-        Photo photo;
-        try {
-            photo = fileStore.storeFile(form.getImageFile());
-        } catch (IOException e) {
-            throw new StoreFailException(e);
+    public void update(Long id, List<String> fieldForms, Optional<List<MultipartFile>> files, Optional<List<Integer>> imgIndexes, Member member) throws StoreFailException {
+        List<RecipeField> recipeFields = findByRecipeId(id).get();
+        int cnt = 0;
+        for (int i = 0; i < recipeFields.size(); i++) {
+            // 수정에서 없앤 폼 삭제하기
+            if (i >= fieldForms.size()) {
+                delete(recipeFields.get(i).getId());
+                continue;
+            }
+
+            RecipeField recipeField = recipeFields.get(i);
+            recipeField.setContent(fieldForms.get(i));
+            if (imgIndexes.isPresent() && imgIndexes.get().contains(i)) {
+                Photo photo = null;
+                try {
+                    // 기존 파일 삭제
+                    fileStore.deleteFile(recipeField.getPhoto().getStoreFileName());
+                    photo = fileStore.storeFile(files.get().get(cnt));
+                } catch (IOException e) {
+                    throw new StoreFailException(e);
+                }
+                // 새로운 이미지 파일 세팅
+                recipeField.setPhoto(photo);
+                Photo.createPhoto(photo, recipeField);
+                cnt++;
+            }
         }
-        recipeField.setPhoto(photo);
-        recipeField.setContent(form.getContent());
+        // 추가된 recipeField 생성
+        for (int i = recipeFields.size(); i < fieldForms.size(); i++) {
+            create(id, fieldForms.get(i), files.get().get(cnt), member);
+        }
     }
 
     @Transactional

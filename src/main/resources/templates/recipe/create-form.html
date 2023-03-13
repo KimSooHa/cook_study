@@ -77,11 +77,11 @@
                 <div class="">
                     <span class="order-num">1.</span>
                     <label class="detail-title" for="image-file"></label>
-                    <input type="file" id="image-file" th:name="imageFile" required>
+                    <input type="file" id="image-file" th:name="imageFile" accept="image/*" required>
                     <!-- th:class="${#fields.hasErrors('fieldForm.imageFile')}? 'form-control fieldError' : 'form-control'" required> -->
                     <!-- <p th:if="${#fields.hasErrors('fieldForm.imageFile')}" th:errors="*{fieldForm.imageFile}">Incorrect date</p> -->
                 </div>
-                <img class="d-none food-detail-img" src="" name="imageFile" id="imageFile" accept="image/*" alt="요리사진">
+                <img class="d-none food-detail-img" src="" name="imageFile" id="imageFile" alt="요리사진">
 
                 <!-- <textarea th:field="*{fieldForm.content}" class="content" name="content" id="content" cols="30" rows="5" -->
                 <textarea class="content" name="content" id="content" cols="30" rows="5" placeholder="내용을 입력해주세요."

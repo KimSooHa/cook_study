@@ -30,6 +30,7 @@ import javax.validation.Valid;
 import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -158,30 +159,59 @@ public class RecipeController {
         Recipe recipe = recipeService.findOneById(recipeId);
 
         RecipeForm recipeForm = new RecipeForm();
-        recipeForm.getTitle();
-        recipeForm.getIngredients();
-        recipeForm.getIntroduction();
-        recipeForm.getImageFile();
-        recipeForm.getCookingTime();
-        recipeForm.getCategoryId();
-        recipeForm.getServings();
+        recipeForm.setTitle(recipe.getTitle());
+        recipeForm.setIngredients(recipe.getIngredients());
+        recipeForm.setIntroduction(recipe.getIntroduction());
+        recipeForm.setImg(recipe.getPhoto());
+        recipeForm.setCookingTime(recipe.getCookingTime());
+        recipeForm.setCategoryId(recipe.getCategory().getId());
+        recipeForm.setServings(recipe.getServings());
+        List<Category> categories = categoryService.findList();
 
-        model.addAttribute("form", recipeForm);
+        Optional<List<RecipeField>> recipeFieldList = recipeFieldService.findByRecipeId(recipeId);
+        List<RecipeFieldForm> fieldForms = recipeFieldList.get().stream().map(rf -> {
+            RecipeFieldForm fieldForm = new RecipeFieldForm();
+            fieldForm.setImg(rf.getPhoto());
+            fieldForm.setContent(rf.getContent());
+            return fieldForm;
+        }).collect(toList());
+
+        model.addAttribute("fieldForms", fieldForms);
+        model.addAttribute("categories", categories);
+        model.addAttribute("recipeForm", recipeForm);
+        model.addAttribute("recipeId", recipeId);
         return "recipe/update-form";
     }
 
-
-    @PutMapping("/{recipeId}/edit")
-    public String update(@PathVariable Long recipeId, @Valid RecipeForm form, BindingResult result) throws StoreFailException {
+    @ResponseBody
+    @PutMapping("/{recipeId}")
+    public ResultVO update(@PathVariable Long recipeId,
+                           @Valid @RequestPart RecipeForm recipeForm, @RequestPart(required = false) Optional<MultipartFile> imageFile,
+                           @Valid @RequestPart List<String> fieldForms, @RequestPart(required = false) Optional<List<MultipartFile>> multipartFiles,
+                           @RequestPart(required = false) Optional<List<Integer>> imgIndexes, BindingResult result, HttpSession session) throws StoreFailException {
 
         if (result.hasErrors()) {
             log.info("errors={}", result);
-            return "recipe/update-form";
+            return new ResultVO("저장에 실패하였습니다! 선택을 안하거나 입력칸에 빈칸이 있는지 확인해주세요.", "/recipes/" + recipeId + "/edit", false);
         }
 
-        recipeService.update(recipeId, form);
+        if ((multipartFiles.isPresent() && imgIndexes.isPresent())) {
+            if (multipartFiles.get().size() != imgIndexes.get().size())
+                return new ResultVO("저장에 실패하였습니다! 선택을 안하거나 입력칸에 빈칸이 있는지 확인해주세요.", "/recipes/" + recipeId + "/edit", false);
+        }
 
-        return "redirect:/mypage";
+        Member member = memberFinder.getMember(session);
+
+        try {
+            recipeService.update(recipeId, recipeForm, imageFile);
+            recipeFieldService.update(recipeId, fieldForms, multipartFiles, imgIndexes, member);
+
+        } catch (StoreFailException e) {
+            return new ResultVO("저장에 실패하였습니다.", "/recipes/" + recipeId + "/edit", false);
+        }
+
+        return new ResultVO("저장되었습니다!", "/recipes/" + recipeId, true);
+
     }
 
     // 삭제

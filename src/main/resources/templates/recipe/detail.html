@@ -30,21 +30,11 @@
                     src="https://bakeitwithlove.com/wp-content/uploads/2022/02/valentines-day-chocolate-covered-strawberries-sq.jpg"
                     alt="요리사진">
             </div>
-            <!-- <div class="order-box">
-                <p class="detail-content-title"><span>1.</span>리스트 항목</p>
-                <img class="food-detail-img"
-                    src="https://www.allrecipes.com/thmb/F-EluJr_7l4tdCKSuAsjWNcjUnA=/750x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/5112458-61ab2bab516346c5a02f78612c7823fe.jpg"
-                    alt="요리사진">
-            </div>
-            <div class="order-box">
-                <p class="detail-content-title"><span>1.</span>리스트 항목</p>
-                <img class="food-detail-img" src="https://www.menupan.com/cook/cookimg/pimg/003700_p01.jpg" alt="요리사진">
-            </div> -->
         </section>
         <form class="edits-box" th:class="${member.id == loginMember.id} ? 'edits-box' : 'd-none edits-box'" method="post" th:action="@{/recipes/{param1}(param1=${recipeId})}">
             <input type="hidden" name="_method" value="delete" />
             <button th:method="post" class="btn btn-default btn-basic" type="button" value="삭제하기">삭제하기</button>
-            <a class="btn btn-default btn-strong" th:href="@{edit}">수정하기</a>
+            <a class="btn btn-default btn-strong" th:href="@{/recipes/{param}/edit(param=${recipeId})}">수정하기</a>
         </form>
     </section>
 
