@@ -23,6 +23,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -216,9 +217,9 @@ public class RecipeController {
 
     // 삭제
     @DeleteMapping("/{recipeId}")
-    public String delete(@PathVariable Long recipeId) {
+    public String delete(@PathVariable Long recipeId, RedirectAttributes redirectAttributes) {
         recipeService.delete(recipeId);
-
+        redirectAttributes.addFlashAttribute("msg", "삭제하였습니다.");
         return "redirect:/";
     }
 }
