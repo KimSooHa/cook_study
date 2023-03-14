@@ -4,8 +4,8 @@
 <main layout:fragment="content" class="detail-container create-container">
     <section class="list-container">
         <header class="header-search">
-            <h1>등록한 쿡스터디</h1>
-            <form class="search-box" th:action="@{/clubs/list/created}" method="GET">
+            <h1>등록한 레시피</h1>
+            <form class="search-box" th:action="@{/recipes/list/created(categoryName=${categoryName})}" method="GET">
                 <div class="input-search d-flex-md">
                     <input class="icon icon-md icon-search" type="submit">
                     <label for="search" class="d-none">
@@ -22,54 +22,40 @@
             <ul>
                 <li class="nav-selected">
                     <a th:class="${categoryName} == null ? 'btn btn-tag selected' : 'btn btn-tag'"
-                        th:href="@{/clubs/list/created(title=${title})}">전체</a>
+                        th:href="@{/recipes/list/created(title=${title})}">전체</a>
                 </li>
                 <li th:each="category : ${categories}" th:value="${category.id}">
                     <a th:text="${category.name}" class="btn btn-tag"
                         th:class="${categoryName} == ${category.name} ? 'btn btn-tag selected' : 'btn btn-tag'"
-                        th:href="@{/clubs/list/created(categoryName=${category.name}, title=${title})}">한식</a>
+                        th:href="@{/recipes/list/created(categoryName=${category.name}, title=${title})}">한식</a>
                 </li>
             </ul>
         </nav>
 
 
         <div class="intro">
-            <span>총 <span class="text-strong" th:text="${list.totalElements}">8</span>개의 그룹이 있습니다.</span>
+            <span>총 <span class="text-strong" th:text="${list.totalElements}">8</span>개의 레시피가 있습니다.</span>
         </div>
 
-        <table>
-            <h1 class="d-none">그룹 목록</h1>
-
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>스터디명</th>
-                    <!-- <th>운영자</th> -->
-                    <!-- <th></th> -->
-                    <!-- <th></th> -->
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="club : ${list}">
-                    <td th:text="${clubStat.count}">1</td>
-                    <td>
-                        <a th:href="@{/clubs/{param1}/detail?redirectURL=/clubs/list/created(param1=${club.clubId})}" th:text="${club.name}">
-                            그룹 제목
-                        </a>
-                    </td>
-                    <td th:text="${club.memberLoginId}"></td>
-                </tr>
-            </tbody>
-        </table>
+        <section class="list-box">
+            <h1 class="d-none">레시피 목록</h1>
+            <section class="list-element" th:each="recipe : ${list}">
+                <a th:href="@{{param1}(param1=${recipe.recipeId})}">
+                    <img class="image-view-round food-list-img"
+                        th:src="|/recipes/images/${recipe.img.getStoreFileName()}|" alt="목록 이미지">
+                </a>
+                <h1 th:text="${recipe.title}">레시피 제목</h1>
+            </section>
+        </section>
 
         <div class="paging-box"
             th:with="start=${(list.number/maxPage)*maxPage +1}, end=(${(list.totalPages == 0) ? 1 : (start + (maxPage -1) < list.totalPages ? start + (maxPage - 1) : list.totalPages)})">
-            <a th:if="${start > 1}" th:href="@{created(page=${start - maxPage - 1})}"
+            <a th:if="${start > 1}" th:href="@{created(page=${start - maxPage - 1}, categoryName=${categoryName}, title=${title})}"
                 class="btn btn-tag btn-icon icon-arrow-left">왼쪽 버튼</a>
-            <a th:each="page: ${#numbers.sequence(start, end)}" th:href="@{created(page=${page-1})}" th:text="${page}"
+            <a th:each="page: ${#numbers.sequence(start, end)}" th:href="@{created(page=${page-1}, categoryName=${categoryName}, title=${title})}" th:text="${page}"
                 th:class="${page == list.number + 1} ? 'btn btn-default selected' : 'btn btn-default'"
                 class="btn btn-default selected">1</a>
-            <a th:if="${end < list.totalPages}" th:href="@{created(page=${list.totalPages-1})}"
+            <a th:if="${end < list.totalPages}" th:href="@{created(page=${list.totalPages-1}, categoryName=${categoryName}, title=${title})}"
                 class="btn btn-tag btn-icon icon-arrow-right">오른쪽 버튼</a>
         </div>
     </section>

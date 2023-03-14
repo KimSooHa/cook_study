@@ -5,10 +5,15 @@ import com.study.cook.domain.Category;
 import com.study.cook.domain.Member;
 import com.study.cook.domain.Photo;
 import com.study.cook.domain.Recipe;
+import com.study.cook.dto.ClubListDto;
+import com.study.cook.dto.RecipeListDto;
+import com.study.cook.dto.SearchCondition;
 import com.study.cook.exception.StoreFailException;
 import com.study.cook.file.FileStore;
 import com.study.cook.repository.RecipeRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -50,8 +55,15 @@ public class RecipeService {
     /**
      * 전체 조회
      */
-    public List<Recipe> findList() {
-        return recipeRepository.findAll();
+    public Page<RecipeListDto> findList(SearchCondition condition, Pageable pageable) {
+        return recipeRepository.findList(condition, pageable);
+    }
+
+    /**
+     * 등록한 레시피 리스트 조회
+     */
+    public Page<RecipeListDto> findByMember(Long memberId, SearchCondition condition, Pageable pageable) {
+        return recipeRepository.findByMemberId(memberId, condition, pageable);
     }
 
 

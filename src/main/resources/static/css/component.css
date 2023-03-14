@@ -56,9 +56,6 @@ main {
 
 /* -----------------------list-container ----------------------------*/
 
-
-/* -----------------------list-box ----------------------------*/
-
 .search-box {
     display: flex;
     justify-content: space-between;
@@ -99,7 +96,7 @@ main {
 
 .list-box {
     margin-top: 100px;
-
+    min-width: 1000px;
     width: 100%;
     display: grid;
     grid-template-columns: repeat(4, 1fr);

@@ -11,6 +11,7 @@
                     <label for="search" class="d-none">
                         검색
                     </label>
+                    <input type="hidden" name="categoryName" th:value="${categoryName}">
                     <input type="text" name="title" th:value="${title}" placeholder="검색할 스터디명을 입력하세요.">
                 </div>
             </form>
@@ -62,12 +63,12 @@
 
         <div class="paging-box"
             th:with="start=${(list.number/maxPage)*maxPage +1}, end=(${(list.totalPages == 0) ? 1 : (start + (maxPage -1) < list.totalPages ? start + (maxPage - 1) : list.totalPages)})">
-            <a th:if="${start > 1}" th:href="@{joined(page=${start - maxPage - 1})}"
+            <a th:if="${start > 1}" th:href="@{joined(page=${start - maxPage - 1}, categoryName=${categoryName}, title=${title})}"
                 class="btn btn-tag btn-icon icon-arrow-left">왼쪽 버튼</a>
-            <a th:each="page: ${#numbers.sequence(start, end)}" th:href="@{joined(page=${page-1})}" th:text="${page}"
+            <a th:each="page: ${#numbers.sequence(start, end)}" th:href="@{joined(page=${page-1}, categoryName=${categoryName}, title=${title})}" th:text="${page}"
                 th:class="${page == list.number + 1} ? 'btn btn-default selected' : 'btn btn-default'"
                 class="btn btn-default selected">1</a>
-            <a th:if="${end < list.totalPages}" th:href="@{joined(page=${list.totalPages-1})}"
+            <a th:if="${end < list.totalPages}" th:href="@{joined(page=${list.totalPages-1}, categoryName=${categoryName}, title=${title})}"
                 class="btn btn-tag btn-icon icon-arrow-right">오른쪽 버튼</a>
         </div>
     </section>

@@ -6,6 +6,8 @@ import com.study.cook.domain.Recipe;
 import com.study.cook.domain.RecipeField;
 import com.study.cook.dto.RecipeDto;
 import com.study.cook.dto.RecipeFieldDto;
+import com.study.cook.dto.RecipeListDto;
+import com.study.cook.dto.SearchCondition;
 import com.study.cook.exception.StoreFailException;
 import com.study.cook.file.FileStore;
 import com.study.cook.service.CategoryService;
@@ -18,6 +20,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,15 +30,14 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @Controller
 @RequiredArgsConstructor
@@ -50,12 +54,49 @@ public class RecipeController {
 
 
     @GetMapping("/list")
-    public String list(HttpServletRequest request, Model model) {
-        List<Recipe> list = recipeService.findList();
+    public String list(String categoryName, @RequestParam(defaultValue = "") String title, Model model, @PageableDefault(size = 8, sort = "regDate", direction = DESC) Pageable pageable) {
 
-        model.addAttribute("recipes", list);
+        SearchCondition condition = new SearchCondition();
+        if (title != null || title != "")
+            condition.setTitle(title);
+        if (categoryName != null || categoryName != "")
+            condition.setCategoryName(categoryName);
+
+        Page<RecipeListDto> list = recipeService.findList(condition, pageable);
+        List<Category> categories = categoryService.findList();
+
+        model.addAttribute("list", list);
+        model.addAttribute("maxPage", 4);   // 한 페이지 바 당 보여줄 개수
+        model.addAttribute("categories", categories);
+        model.addAttribute("title", title);
+        model.addAttribute("categoryName", categoryName);
 
         return "recipe/list";
+    }
+
+    /**
+     * 등록한 리스트
+     */
+    @GetMapping("/list/created")
+    public String createdList(String categoryName, @RequestParam(defaultValue = "") String title, HttpSession session, Model model, @PageableDefault(size = 8, sort = "regDate", direction = DESC) Pageable pageable) {
+
+        SearchCondition condition = new SearchCondition();
+        if (title != null || title != "")
+            condition.setTitle(title);
+        if (categoryName != null || categoryName != "")
+            condition.setCategoryName(categoryName);
+
+        Member member = memberFinder.getMember(session);
+         Page<RecipeListDto> list = recipeService.findByMember(member.getId(), condition, pageable);
+        List<Category> categories = categoryService.findList();
+
+        model.addAttribute("list", list);
+        model.addAttribute("maxPage", 4);   // 한 페이지 바 당 보여줄 개수
+        model.addAttribute("categories", categories);
+        model.addAttribute("title", title);
+        model.addAttribute("categoryName", categoryName);
+
+        return "recipe/created-list";
     }
 
     @GetMapping
@@ -130,7 +171,7 @@ public class RecipeController {
     @GetMapping("/{recipeId}")
     public String detail(@PathVariable Long recipeId, Model model, HttpSession session) {
         Recipe recipe = recipeService.findOneById(recipeId);
-//        Long heartCount = heartService.countByRecipe(recipe);
+
         RecipeDto recipeDto = new RecipeDto(recipe.getTitle(), recipe.getIntroduction(), recipe.getPhoto(), recipe.getIngredients(), recipe.getCookingTime(), recipe.getServings(), recipe.getCategory().getName());
         Member member = recipe.getMember();
 

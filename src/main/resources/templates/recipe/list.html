@@ -5,13 +5,14 @@
     <section class="list-container">
         <header class="header-search">
             <h1 class="d-none">레시피 목록</h1>
-            <form class="search-box">
+            <form class="search-box" th:action="@{/recipes/list}" method="GET">
                 <div class="input-search d-flex-md">
                     <input class="icon icon-md icon-search" type="submit">
                     <label for="search" class="d-none">
                         검색
                     </label>
-                    <input type="text" id="search">
+                    <input type="hidden" name="categoryName" th:value="${categoryName}">
+                    <input type="text" id="search" name="title" th:value="${title}" placeholder="검색할 레시피를 입력하세요.">
                 </div>
                 <label class="d-none" for="select">정렬 선택</label>
                 <!-- <select id="select" class="form-control">
@@ -27,98 +28,42 @@
         <nav class="nav-category">
             <ul>
                 <li class="nav-selected">
-                    <a class="btn btn-tag" href="/recipes/list">전체</a>
+                    <a th:class="${categoryName} == null ? 'btn btn-tag selected' : 'btn btn-tag'"
+                        th:href="@{/recipes/list(title=${title})}">전체</a>
                 </li>
-                <li>
-                    <a class="btn btn-tag" href="">한식</a>
-                </li>
-                <li>
-                    <a class="btn btn-tag" href="">양식</a>
-                </li>
-                <li>
-                    <a class="btn btn-tag" href="">일식</a>
-                </li>
-                <li>
-                    <a class="btn btn-tag" href="">중식</a>
-                </li>
-                <li>
-                    <a class="btn btn-tag" href="">디저트</a>
+                <li th:each="category : ${categories}" th:value="${category.id}">
+                    <a th:text="${category.name}" class="btn btn-tag"
+                        th:class="${categoryName} == ${category.name} ? 'btn btn-tag selected' : 'btn btn-tag'"
+                        th:href="@{/recipes/list(categoryName=${category.name}, title=${title})}">한식</a>
                 </li>
             </ul>
         </nav>
 
 
         <div class="intro">
-            <span>총 <span class="text-strong">8</span>개의 맛있는 레시피가 있습니다.</span>
+            <span>총 <span class="text-strong" th:text="${list.totalElements}">8</span>개의 맛있는 레시피가 있습니다.</span>
         </div>
 
         <section class="list-box">
             <h1 class="d-none">레시피 목록</h1>
-            <section class="list-element">
-                <a href="/menu/detail?id=13">
+            <section class="list-element" th:each="recipe : ${list}">
+                <a th:href="@{{param1}(param1=${recipe.recipeId})}">
                     <img class="image-view-round food-list-img"
-                        src="https://images.unsplash.com/photo-1515442261605-65987783cb6a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
-                        alt="">
+                        th:src="|/recipes/images/${recipe.img.getStoreFileName()}|" alt="목록 이미지">
                 </a>
-                <h1>레시피 제목</h1>
-            </section>
-            <section class="list-element">
-                <a href="/menu/detail?id=13">
-                    <img class="image-view-round food-list-img"
-                        src="https://images.unsplash.com/photo-1515442261605-65987783cb6a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
-                        alt="">
-                </a>
-                <h1>레시피 제목</h1>
-            </section>
-            <section class="list-element">
-                <a href="/menu/detail?id=13">
-                    <img class="image-view-round food-list-img"
-                        src="https://images.unsplash.com/photo-1515442261605-65987783cb6a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
-                        alt="">
-                </a>
-                <h1>레시피 제목</h1>
-            </section>
-            <section class="list-element">
-                <a href="/menu/detail?id=13">
-                    <img class="image-view-round food-list-img"
-                        src="https://images.unsplash.com/photo-1515442261605-65987783cb6a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
-                        alt="">
-                </a>
-                <h1>레시피 제목</h1>
-            </section>
-            <section class="list-element">
-                <a href="/menu/detail?id=13">
-                    <img class="image-view-round food-list-img"
-                        src="https://images.unsplash.com/photo-1515442261605-65987783cb6a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
-                        alt="">
-                </a>
-                <h1>레시피 제목</h1>
-            </section>
-            <section class="list-element">
-                <a href="/menu/detail?id=13">
-                    <img class="image-view-round food-list-img"
-                        src="https://images.unsplash.com/photo-1515442261605-65987783cb6a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
-                        alt="">
-                </a>
-                <h1>레시피 제목</h1>
-            </section>
-            <section class="list-element">
-                <a href="/menu/detail?id=13">
-                    <img class="image-view-round food-list-img"
-                        src="https://images.unsplash.com/photo-1515442261605-65987783cb6a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
-                        alt="">
-                </a>
-                <h1>레시피 제목</h1>
+                <h1 th:text="${recipe.title}">레시피 제목</h1>
             </section>
         </section>
 
-        <div class="paging-box">
-            <a href="" class="btn btn-tag btn-icon icon-arrow-left">왼쪽 버튼</a>
-            <a href="" class="btn btn-default selected">1</a>
-            <a href="" class="btn btn-default">2</a>
-            <a href="" class="btn btn-default">3</a>
-            <a href="" class="btn btn-default">4</a>
-            <a href="" class="btn btn-tag btn-icon icon-arrow-right">오른쪽 버튼</a>
+        <div class="paging-box"
+            th:with="start=${(list.number/maxPage)*maxPage +1}, end=(${(list.totalPages == 0) ? 1 : (start + (maxPage -1) < list.totalPages ? start + (maxPage - 1) : list.totalPages)})">
+            <a th:if="${start > 1}" th:href="@{list(page=${start - maxPage - 1}, categoryName=${categoryName}, title=${title})}"
+                class="btn btn-tag btn-icon icon-arrow-left">왼쪽 버튼</a>
+            <a th:each="page: ${#numbers.sequence(start, end)}" th:href="@{list(page=${page-1}, categoryName=${categoryName}, title=${title})}" th:text="${page}"
+                th:class="${page == list.number + 1} ? 'btn btn-default selected' : 'btn btn-default'"
+                class="btn btn-default selected">1</a>
+            <a th:if="${end < list.totalPages}" th:href="@{list(page=${list.totalPages-1}, categoryName=${categoryName}, title=${title})}"
+                class="btn btn-tag btn-icon icon-arrow-right">오른쪽 버튼</a>
         </div>
     </section>
 </main>

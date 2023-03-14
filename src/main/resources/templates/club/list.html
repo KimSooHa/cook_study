@@ -5,12 +5,13 @@
     <section class="list-container">
         <header class="header-search">
             <h1 class="d-none">그룹 목록</h1>
-            <form class="search-box" th:action="@{/clubs/list}" method="GET">
+            <form class="search-box" th:action="@{/clubs/list(categoryName=${categoryName})}" method="GET">
                 <div class="input-search d-flex-md">
                     <input class="icon icon-md icon-search" type="submit">
                     <label for="search" class="d-none">
                         검색
                     </label>
+                    <input type="hidden" name="categoryName" th:value="${categoryName}">
                     <input type="text" name="title" th:value="${title}" placeholder="검색할 스터디명을 입력하세요.">
                 </div>
             </form>
@@ -68,33 +69,17 @@
                     <!-- </form> -->
                     <!-- </td> -->
                 </tr>
-
-                <!-- <tr th:each="reservation : ${reservations}">
-                    <td th:text="'${reservation.count}">1</td>
-                    <td th:text="${reservation.cookingRoomName}">102호</td>
-                    <td th:text="${reservation.date}">2023.03.20</td>
-                    <td th:text="|${reservation.startTime} ~ ${reservation.endTime}|">11:00 ~ 12:00</td>
-                </tr> -->
             </tbody>
-
-            <!-- <section class="list-element">
-                <a href="/menu/detail?id=13">
-                    <img class="image-view-round food-list-img"
-                        src="https://images.unsplash.com/photo-1515442261605-65987783cb6a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
-                        alt="">
-                </a>
-                <h1>그룹 제목</h1>
-            </section> -->
         </table>
 
         <div class="paging-box"
             th:with="start=${(list.number/maxPage)*maxPage +1}, end=(${(list.totalPages == 0) ? 1 : (start + (maxPage -1) < list.totalPages ? start + (maxPage - 1) : list.totalPages)})">
-            <a th:if="${start > 1}" th:href="@{list(page=${start - maxPage - 1})}"
+            <a th:if="${start > 1}" th:href="@{list(page=${start - maxPage - 1}, categoryName=${categoryName}, title=${title})}"
                 class="btn btn-tag btn-icon icon-arrow-left">왼쪽 버튼</a>
-            <a th:each="page: ${#numbers.sequence(start, end)}" th:href="@{list(page=${page-1})}" th:text="${page}"
+            <a th:each="page: ${#numbers.sequence(start, end)}" th:href="@{list(page=${page-1}, categoryName=${categoryName}, title=${title})}" th:text="${page}"
                 th:class="${page == list.number + 1} ? 'btn btn-default selected' : 'btn btn-default'"
                 class="btn btn-default selected">1</a>
-            <a th:if="${end < list.totalPages}" th:href="@{list(page=${list.totalPages-1})}"
+            <a th:if="${end < list.totalPages}" th:href="@{list(page=${list.totalPages-1}, categoryName=${categoryName}, title=${title})}"
                 class="btn btn-tag btn-icon icon-arrow-right">오른쪽 버튼</a>
         </div>
     </section>
