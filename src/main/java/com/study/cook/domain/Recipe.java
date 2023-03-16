@@ -62,7 +62,7 @@ public class Recipe {
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
     private List<RecipeField> recipeFields = new ArrayList<>();
 
-    @OneToMany(mappedBy = "recipe")
+    @OneToMany(mappedBy = "recipe", cascade = CascadeType.REMOVE)
     private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "recipe")

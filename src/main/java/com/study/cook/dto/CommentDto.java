@@ -10,14 +10,19 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class CommentDto {
 
+    private Long commentId;
     private String content;
+    private String regDateStr;
     private LocalDateTime regDate;
-    private String nickname;
+    private Long memberId;
+    private String memberLoginId;
 
     @QueryProjection
-    public CommentDto(String content, LocalDateTime regDate, String nickname) {
+    public CommentDto(Long commentId, String content, LocalDateTime regDate, Long memberId, String memberLoginId) {
+        this.commentId = commentId;
         this.content = content;
         this.regDate = regDate;
-        this.nickname = nickname;
+        this.memberId = memberId;
+        this.memberLoginId = memberLoginId;
     }
 }

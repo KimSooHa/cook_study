@@ -49,9 +49,8 @@ public class Comment {
         member.getComments().add(this);
     }
 
-    public static Comment createComment(Comment comment, String content, Member member, Recipe recipe) {
+    public static Comment createComment(Comment comment, Member member, Recipe recipe) {
 
-        comment.setContent(content);
         comment.setMember(member);
         comment.setRecipe(recipe);
 

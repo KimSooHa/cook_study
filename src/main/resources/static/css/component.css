@@ -1013,7 +1013,8 @@ li .btn-tag{
             font-family: var(--font-content);
         }
 
-        .comment-container .input-content input {
+        .comment-container .input-content input,
+        .comment-container .input-content button {
             /* layout */
             align-self: flex-end;
             margin-top: 5px;
@@ -1081,10 +1082,26 @@ li .btn-tag{
             /* items layout */
             display: flex;
             align-items: center;
+            justify-content: space-between;
 
             /* layout */
             margin-top: 10px;
             position: relative;
+        }
+
+        .comment-container .comment .edit-content {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .comment-container .comment .edit-content input[type="text"] {
+            /* content box style */
+            width: 80%;
+            border: var(--border-weight-light) solid var(--color-border);
+            border-radius: 15px;
+            padding: 13px 12px;
+            box-sizing: border-box;
         }
 
             .comment-container .comment .footer .btn-reply {
@@ -1181,88 +1198,15 @@ li .btn-tag{
             line-height: 1.47;
         }
 
-            .comment-container .comment .reply-of-comment-box .input-content input[type="text"]::placeholder {
+            .comment-container .comment .reply-of-comment-box .edit-content input[type="text"]::placeholder {
                 /* text */
                 font-size: var(--text-content);
                 font-family: var(--font-content);
             }
 
-            .comment-container .comment .reply-of-comment-box .input-content input[type="text"]:focus {
+            .comment-container .comment .reply-of-comment-box .edit-content input[type="text"]:focus {
                 /* text */
                 font-family: var(--font-content);
             }
-
-@media screen and (min-width: 1024px) {
-
-    /* -----------------------/class ----------------------------*/
-    .class-container {
-        grid-auto-rows: 300px;
-    }
-
-    .class-container .item {
-
-        border-radius: var(--border-radius-3);
-    }
-
-    .class-container .item-header {
-        flex-basis: 40%;
-        border-radius: var(--border-radius-3) var(--border-radius-3) 0 0;
-    }
-
-    .class-container .item-content {
-
-        /* layout */
-        padding: 0 var(--item-interval-lr);
-        border: solid var(--border-weight-light) var(--color-border);
-        border-radius: 0 0 var(--border-radius-3) var(--border-radius-3);
-        /* item-layout */
-        display: flex;
-        flex-direction: column;
-        flex-basis: 60%;
-
-    }
-
-    .class-container .item-content .host-info {
-
-        /* layout */
-        padding-top: var(--item-interval-lr);
-
-        /* item-layout */
-        display: flex;
-        align-items: center;
-
-    }
-
-    .class-container .item-content .host-info img {
-
-        /* layout */
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        object-fit: cover;
-
-    }
-
-    .class-container .item-content .host-info span {
-
-        /* layout */
-        margin-left: var(--item-interval-lr);
-
-    }
-
-    .class-container .item-content .content {
-
-        /* layout */
-        padding-top: var(--item-interval-ud);
-
-        /* item-layout */
-        flex-grow: 1;
-    }
-    /* --------------------------------------------------*/
-    .post-summary-meta{
-        flex-direction: row;
-    }
-
-}
 
 
