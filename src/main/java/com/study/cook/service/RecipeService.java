@@ -66,6 +66,13 @@ public class RecipeService {
         return recipeRepository.findByMemberId(memberId, condition, pageable);
     }
 
+    /**
+     * 정해진 갯수의 그룹 리스트 조회
+     */
+    public List<RecipeListDto> findLimitList(int length) {
+        return recipeRepository.findList(length);
+    }
+
 
     /**
      * 단건 조회

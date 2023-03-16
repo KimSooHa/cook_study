@@ -40,7 +40,7 @@
         <section class="list-box">
             <h1 class="d-none">레시피 목록</h1>
             <section class="list-element" th:each="recipe : ${list}">
-                <a th:href="@{{param1}(param1=${recipe.recipeId})}">
+                <a th:href="@{/recipes/{param1}?redirectURL=/recipes/list/created(param1=${recipe.recipeId})}">
                     <img class="image-view-round food-list-img"
                         th:src="|/recipes/images/${recipe.img.getStoreFileName()}|" alt="목록 이미지">
                 </a>

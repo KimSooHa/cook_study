@@ -4,16 +4,10 @@ import com.study.cook.domain.Category;
 import com.study.cook.domain.Member;
 import com.study.cook.domain.Recipe;
 import com.study.cook.domain.RecipeField;
-import com.study.cook.dto.RecipeDto;
-import com.study.cook.dto.RecipeFieldDto;
-import com.study.cook.dto.RecipeListDto;
-import com.study.cook.dto.SearchCondition;
+import com.study.cook.dto.*;
 import com.study.cook.exception.StoreFailException;
 import com.study.cook.file.FileStore;
-import com.study.cook.service.CategoryService;
-import com.study.cook.service.HeartService;
-import com.study.cook.service.RecipeFieldService;
-import com.study.cook.service.RecipeService;
+import com.study.cook.service.*;
 import com.study.cook.util.MemberFinder;
 import com.study.cook.util.ResultVO;
 import lombok.RequiredArgsConstructor;
@@ -47,6 +41,7 @@ public class RecipeController {
 
     private final RecipeService recipeService;
     private final RecipeFieldService recipeFieldService;
+    private final CommentService commentService;
     private final CategoryService categoryService;
     private final HeartService heartService;
     private final MemberFinder memberFinder;
@@ -87,7 +82,7 @@ public class RecipeController {
             condition.setCategoryName(categoryName);
 
         Member member = memberFinder.getMember(session);
-         Page<RecipeListDto> list = recipeService.findByMember(member.getId(), condition, pageable);
+        Page<RecipeListDto> list = recipeService.findByMember(member.getId(), condition, pageable);
         List<Category> categories = categoryService.findList();
 
         model.addAttribute("list", list);
@@ -258,9 +253,9 @@ public class RecipeController {
 
     // 삭제
     @DeleteMapping("/{recipeId}")
-    public String delete(@PathVariable Long recipeId, RedirectAttributes redirectAttributes) {
+    public String delete(@PathVariable Long recipeId, RedirectAttributes redirectAttributes, @RequestParam(defaultValue = "/recipes/list") String redirectURL) {
         recipeService.delete(recipeId);
         redirectAttributes.addFlashAttribute("msg", "삭제하였습니다.");
-        return "redirect:/";
+        return "redirect:" + redirectURL;
     }
 }

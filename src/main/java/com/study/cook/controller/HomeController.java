@@ -3,7 +3,9 @@ package com.study.cook.controller;
 import com.study.cook.argumentresolver.Login;
 import com.study.cook.domain.Member;
 import com.study.cook.dto.ClubListDto;
+import com.study.cook.dto.RecipeListDto;
 import com.study.cook.service.ClubService;
+import com.study.cook.service.RecipeService;
 import com.study.cook.util.MemberFinder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,13 +23,16 @@ public class HomeController {
 
 
     private final ClubService clubService;
+    private final RecipeService recipeService;
     private final MemberFinder memberFinder;
 
     @GetMapping("/")
     public String home(@Login Member loginMember, Model model) {
 
-        List<ClubListDto> list = clubService.findLimitList(4);
-        model.addAttribute("list", list);
+        List<ClubListDto> clubList = clubService.findLimitList(4);
+        List<RecipeListDto> recipeList = recipeService.findLimitList(4);
+        model.addAttribute("clubList", clubList);
+        model.addAttribute("recipeList", recipeList);
 
 
         // 세션에 회원 데이터가 없으면 home

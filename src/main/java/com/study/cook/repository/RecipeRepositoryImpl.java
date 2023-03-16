@@ -14,7 +14,6 @@ import org.springframework.util.StringUtils;
 import javax.persistence.EntityManager;
 import java.util.List;
 
-import static com.study.cook.domain.QMember.member;
 import static com.study.cook.domain.QRecipe.recipe;
 
 
@@ -86,6 +85,28 @@ public class RecipeRepositoryImpl implements RecipeRepositoryCustom {
         return PageableExecutionUtils.getPage(content, pageable, () -> countQuery.fetchOne());
     }
 
+    /**
+     * length: 반환할 목록 갯수
+     * recipe 목록
+     */
+    @Override
+    public List<RecipeListDto> findList(int length) {
+
+        List<RecipeListDto> content =
+            queryFactory.select(new QRecipeListDto(
+                            recipe.id,
+                            recipe.title,
+                            recipe.photo))
+                    .from(recipe)
+                    .orderBy(recipe.comments.size().desc(),
+                            recipe.regDate.desc())
+                    .offset(0)
+                    .limit(length)
+                    .fetch();
+
+        return content;
+    }
+
     private BooleanExpression categoryNameEq(String categoryName) {
         return StringUtils.hasText(categoryName) ? recipe.category.name.eq(categoryName) : null;
     }
@@ -97,7 +118,6 @@ public class RecipeRepositoryImpl implements RecipeRepositoryCustom {
 //    private BooleanExpression orderByDesc(String commentCount, String heartCount, String regDate) {
 //        return regDate != null ? recipe.regDate.desc() : null;
 //    }
-
 
 
 }

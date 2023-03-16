@@ -9,9 +9,9 @@ import java.util.List;
 
 public interface RecipeRepositoryCustom {
 
-//    List<Recipe> findByTitle(String title);
-
     Page<RecipeListDto> findByMemberId(Long memberId, SearchCondition condition, Pageable pageable);
 
     Page<RecipeListDto> findList(SearchCondition condition, Pageable pageable);
+
+    List<RecipeListDto> findList(int length);
 }

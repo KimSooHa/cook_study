@@ -60,28 +60,10 @@
         </div>
         <section class="best-list">
             <h1 class="d-none">best 레시피 목록</h1>
-            <div class="list-element">
-                <a class="element-link" href="">
-                    <img class="food-list-img" src="https://src.hidoc.co.kr/image/lib/2020/11/9/1604911318873_0.jpg" alt="">
-                    <span class="title">레시피 제목</span>
-                </a>
-            </div>
-            <div class="list-element">
-                <a class="element-link" href="">
-                    <img class="food-list-img" src="https://src.hidoc.co.kr/image/lib/2020/11/9/1604911318873_0.jpg" alt="">
-                    <span class="title">레시피 제목</span>
-                </a>
-            </div>
-            <div class="list-element">
-                <a class="element-link" href="">
-                    <img class="food-list-img" src="https://src.hidoc.co.kr/image/lib/2020/11/9/1604911318873_0.jpg" alt="">
-                    <span class="title">레시피 제목</span>
-                </a>
-            </div>
-            <div class="list-element">
-                <a class="element-link" href="">
-                    <img class="food-list-img" src="https://src.hidoc.co.kr/image/lib/2020/11/9/1604911318873_0.jpg" alt="">
-                    <span class="title">레시피 제목</span>
+            <div class="list-element" th:each="recipe : ${recipeList}">
+                <a class="element-link" th:href="@{recipes/{param1}(param1=${recipe.recipeId})}">
+                    <img class="food-list-img" th:src="|/recipes/images/${recipe.img.getStoreFileName()}|" alt="목록 이미지">
+                    <span class="title" th:text="${recipe.title}">레시피 제목</span>
                 </a>
             </div>
         </section>
@@ -97,7 +79,7 @@
         </div>
         <section class="best-list">
             <h1 class="d-none">best 쿡스터디 목록</h1>
-            <div class="list-element" th:each="club : ${list}">
+            <div class="list-element" th:each="club : ${clubList}">
                 <a class="element-link" th:href="@{clubs/{param1}/detail(param1=${club.clubId})}">
                     <span class="title" th:text="${club.name}">쿡스터디 제목</span>
                     <span class="writer" th:text="${club.memberLoginId}">작성자</span> 

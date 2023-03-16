@@ -25,7 +25,7 @@
                             method="post">
                             <input type="hidden" name="_method" value="delete" />
                             <a href="#" class="btn btn-default btn-strong"
-                                th:href="'javascript:cancel('+${reservation.id}+')'">취소하기</a>
+                                onclick="cancel(this)">취소하기</a>
                         </form>
                     </td>
                     <td>
@@ -63,12 +63,12 @@
         }
     }
     // 취소
-    function cancel(id) {
+    function cancel(e) {
 
         if (!confirm("삭제하시겠습니까?"))
             return;
 
-        const form = document.querySelector("form");
+        const form = e.parentElement;
         form.submit();
     }
 </script>
