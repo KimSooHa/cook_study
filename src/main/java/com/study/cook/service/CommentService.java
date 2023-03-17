@@ -22,13 +22,8 @@ import javax.servlet.http.HttpSession;
 @RequiredArgsConstructor
 public class CommentService {
 
-    private final ClubRepository clubRepository;
     private final RecipeRepository recipeRepository;
     private final CommentRepository commentRepository;
-    private final MemberService memberService;
-    private final CategoryService categoryService;
-    private final ReservationService reservationService;
-    private final ParticipationService participationService;
     private final MemberFinder memberFinder;
 
 
@@ -67,7 +62,8 @@ public class CommentService {
 
     @Transactional
     public void update(Long commentId, CommentForm form) {
-
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글입니다."));
+        comment.setContent(form.getContent());
     }
 
     @Transactional

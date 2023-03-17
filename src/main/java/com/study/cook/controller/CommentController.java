@@ -35,13 +35,19 @@ public class CommentController {
 
     @ResponseBody
     @GetMapping("/list")
-    public Map<String, Object> list(@RequestParam Long recipeId, @PageableDefault(size = 8, sort = "regDate", direction = DESC) Pageable pageable) {
+    public Map<String, Object> list(@RequestParam Long recipeId, @PageableDefault(size = 4, sort = "regDate", direction = DESC) Pageable pageable) {
 
         Page<CommentDto> comments = commentService.findList(recipeId, pageable);
         comments.forEach(cd -> cd.setRegDateStr(dateParser.getFormatDateDash(cd.getRegDate())));
+        int size = comments.getSize();
+        long totalElements = comments.getTotalElements();
+        int totalPages = comments.getTotalPages();
+
         Map<String, Object> map = new HashMap<>();
         map.put("comments", comments);
-
+        map.put("size", size);
+        map.put("totalElements", totalElements);
+        map.put("totalPages", totalPages);
         return map;
     }
 
@@ -58,10 +64,14 @@ public class CommentController {
             return map;
         }
 
-        Long commentId = commentService.create(form, session);
-        Comment comment = commentService.findOneById(commentId);
-        CommentDto commentDto = new CommentDto(commentId, comment.getContent(), comment.getRegDate(), comment.getMember().getId(), comment.getMember().getLoginId());
-        map.put("commentDto", commentDto);
+        try {
+            Long commentId = commentService.create(form, session);
+            Comment comment = commentService.findOneById(commentId);
+            CommentDto commentDto = new CommentDto(commentId, comment.getContent(), comment.getRegDate(), comment.getMember().getId(), comment.getMember().getLoginId());
+            map.put("commentDto", commentDto);
+        } catch (IllegalArgumentException e) {
+            map.put("msg", e.getMessage());
+        }
 
         return map;
     }
@@ -71,17 +81,23 @@ public class CommentController {
     @PutMapping("/{commentId}")
     public ResultVO update(@PathVariable Long commentId, @RequestBody @Valid CommentForm form, BindingResult result) {
 
-        if (result.hasErrors())
-            return new ResultVO("수정에 실패했습니다.", "/comments/" + commentId + "/edit", false);
-
+        ResultVO resultVO = new ResultVO();
+        if (result.hasErrors()) {
+            resultVO.setMsg("수정에 실패했습니다.");
+            resultVO.setSuccess(false);
+            return resultVO;
+        }
 
         try {
             commentService.update(commentId, form);
         } catch (IllegalArgumentException e) {
-            return new ResultVO("수정에 실패했습니다.", "/comments/" + commentId + "/edit", false);
+            resultVO.setMsg(e.getMessage());
+            resultVO.setSuccess(false);
+            return resultVO;
         }
 
-        return new ResultVO("수정하였습니다!", "/comments/" + commentId + "/detail", true);
+//        resultVO.setMsg("수정하였습니다!");
+        return resultVO;
     }
 
     @ResponseBody
