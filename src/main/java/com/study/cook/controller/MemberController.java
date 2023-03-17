@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -83,20 +84,25 @@ public class MemberController {
         form.setPwd(member.getPwd());
         form.setPhoneNum(member.getPhoneNum());
 
-        model.addAttribute("form", form);
+        model.addAttribute("memberForm", form);
+        model.addAttribute("memberId", memberId);
         return "member/update-form";
     }
 
     @PutMapping("/{memberId}")
-    public String update(@PathVariable Long memberId, @Valid MemberForm form, BindingResult result) {
+    public String update(@PathVariable Long memberId, @Valid MemberForm form, BindingResult result, RedirectAttributes redirectAttributes) {
 
         if (result.hasErrors()) {
             log.info("errors={}", result);
             return "member/update-form";
         }
-
-        memberService.update(memberId, form.getName(), form.getLoginId(), form.getPwd(), form.getEmail(), form.getPhoneNum());
-
+        try {
+            memberService.update(memberId, form);
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("msg", "수정 실패: 해당 회원을 찾을 수 없습니다.");
+            return "member/update-form";
+        }
+        redirectAttributes.addFlashAttribute("msg", "수정하였습니다.");
         return "redirect:/mypage";
     }
 

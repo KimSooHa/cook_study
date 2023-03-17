@@ -1,7 +1,55 @@
-<!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-    layout:decorate="inc/layout">
-<main layout:fragment="content">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../../css/reset.css" rel="stylesheet" type="text/css" />
+    <link href="../../css/style.css" rel="stylesheet" type="text/css" />
+    <link href="../../css/layout.css" rel="stylesheet" type="text/css" />
+    <link href="../../css/component.css" rel="stylesheet" type="text/css" />
+    <link href="../../css/buttons.css" rel="stylesheet" type="text/css" />
+    <link href="../../css/utils.css" rel="stylesheet" type="text/css">
+    <title>요리모여</title>
+</head>
+<header class="header">
+    <div class="header-top">
+        <div class="d-flex align-items-center">
+            <a class="header-title main-title" href="/">요리모여</a>
+        </div>
+
+        <nav class="nav-login">
+            <div class="btn btn-strong">
+                <a href="/recipes">레시피 등록</a>
+            </div>
+            <div class="btn btn-strong">
+                <a href="/clubs">쿡스터디 등록</a>
+            </div>
+            <div class="btn btn-strong">
+                <a href="/cooking-rooms/reservation">요리실 대여</a>
+            </div>
+            <div class="btn btn-default">
+                <a href="/login">로그인</a>
+            </div>
+
+            <div class="btn btn-strong">
+                <a href="/members">회원가입</a>
+            </div>
+        </nav>
+    </div>
+
+    <div class="header-bottom">
+        <nav>
+            <ul class="d-flex">
+                <li><a href="/recipes/list">레시피</a></li>
+                <li><a href="/clubs/list">쿡스터디</a></li>
+                <li><a href="/cooking-rooms/reservations">요리실</a></li>
+                <li><a href="/mypage">마이페이지</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+<main>
     <section class="input-container">
         <h1 class="detail-title">회원가입</h1>
         <form role="form" action="/members" th:object="${memberForm}" method="post" autocomplete="off">
@@ -45,10 +93,12 @@
                 <div class="input-box">
                     <label th:for="phoneNum">휴대폰 번호</label>
                     <input type="tel" th:field="*{phoneNum}" class="form-control" placeholder="휴대폰 번호를 입력하세요"
-                        th:class="${#fields.hasErrors('phoneNum')}? 'form-control fieldError' : 'form-control'"
-                        required>
+                        th:class="${#fields.hasErrors('phoneNum')}? 'form-control fieldError' : 'form-control'" required oninput="checkPhoneNum()">
                 </div>
                 <p th:if="${#fields.hasErrors('phoneNum')}" th:errors="*{phoneNum}">휴대폰 번호 형식에 맞지 않습니다.</p>
+                <p class="phone-valid d-none">사용 가능한 휴대폰 번호입니다.</p>
+                <p class="phone-invalid d-none">이미 사용중인 휴대폰 번호입니다.</p>
+                <p class="phone-origin d-none">기존 휴대폰 번호입니다.</p>
             </div>
             <div class="edit-box">
                 <button type="submit" class="btn btn-strong btn-default btn-submit">회원가입</button>
@@ -71,7 +121,27 @@
         location.href = url;
     }
 
-    /* ]]> */
+
+    const editBox = document.querySelector(".edit-box");
+    const submitBtn = editBox.querySelector("button");
+
+
+    submitBtn.onclick = (e) => {
+        const validId = document.querySelector(".id-valid");
+        const invalidId = document.querySelector(".id-invalid");
+        const validEmail = document.querySelector(".email-valid");
+        const invalidEmail = document.querySelector(".email-invalid");
+        const validPhone = document.querySelector(".phone-valid");
+        const invalidPhone = document.querySelector(".phone-invalid");
+
+        if ((validId.classList.contains("d-none") && !invalidId.classList.contains("d-none"))  || (validEmail.classList.contains("d-none") && !invalidEmail.classList.contains("d-none"))
+        || (validPhone.classList.contains("d-none") && !invalidPhone.classList.contains("d-none"))) {
+            alert("기존에 존재하는 아이디 혹은 이메일입니다.");
+            e.preventDefault();
+            return;
+        }
+
+    }
 
     function checkLoginId() {
         let loginId = document.querySelector("#loginId").value;
@@ -158,10 +228,44 @@
         request.send();
     }
 
+    function checkPhoneNum() {
+        let phone = document.querySelector("input[type=tel]").value;
+        const request = new XMLHttpRequest();
+        let type = "GET";
+        let url = "/valid-phoneNum?phoneNum=" + phone;
+        // let json = JSON.stringify(emailJson);
 
-    
+        const valid = document.querySelector(".phone-valid");
+        const invalid = document.querySelector(".phone-invalid");
 
+        request.onreadystatechange = () => {
+            if (request.readyState != XMLHttpRequest.DONE)
+                return;
+            let response = request.responseText;
 
+            console.log(response);
+
+            if (response == 1) {
+                if (phone == [[${ memberForm.phoneNum }]]) {
+                    valid.classList.remove("d-none");
+                    return;
+                }
+
+                invalid.classList.remove("d-none");
+                valid.classList.add("d-none");
+            }
+            else {
+                invalid.classList.add("d-none");
+                valid.classList.remove("d-none");
+            }
+        }
+
+        /* Post 방식으로 요청 */
+        request.open(type, url);    // 요청 초기화
+        request.send();
+    }
+
+/* ]]> */
 </script>
-
+<div th:replace="inc/footer :: footer"></div>
 </html>

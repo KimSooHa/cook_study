@@ -1,12 +1,14 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
     layout:decorate="inc/layout">
-<main>
+<main layout:fragment="content">
     <section class="input-container">
         <h1 class="detail-title">프로필 수정</h1>
-        <form role="form" action="/members" th:object="${memberForm}" method="put" autocomplete="off">
+        <form role="form" th:action="@{/members/{param}(param=${memberId})}" th:object="${memberForm}" method="post"
+            autocomplete="off">
             <!-- id -->
-            <input type="hidden" th:field="*{memberId}" name="">
+            <!-- <input type="hidden" th:field="*{memberId}" name=""> -->
+            <input type="hidden" name="_method" value="put" />
             <div class="form-group">
                 <div class="input-box">
                     <label th:for="name">이름</label>
@@ -44,15 +46,18 @@
                 <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}">이메일 형식에 맞지 않습니다.</p>
                 <p class="email-valid d-none">사용 가능한 이메일입니다.</p>
                 <p class="email-invalid d-none">이미 사용중인 이메일입니다.</p>
+                <p class="email-origin d-none">기존 이메일입니다.</p>
             </div>
             <div class="form-group">
                 <div class="input-box">
                     <label th:for="phoneNum">휴대폰 번호</label>
                     <input type="tel" th:field="*{phoneNum}" class="form-control" placeholder="휴대폰 번호를 입력하세요"
-                        th:class="${#fields.hasErrors('phoneNum')}? 'form-control fieldError' : 'form-control'"
-                        required>
+                        th:class="${#fields.hasErrors('phoneNum')}? 'form-control fieldError' : 'form-control'" required oninput="checkPhoneNum()">
                 </div>
-                <p th:if="${#fields.hasErrors('phoneNum')}" th:errors="*{phoneNum}">전화번호 형식에 맞지 않습니다.</p>
+                <p th:if="${#fields.hasErrors('phoneNum')}" th:errors="*{phoneNum}">휴대폰 번호 형식에 맞지 않습니다.</p>
+                <p class="phone-valid d-none">사용 가능한 휴대폰 번호입니다.</p>
+                <p class="phone-invalid d-none">이미 사용중인 휴대폰 번호입니다.</p>
+                <p class="phone-origin d-none">기존 휴대폰 번호입니다.</p>
             </div>
             <div class="edit-box">
                 <button type="submit" class="btn btn-strong btn-default btn-submit">수정하기</button>
@@ -68,14 +73,36 @@
 
         let message = [[${ msg }]];
         let url = [[${ url }]];
+
         if (message == null)
             return;
-
         alert(message);
+
+        if (url == null)
+            return;
         location.href = url;
     }
 
-    /* ]]> */
+    const editBox = document.querySelector(".edit-box");
+    const submitBtn = editBox.querySelector("button");
+
+
+    submitBtn.onclick = (e) => {
+        const validId = document.querySelector(".id-valid");
+        const invalidId = document.querySelector(".id-invalid");
+        const validEmail = document.querySelector(".email-valid");
+        const invalidEmail = document.querySelector(".email-invalid");
+        const validPhone = document.querySelector(".phone-valid");
+        const invalidPhone = document.querySelector(".phone-invalid");
+
+        if ((validId.classList.contains("d-none") && !invalidId.classList.contains("d-none"))  || (validEmail.classList.contains("d-none") && !invalidEmail.classList.contains("d-none"))
+        || (validPhone.classList.contains("d-none") && !invalidPhone.classList.contains("d-none"))) {
+            alert("기존에 존재하는 아이디 혹은 이메일입니다.");
+            e.preventDefault();
+            return;
+        }
+
+    }
 
     function checkLoginId() {
         let loginId = document.querySelector("#loginId").value;
@@ -83,12 +110,11 @@
         const request = new XMLHttpRequest();
         let type = "GET";
         let url = "/valid-loginId?loginId=" + loginId;
-        // let emailJson = new Object();
-        // emailJson.email = email;
-        // let json = JSON.stringify(emailJson);
-
         const valid = document.querySelector(".id-valid");
         const invalid = document.querySelector(".id-invalid");
+
+        // let json = JSON.stringify(emailJson);
+
 
         request.onreadystatechange = () => {
             if (request.readyState != XMLHttpRequest.DONE)
@@ -98,6 +124,10 @@
             console.log(response);
 
             if (response == 1) {
+                if (loginId == [[${ memberForm.loginId }]]) {
+                    valid.classList.remove("d-none");
+                    return;
+                }
                 invalid.classList.remove("d-none");
                 valid.classList.add("d-none");
             }
@@ -106,18 +136,11 @@
                 invalid.classList.add("d-none");
             }
 
-
         }
 
         /* Post 방식으로 요청 */
         request.open(type, url);    // 요청 초기화
-        /* Response Type을 Json으로 사전 정의 */
-        // request.responseType = "json";
-        /* 요청 Header에 컨텐츠 타입은 Json으로 사전 정의 */
-        // request.setRequestHeader('content-type', 'application/json');
-        /* 정의된 서버에 Json 형식의 요청 Data를 포함하여 요청을 전송 */
         request.send();
-
     }
 
     function checkEmail() {
@@ -126,8 +149,6 @@
         const request = new XMLHttpRequest();
         let type = "GET";
         let url = "/valid-email?email=" + email;
-        // let emailJson = new Object();
-        // emailJson.email = email;
         // let json = JSON.stringify(emailJson);
 
         const valid = document.querySelector(".email-valid");
@@ -141,12 +162,17 @@
             console.log(response);
 
             if (response == 1) {
+                if (email == [[${ memberForm.email }]]) {
+                    valid.classList.remove("d-none");
+                    return;
+                }
+
                 invalid.classList.remove("d-none");
                 valid.classList.add("d-none");
             }
             else {
-                valid.classList.remove("d-none");
                 invalid.classList.add("d-none");
+                valid.classList.remove("d-none");
             }
 
 
@@ -154,14 +180,47 @@
 
         /* Post 방식으로 요청 */
         request.open(type, url);    // 요청 초기화
-        /* Response Type을 Json으로 사전 정의 */
-        // request.responseType = "json";
-        /* 요청 Header에 컨텐츠 타입은 Json으로 사전 정의 */
-        // request.setRequestHeader('content-type', 'application/json');
-        /* 정의된 서버에 Json 형식의 요청 Data를 포함하여 요청을 전송 */
         request.send();
     }
 
+
+    function checkPhoneNum() {
+        let phone = document.querySelector("input[type=tel]").value;
+        const request = new XMLHttpRequest();
+        let type = "GET";
+        let url = "/valid-phoneNum?phoneNum=" + phone;
+        // let json = JSON.stringify(emailJson);
+
+        const valid = document.querySelector(".phone-valid");
+        const invalid = document.querySelector(".phone-invalid");
+
+        request.onreadystatechange = () => {
+            if (request.readyState != XMLHttpRequest.DONE)
+                return;
+            let response = request.responseText;
+
+            console.log(response);
+
+            if (response == 1) {
+                if (phone == [[${ memberForm.phoneNum }]]) {
+                    valid.classList.remove("d-none");
+                    return;
+                }
+
+                invalid.classList.remove("d-none");
+                valid.classList.add("d-none");
+            }
+            else {
+                invalid.classList.add("d-none");
+                valid.classList.remove("d-none");
+            }
+        }
+
+        /* Post 방식으로 요청 */
+        request.open(type, url);    // 요청 초기화
+        request.send();
+    }
+/* ]]> */
 </script>
 
 </html>

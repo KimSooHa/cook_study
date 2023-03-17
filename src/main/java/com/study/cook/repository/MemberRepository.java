@@ -17,5 +17,6 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberRep
     Long countByEmail(String email);
     Long countByLoginId(String loginId);
 
+    Long countByPhoneNum(String phoneNum);
 
 }

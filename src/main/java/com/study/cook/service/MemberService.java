@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -41,23 +40,22 @@ public class MemberService {
         findMember.ifPresent((m) -> {
             throw new IllegalStateException("이미 존재하는 회원입니다.");
         });
-        Long emailCnt = validDuplicateEmail(member.getEmail());
+        Long emailCnt = countByEmail(member.getEmail());
         // 해당 아이디의 회원이 있으면
         if (emailCnt != 0) {
             throw new IllegalStateException("이미 존재하는 회원입니다.");
         }
     }
-    public Long validDuplicateLoginId(String loginId) {
+    public Long countByLoginId(String loginId) {
         return memberRepository.countByLoginId(loginId);
     }
 
-    public Long validDuplicateEmail(String email) {
+    public Long countByEmail(String email) {
         return memberRepository.countByEmail(email);
     }
 
-    // 회원 전체 조회
-    public List<Member> findMembers() {
-        return memberRepository.findAll();
+    public Long countByPhoneNum(String phoneNum) {
+        return memberRepository.countByPhoneNum(phoneNum);
     }
 
     // 회원 조회
@@ -79,13 +77,13 @@ public class MemberService {
     }
 
     @Transactional
-    public void update(Long id, String name, String loginId, String pwd, String email, String phoneNum) {
+    public void update(Long id, MemberForm form) {
         Member member = memberRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("no such data"));
-        member.setName(name);
-        member.setLoginId(loginId);
-        member.setPwd(pwd);
-        member.setEmail(email);
-        member.setPhoneNum(phoneNum);
+        member.setName(form.getName());
+        member.setLoginId(form.getLoginId());
+        member.setPwd(form.getPwd());
+        member.setEmail(form.getEmail());
+        member.setPhoneNum(form.getPhoneNum());
     }
 
     @Transactional
