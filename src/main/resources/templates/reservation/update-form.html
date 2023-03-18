@@ -92,11 +92,11 @@
 
                 for (let result of results) {
                     if ((result % 8) == checkboxes[i].value) {
-                        if(checkboxes[i].value == ([[${reservationForm.scheduleIds[0]}]]%8)) {
+                        if (checkboxes[i].value == ([[${ reservationForm.scheduleIds[0] }]] % 8)) {
                             checkboxes[i].checked = true;
                             continue;
                         }
-                            checkboxes[i].disabled = true;
+                        checkboxes[i].disabled = true;
                     }
 
                 }
@@ -173,7 +173,12 @@
             let message = results.msg;
             let url = results.url;
 
+            if (message == null)
+                return;
             alert(message);
+
+            if (url == null)
+                return;
             location.href = url;
 
         }

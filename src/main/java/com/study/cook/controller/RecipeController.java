@@ -41,9 +41,7 @@ public class RecipeController {
 
     private final RecipeService recipeService;
     private final RecipeFieldService recipeFieldService;
-    private final CommentService commentService;
     private final CategoryService categoryService;
-    private final HeartService heartService;
     private final MemberFinder memberFinder;
     private final FileStore fileStore;
 
@@ -110,9 +108,9 @@ public class RecipeController {
     @PostMapping
     public ResultVO create(@Valid @RequestPart RecipeForm recipeForm, @RequestPart MultipartFile imageFile,
                            @Valid @RequestPart List<String> fieldForms, @RequestPart List<MultipartFile> multipartFiles,  // @RequestPart를 사용하면 Json 파일로 넘어온 데이터를 바인딩
-                           BindingResult result, HttpSession session) {
+                           HttpSession session) {
 
-        if (result.hasErrors() || fieldForms.size() != multipartFiles.size()) {
+        if (fieldForms.size() != multipartFiles.size()) {
             return new ResultVO("등록에 실패하였습니다! 선택을 안하거나 빈칸이 있는지 확인해주세요.", "/recipes", false);
         }
         Member member = memberFinder.getMember(session);
@@ -127,10 +125,9 @@ public class RecipeController {
             }
 
         } catch (StoreFailException e) {
-            return new ResultVO("등록에 실패하였습니다.", "/recipes", false);
+            return new ResultVO(e.getMessage(), "/recipes", false);
         }
 
-        log.info("등록 성공! id = {}", id);
         return new ResultVO("등록되었습니다!", "/recipes/" + id, true);
 
     }
@@ -142,25 +139,6 @@ public class RecipeController {
     public Resource downloadImage(@PathVariable String filename) throws MalformedURLException {
         return new UrlResource("file:" + fileStore.getFullPath(filename));  // 파일에 직접 접근해서 스트링으로 반환
     }
-
-
-    // 파일 다운로드
-//    @GetMapping("/attach/{recipeId}")
-//    public ResponseEntity<Resource> downloadAttach(@PathVariable Long recipeId) throws MalformedURLException {
-//        Recipe recipe = recipeService.findOneById(recipeId);
-//        String storeFileName = recipe.getPhoto().getStoreFileName();
-//        String uploadFileName = recipe.getPhoto().getUploadFileName();
-//
-//        UrlResource resource = new UrlResource("file:" + fileStore.getFullPath(storeFileName));
-//
-//        log.info("uploadFileName={}", uploadFileName);
-//        String encodedUploadFileName = UriUtils.encode(uploadFileName, StandardCharsets.UTF_8); // UriUtils: 파일을 인코딩하도록 지원
-//        String contentDisposition = "Attachment; filename=\"" + encodedUploadFileName + "\"";    // 파일 다운로드할 때 필요한 헤더에 들어갈 정보(업로드 파일명)
-//
-//        return ResponseEntity.ok()
-//                .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
-//                .body(resource);
-//    }
 
 
     @GetMapping("/{recipeId}")
@@ -225,12 +203,7 @@ public class RecipeController {
     public ResultVO update(@PathVariable Long recipeId,
                            @Valid @RequestPart RecipeForm recipeForm, @RequestPart(required = false) Optional<MultipartFile> imageFile,
                            @Valid @RequestPart List<String> fieldForms, @RequestPart(required = false) Optional<List<MultipartFile>> multipartFiles,
-                           @RequestPart(required = false) Optional<List<Integer>> imgIndexes, BindingResult result, HttpSession session) throws StoreFailException {
-
-        if (result.hasErrors()) {
-            log.info("errors={}", result);
-            return new ResultVO("저장에 실패하였습니다! 선택을 안하거나 입력칸에 빈칸이 있는지 확인해주세요.", "/recipes/" + recipeId + "/edit", false);
-        }
+                           @RequestPart(required = false) Optional<List<Integer>> imgIndexes, HttpSession session) throws StoreFailException {
 
         if ((multipartFiles.isPresent() && imgIndexes.isPresent())) {
             if (multipartFiles.get().size() != imgIndexes.get().size())
@@ -244,11 +217,10 @@ public class RecipeController {
             recipeFieldService.update(recipeId, fieldForms, multipartFiles, imgIndexes, member);
 
         } catch (StoreFailException e) {
-            return new ResultVO("저장에 실패하였습니다.", "/recipes/" + recipeId + "/edit", false);
+            return new ResultVO(e.getMessage(), "/recipes/" + recipeId + "/edit", false);
         }
 
         return new ResultVO("저장되었습니다!", "/recipes/" + recipeId, true);
-
     }
 
     // 삭제

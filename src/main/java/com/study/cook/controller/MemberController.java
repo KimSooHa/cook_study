@@ -44,32 +44,10 @@ public class MemberController {
             model.addAttribute("url", "/members");
             return "member/create-form";
         }
-//        catch (Exception e) {
-//
-//            model.addAttribute("msg", e.getMessage());
-//            model.addAttribute("url", "/members");
-//            return "member/create-form";
-//        }
 
         model.addAttribute("msg", "회원가입되었습니다!");
         model.addAttribute("url", "/");
         return "member/create-form";
-    }
-
-    @GetMapping("/search-id")
-    public String searchLoginId(MemberLoginIdSearchCondition condition, Model model) {
-        Member findMember = memberService.findOne(condition);
-        String loginId = findMember.getLoginId();
-        model.addAttribute("loginId", loginId);
-        return "member/find-id";
-    }
-
-    @GetMapping("/search-pwd")
-    public String searchPwd(MemberPwdSearchCondition condition, Model model) {
-        Member findMember = memberService.findOne(condition);
-        String pwd = findMember.getPwd();
-        model.addAttribute("pwd", pwd);
-        return "member/find-pwd";
     }
 
     @GetMapping("/{memberId}")

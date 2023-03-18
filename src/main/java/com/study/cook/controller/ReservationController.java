@@ -1,13 +1,14 @@
 package com.study.cook.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.study.cook.domain.CookingRoom;
 import com.study.cook.domain.Member;
 import com.study.cook.domain.Reservation;
 import com.study.cook.domain.Schedule;
 import com.study.cook.dto.ReservationListDto;
+import com.study.cook.exception.FindCookingRoomException;
+import com.study.cook.exception.FindReservationException;
+import com.study.cook.exception.FindScheduleException;
 import com.study.cook.service.CookingRoomService;
-import com.study.cook.service.MemberService;
 import com.study.cook.service.ReservationService;
 import com.study.cook.service.ScheduleService;
 import com.study.cook.util.DateParser;
@@ -21,7 +22,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -41,7 +41,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ReservationController {
 
-    private final MemberService memberService;
     private final ReservationService reservationService;
     private final CookingRoomService cookingRoomService;
     private final ScheduleService scheduleService;
@@ -50,7 +49,7 @@ public class ReservationController {
 
     @GetMapping("/reservations")
     public String list(HttpSession session, Model model, RedirectAttributes redirectAttributes,
-                       @PageableDefault(size = 10, sort = "startDateTime", direction = Sort.Direction.ASC) Pageable pageable) {
+                       @PageableDefault(size = 10, sort = "startDateTime", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<Reservation> list = reservationService.findByMember(memberFinder.getMember(session), pageable).orElseThrow();
 
         if (list.isEmpty()) {
@@ -119,27 +118,16 @@ public class ReservationController {
 
     @ResponseBody
     @PostMapping("/reservation")
-    // , consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE} / , consumes = "application/json" / MediaType.APPLICATION_FORM_URLENCODED_VALUE
-    public ResultVO reserve(Model model,
-                            @RequestBody @Valid ReservationForm reservationForm, BindingResult result,
-                            HttpSession session, RedirectAttributes redirectAttributes) {
-
-        ResultVO resultVO;
-        if (result.hasErrors()) {
-            resultVO = new ResultVO("선택하지 않은 옵션이 존재합니다.", "/cooking-rooms/reservation", false);
-        }
+    public ResultVO reserve(@RequestBody @Valid ReservationForm reservationForm, HttpSession session) {
 
         Member member = memberFinder.getMember(session);
         try {
-            List<Long> id = reservationService.create(reservationForm, member);
+            reservationService.create(reservationForm, member);
         } catch (NoSuchElementException e) {
-            resultVO = new ResultVO("등록에 실패했습니다.", "/cooking-rooms/reservation", false);
+            throw new FindScheduleException("등록에 실패했습니다.");
         }
 
-        log.info("예약 성공!");
-        resultVO = new ResultVO("등록에 성공했습니다.", "/cooking-rooms/reservations", true);
-
-        return resultVO;
+        return new ResultVO("등록에 성공했습니다.", "/cooking-rooms/reservations", true);
     }
 
 
@@ -188,30 +176,20 @@ public class ReservationController {
 
     @ResponseBody
     @PutMapping("/reservation/{reservationId}")
-    public ResultVO update(@PathVariable Long reservationId, @RequestBody @Valid ReservationForm reservationForm,
-                           BindingResult result, HttpSession session) {
-
-        ResultVO resultVO;
-        if (result.hasErrors()) {
-            resultVO = new ResultVO();
-            resultVO.setMsg("수정에 실패했습니다.");
-            resultVO.setUrl("/cooking-rooms/reservation/" + reservationId);
-        }
+    public ResultVO update(@PathVariable Long reservationId, @RequestBody @Valid ReservationForm reservationForm, HttpSession session) {
 
         Member member = memberFinder.getMember(session);
         try {
             reservationService.update(reservationId, reservationForm, member);
-        } catch (NoSuchElementException e) {
-            resultVO = new ResultVO();
-            resultVO.setMsg("수정에 실패했습니다.");
-            resultVO.setUrl("/cooking-rooms/reservation/" + reservationId);
+        } catch (FindScheduleException e) {
+            throw new FindScheduleException("수정 실패:" + e.getMessage());
+        } catch (FindReservationException e) {
+            throw new FindReservationException("수정 실패: " + e.getMessage());
+        } catch (FindCookingRoomException e) {
+            throw new FindCookingRoomException("수정 실패: " + e.getMessage());
         }
 
-        resultVO = new ResultVO();
-        resultVO.setMsg("수정하였습니다!");
-        resultVO.setUrl("/cooking-rooms/reservations");
-
-        return resultVO;
+        return new ResultVO("수정하였습니다!", "/cooking-rooms/reservations", true);
     }
 
     @DeleteMapping("/reservation/{reservationId}")

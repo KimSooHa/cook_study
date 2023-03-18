@@ -17,6 +17,7 @@ public class RecipeForm {
     @Size(max = 20, message = "제목은 최대 20자까지 가능합니다.")
     private String title;
 
+    @NotBlank(message = "설명글을 작성해주세요.")
     @Size(max = 200, message = "최대 200자까지 가능합니다.")
     private String introduction;
 
@@ -33,7 +34,7 @@ public class RecipeForm {
 
     @NotNull(message = "몇인분 음식인지 작성해주세요.")
     private int servings;   // 인분
-
+    @NotNull(message = "카테고리를 선택해주세요.")
     private Long categoryId;
 
 }

@@ -136,10 +136,6 @@
         if (cnt > 3) {
             alert("시간은 최대 3개까지만 가능합니다.");
             return;
-        } else if (cnt == 0) {
-            // e.preventDefault();
-            alert("예약하실 시간을 선택해주세요.");
-            return;
         }
 
         const request = new XMLHttpRequest();
@@ -170,16 +166,18 @@
 
             let results = request.response;
 
-            if (results.SUSSESS == false)
-                console.log("전송 실패!");
-            else {
-                let message = results.msg;
-                let url = results.url;
+            let message = results.msg;
+            let url = results.url;
+            console.log("전송 성공!");
 
-                alert(message);
-                location.href = url;
-                console.log("전송 성공!");
-            }
+            if (message == null)
+                return;
+            alert(message);
+
+            if (url == null)
+                return;
+            location.href = url;
+
         }
 
         /* Post 방식으로 요청 */

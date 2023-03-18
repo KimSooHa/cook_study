@@ -2,11 +2,13 @@ package com.study.cook.service;
 
 import com.study.cook.controller.ReservationForm;
 import com.study.cook.domain.*;
+import com.study.cook.exception.FindCookingRoomException;
+import com.study.cook.exception.FindReservationException;
+import com.study.cook.exception.FindScheduleException;
 import com.study.cook.repository.CookingRoomRepository;
 import com.study.cook.repository.ReservationRepository;
 import com.study.cook.repository.ScheduleRepository;
 import com.study.cook.util.DateParser;
-import com.study.cook.util.MemberFinder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,13 +30,11 @@ public class ReservationService {
 
     private final CookingRoomRepository cookingRoomRepository;
     private final ScheduleRepository scheduleRepository;
-    private final CookingRoomService cookingRoomService;
     private final ReservationRepository reservationRepository;
     private final DateParser dateParser;
-    private final MemberFinder memberFinder;
 
     /**
-     * 요리실 등록
+     * 요리실 예약
      */
     @Transactional  // 변경해야 하기 때문에 읽기, 쓰기가 가능해야 함
     public List<Long> create(ReservationForm form, Member member) {
@@ -45,7 +45,7 @@ public class ReservationService {
 
             // 문자를 날짜로 파싱
             LocalDate date = LocalDate.parse(form.getDate());
-            Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(() -> new IllegalArgumentException("no such data"));
+            Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(() -> new NoSuchElementException("no such data"));
             LocalTime startTime = schedule.getStartTime();
             LocalTime endTime = schedule.getEndTime();
 
@@ -53,7 +53,7 @@ public class ReservationService {
             LocalDateTime endDateTime = dateParser.parseToDateTime(date, endTime);
 
             Reservation reservation = new Reservation(startDateTime, endDateTime);
-            CookingRoom cookingRoom = cookingRoomRepository.findById(form.getCookingRoomId()).orElseThrow(() -> new IllegalArgumentException("no such data"));
+            CookingRoom cookingRoom = cookingRoomRepository.findById(form.getCookingRoomId()).orElseThrow(() -> new NoSuchElementException("no such data"));
             Reservation.createReservation(reservation, member, cookingRoom);
 
             reservationRepository.save(reservation);
@@ -108,17 +108,17 @@ public class ReservationService {
         // 문자를 날짜로 파싱
         LocalDate date = LocalDate.parse(form.getDate());
 
-        Schedule schedule = scheduleRepository.findById(form.getScheduleIds().get(0)).orElseThrow(() -> new NoSuchElementException());
+        Schedule schedule = scheduleRepository.findById(form.getScheduleIds().get(0)).orElseThrow(() -> new FindScheduleException("해당 시간을 찾을 수 없습니다."));
         LocalTime startTime = schedule.getStartTime();
         LocalTime endTime = schedule.getEndTime();
 
         LocalDateTime startDateTime = dateParser.parseToDateTime(date, startTime);
         LocalDateTime endDateTime = dateParser.parseToDateTime(date, endTime);
 
-        Reservation reservation = reservationRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("no such data"));
+        Reservation reservation = reservationRepository.findById(id).orElseThrow(() -> new FindReservationException("예약을 찾을 수 없습니다."));
         reservation.setStartDateTime(startDateTime);
         reservation.setEndDateTime(endDateTime);
-        CookingRoom cookingRoom = cookingRoomRepository.findById(form.getCookingRoomId()).orElseThrow(() -> new IllegalArgumentException("no such data"));
+        CookingRoom cookingRoom = cookingRoomRepository.findById(form.getCookingRoomId()).orElseThrow(() -> new FindCookingRoomException("해당 요리실을 찾을 수 없습니다."));
         reservation.setCookingRoom(cookingRoom);
 
     }

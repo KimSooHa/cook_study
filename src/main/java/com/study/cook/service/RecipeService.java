@@ -40,7 +40,7 @@ public class RecipeService {
         try {
             photo = fileStore.storeFile(file);
         } catch (IOException e) {
-            throw new StoreFailException(e);
+            throw new StoreFailException("등록 실패: 이미지 파일 저장 실패");
         }
 
         Category category = categoryService.findOneById(form.getCategoryId());
@@ -94,7 +94,7 @@ public class RecipeService {
                 photo = fileStore.storeFile(file.get());
             }
         } catch (IOException e) {
-            throw new StoreFailException(e);
+            throw new StoreFailException("등록 실패: 이미지 파일 저장 실패");
         }
 
         // 기존 파일 삭제

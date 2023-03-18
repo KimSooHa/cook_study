@@ -3,8 +3,9 @@ package com.study.cook.controller;
 import com.study.cook.domain.*;
 import com.study.cook.dto.ClubDto;
 import com.study.cook.dto.ClubListDto;
-import com.study.cook.dto.SearchCondition;
 import com.study.cook.dto.ReservationDto;
+import com.study.cook.dto.SearchCondition;
+import com.study.cook.exception.FindClubException;
 import com.study.cook.service.*;
 import com.study.cook.util.DateParser;
 import com.study.cook.util.MemberFinder;
@@ -17,18 +18,15 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 import static org.springframework.data.domain.Sort.Direction.DESC;
@@ -176,17 +174,6 @@ public class ClubController {
         List<Category> categories = categoryService.findList();
         log.info("reservations={}", reservations.get().size());
         if (reservations.isPresent()) {
-//            List<ReservationDto> reservationDtos = new ArrayList<>();
-//            for (Reservation reservation : reservations.get()) {
-//
-//                // 다른 쿡스터디에 지정된 예약은 제외
-//                Long clubId = null;
-//                try {
-//                    clubId = reservation.getClub().getId();
-//                } catch (NullPointerException e) {
-//                    makeReservationListDto(reservationDtos, reservation);
-//                }
-//            }
             List<ReservationDto> reservationDtos = new ArrayList<>();
             reservations.get().stream().forEach(r -> {
                 // 다른 쿡스터디에 지정된 예약은 제외
@@ -208,11 +195,7 @@ public class ClubController {
 
     @ResponseBody
     @PostMapping
-    public ResultVO create(@Valid @RequestBody ClubForm form, BindingResult result, RedirectAttributes redirectAttributes, HttpSession session) {
-        if (result.hasErrors()) {
-            return new ResultVO("등록에 실패했습니다.", "/clubs", false);
-        }
-
+    public ResultVO create(@Valid @RequestBody ClubForm form, HttpSession session) {
         Long clubId = clubService.create(form, session);
         return new ResultVO("등록하였습니다.", "/clubs/" + clubId + "/detail", true);
     }
@@ -222,7 +205,6 @@ public class ClubController {
         Club club = clubService.findOneById(clubId);
         Optional<List<Reservation>> reservations = reservationService.findByMemberAndDateGt(club.getMember(), LocalDateTime.now());
         List<Category> categories = categoryService.findList();
-
 
         ClubForm form = new ClubForm();
         form.setName(club.getName());
@@ -268,16 +250,12 @@ public class ClubController {
 
     @ResponseBody
     @PutMapping("/{clubId}")
-    public ResultVO update(@PathVariable Long clubId, @RequestBody @Valid ClubForm form, BindingResult result) {
-
-        if (result.hasErrors())
-            return new ResultVO("수정에 실패했습니다.", "/clubs/" + clubId + "/edit", false);
-
+    public ResultVO update(@PathVariable Long clubId, @RequestBody @Valid ClubForm form) {
 
         try {
             clubService.update(clubId, form);
         } catch (IllegalArgumentException e) {
-            return new ResultVO("수정에 실패했습니다.", "/clubs/" + clubId + "/edit", false);
+            throw new FindClubException("수정 실패: " + e.getMessage());
         }
 
         return new ResultVO("수정하였습니다!", "/clubs/" + clubId + "/detail", true);

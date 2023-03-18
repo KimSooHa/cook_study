@@ -65,8 +65,6 @@ public class Recipe {
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.REMOVE)
     private List<Comment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "recipe")
-    private List<Heart> hearts = new ArrayList<>();
 
     public Recipe(String title, String introduction, Photo photo, String ingredients, int cookingTime, int servings) {
         this.title = title;
@@ -108,12 +106,7 @@ public class Recipe {
         recipe.setCategory(category);
         recipe.setPhoto(photo);
 
-//        for (RecipeField recipeField : recipeFields) {
-//            recipe.addRecipeField(recipeField);
-//        }
-
         return recipe;
-
     }
 
 

@@ -2,17 +2,16 @@ package com.study.cook.controller;
 
 import com.study.cook.domain.Comment;
 import com.study.cook.dto.CommentDto;
-import com.study.cook.service.*;
+import com.study.cook.exception.FindCommentException;
+import com.study.cook.exception.FindRecipeException;
+import com.study.cook.service.CommentService;
 import com.study.cook.util.DateParser;
-import com.study.cook.util.MemberFinder;
-import com.study.cook.util.ResultVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
@@ -29,9 +28,7 @@ import static org.springframework.data.domain.Sort.Direction.DESC;
 public class CommentController {
 
     private final CommentService commentService;
-    private final MemberService memberService;
     private final DateParser dateParser;
-    private final MemberFinder memberFinder;
 
     @ResponseBody
     @GetMapping("/list")
@@ -54,50 +51,34 @@ public class CommentController {
 
     @ResponseBody
     @PostMapping
-    public Map<String, Object> create(@Valid @RequestBody CommentForm form, BindingResult result, HttpSession session) {
+    public CommentDto create(@Valid @RequestBody CommentForm form, HttpSession session) {
 
-        Map<String, Object> map = new HashMap<>();
-
-        if (result.hasErrors()) {
-            ResultVO resultVO = new ResultVO("댓글 등록에 실패했습니다.", "", false);
-            map.put("result", resultVO);
-            return map;
-        }
-
+        CommentDto commentDto;
         try {
             Long commentId = commentService.create(form, session);
             Comment comment = commentService.findOneById(commentId);
-            CommentDto commentDto = new CommentDto(commentId, comment.getContent(), comment.getRegDate(), comment.getMember().getId(), comment.getMember().getLoginId());
-            map.put("commentDto", commentDto);
+            commentDto = new CommentDto(commentId, comment.getContent(), comment.getRegDate(), comment.getMember().getId(), comment.getMember().getLoginId());
         } catch (IllegalArgumentException e) {
-            map.put("msg", e.getMessage());
+            throw new FindRecipeException(e.getMessage());
         }
 
-        return map;
+        return commentDto;
     }
 
 
     @ResponseBody
     @PutMapping("/{commentId}")
-    public ResultVO update(@PathVariable Long commentId, @RequestBody @Valid CommentForm form, BindingResult result) {
+    public Map<String, Object> update(@PathVariable Long commentId, @RequestBody @Valid CommentForm form) {
 
-        ResultVO resultVO = new ResultVO();
-        if (result.hasErrors()) {
-            resultVO.setMsg("수정에 실패했습니다.");
-            resultVO.setSuccess(false);
-            return resultVO;
-        }
+        Map<String, Object> map = new HashMap<>();
 
         try {
             commentService.update(commentId, form);
         } catch (IllegalArgumentException e) {
-            resultVO.setMsg(e.getMessage());
-            resultVO.setSuccess(false);
-            return resultVO;
+            throw new FindCommentException(e.getMessage());
         }
-
-//        resultVO.setMsg("수정하였습니다!");
-        return resultVO;
+        map.put("success", true);
+        return map;
     }
 
     @ResponseBody

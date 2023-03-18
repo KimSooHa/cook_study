@@ -63,8 +63,6 @@ public class Member {
 
     @OneToMany(mappedBy = "member")
     private List<Participation> participations = new ArrayList<>();
-    @OneToMany(mappedBy = "member")
-    private List<Heart> hearts = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
     private List<Club> clubs = new ArrayList<>();

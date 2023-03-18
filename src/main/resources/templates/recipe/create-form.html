@@ -192,7 +192,6 @@
                     var reader = new FileReader();
 
                     reader.onload = (e) => {
-                        // memberPhoto.style.backgroundImage = `url(${e.target.result})`;
                         image.src = e.target.result;
                         image.classList.remove("d-none");
                     }
@@ -235,41 +234,6 @@
             return;
 
 
-        // let encodedFile, originalFileName;
-        // originalFileName = file.name;
-
-        // if(file.size > 300000) {
-        //     alert("사이즈가 너무 큽니다.");
-        //     return false;
-        // }
-
-        // // FileReader를 이용해 BASE64로 변환
-        // const reader = new FileReader();
-
-        // // FileReader가 파일을 load 했을 시 동작할 이벤트 지정
-        // reader.addEventListener("load", () => {
-        //     // const dataIndex = reader.result.indexOf(',') + 1;
-        //     // const base64 = reader.result.substring(
-        //     //     dataIndex,
-        //     //     reader.result.length
-        //     // )
-        //     const base64 = btoa(reader.result); // 바이너리 데이터 -> Base64로 인코딩
-
-        //     encodedFile = base64;
-
-        // });
-
-        // // file을 DataURL 형식으로 읽기
-        // reader.readAsDataURL(file);
-
-        // if(!encodedFile) {
-        //     alert("파일이 없습니다.");
-        //     return false;
-        // }
-
-        // recipeForm.imageFile = encodedFile;
-        /* -------------------------------------------- */
-
         let formData = new FormData();
         let recipeForm = {
             title: title,
@@ -310,11 +274,6 @@
         }
 
         e.preventDefault();
-        
-        // if (formData.get("multipartFiles").length != orderBoxes.length || fieldForms.length != orderBoxes.length) {
-        //     alert("이미지 선택 혹은 빈칸을 채워주세요!");
-        //     return;
-        // }
 
 
         let fieldData = JSON.stringify(fieldForms);
@@ -331,7 +290,12 @@
             let message = results.msg;
             let url = results.url;
 
+            if (message == null || message == "")
+                return;
             alert(message);
+
+            if (url == null || url == "")
+                return;
             location.href = url;
 
         }

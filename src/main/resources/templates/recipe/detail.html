@@ -57,6 +57,7 @@
 </main>
 <script th:inline="javascript" layout:fragment="script">
     /* <![CDATA[ */
+    // ==== recipe ====================
     let cnt = 0;
     const editsBox = document.querySelector(".edits-box");
     const submitBtn = editsBox.querySelector("button");
@@ -69,6 +70,8 @@
         editsBox.submit();
     }
 
+    // ==== comment =========================
+    // 수정 버튼 클릭
     function clickEdit(e) {
         let commentContainer = document.querySelector(".comment-container");
         let cl = commentContainer.querySelectorAll(".comment");
@@ -84,88 +87,17 @@
         comment.querySelector(".edit-content").classList.remove("d-none");
     }
 
+    // 댓글 수정 초기화
     function clickReset(e) {
         let editContent = e.parentElement;
         editContent.classList.add("d-none");
     }
 
-    function edit(e, commentId) {
-        const request = new XMLHttpRequest();
-        let type = "PUT";
-        let url = `/comments/${commentId}`;
-        const editContent = e.parentElement;
-        let commentVal = editContent.querySelector("input[type=text]").value;
-
-        if (commentVal == null || commentVal == "") {
-            alert("댓글칸을 작성해주세요!");
-            return;
-        }
-
-        let form = {
-            content: commentVal
-        };
-        let data = JSON.stringify(form);
-        request.onreadystatechange = () => {
-            if (request.readyState != XMLHttpRequest.DONE)
-                return;
-
-            let results = request.response;
-            if (results.SUCCESS == false) {
-                let message = results.msg;
-                let url = results.url;
-
-                if (message == null || message == "")
-                    return;
-                alert(message);
-                return;
-            }
-            resetList();
-            commentList();
-
-        }
-
-        request.open(type, url);    // 요청 초기화
-        /* Response Type을 Json으로 사전 정의 */
-        request.responseType = "json";
-        request.setRequestHeader('content-type', 'application/json');
-        request.send(data);
-    }
-
-
-    function commentRemove(commentId) {
-
-        if (!confirm("삭제하시겠습니까?"))
-            return;
-
-        const request = new XMLHttpRequest();
-        let type = "DELETE";
-        let url = `/comments/${commentId}`;
-
-        // e.parentElement.submit();
-        request.onreadystatechange = () => {
-            if (request.readyState != XMLHttpRequest.DONE)
-                return;
-
-            let results = request.response;
-
-            let message = results.msg;
-            let url = results.url;
-
-            if (message == null || message == "")
-                return;
-            alert(message);
-            resetList();
-            commentList();
-        }
-        request.open(type, url);    // 요청 초기화
-        /* Response Type을 Json으로 사전 정의 */
-        request.responseType = "json";
-        request.send();
-    }
 
     const commentForm = document.querySelector(".input-content");
     const regBtn = commentForm.querySelector("button");
 
+    // 댓글 더보기
     function moreComments(cnt) {
         const rq = new XMLHttpRequest();
         let type = "GET";
@@ -231,6 +163,7 @@
         rq.send();
     }
 
+    // 댓글 리스트 조회
     function commentList() {
         console.log("list!");
         const getRequest = new XMLHttpRequest();
@@ -246,8 +179,7 @@
             let size = results.size;
             let totalElements = results.totalElements;
             let totalPages = results.totalPages;
-            console.log(results);
-            console.log(totalPages);
+
             let html = ``;
             for (let i = 0; i < comments.length; i++) {
                 html += `
@@ -275,7 +207,7 @@
                 }
 
             }
-            console.log(cnt);
+            
             if (totalPages > cnt + 1) {
                 html += `<div class="more-comment">
                             <span class="btn btn-default btn-strong" onclick=moreComments(${cnt}+1)>+</span>
@@ -296,6 +228,7 @@
         getRequest.send();
     }
 
+    // 댓글 리스트 화면상 지우기
     function resetList() {
         const oldComments = document.querySelectorAll(".comment");
         oldComments.forEach(comment => {
@@ -303,7 +236,7 @@
         });
 
         let moreBox = document.querySelector(".more-comment");
-        if(moreBox != null)
+        if (moreBox != null)
             moreBox.remove();
     }
 
@@ -316,7 +249,7 @@
         let commentVal = commentForm.querySelector("textarea").value;
 
         if (commentVal == null || commentVal == "") {
-            alert("댓글칸을 작성해주세요!");
+            alert("댓글을 입력해주세요!");
             return;
         }
 
@@ -332,7 +265,7 @@
 
             let results = request.response;
 
-            if (results.SUSSESS == false) {
+            if (results.msg != null) {
                 console.log("전송 실패!");
                 let message = results.msg;
                 let url = results.url;
@@ -363,6 +296,82 @@
         /* 정의된 서버에 Json 형식의 요청 Data를 포함하여 요청을 전송 */
         request.send(data);
     };
+
+    // edit
+    function edit(e, commentId) {
+        const request = new XMLHttpRequest();
+        let type = "PUT";
+        let url = `/comments/${commentId}`;
+        const editContent = e.parentElement;
+        let commentVal = editContent.querySelector("input[type=text]").value;
+
+        // if (commentVal == null || commentVal == "") {
+        //     alert("댓글을 입력해주세요!");
+        //     return;
+        // }
+
+        let form = {
+            content: commentVal
+        };
+        let data = JSON.stringify(form);
+        request.onreadystatechange = () => {
+            if (request.readyState != XMLHttpRequest.DONE)
+                return;
+
+            let results = request.response;
+            if (results.msg != null) {
+                let message = results.msg;
+                let url = results.url;
+
+                if (message == null || message == "")
+                    return;
+                alert(message);
+                return;
+            }
+            resetList();
+            commentList();
+
+        }
+
+        request.open(type, url);    // 요청 초기화
+        /* Response Type을 Json으로 사전 정의 */
+        request.responseType = "json";
+        request.setRequestHeader('content-type', 'application/json');
+        request.send(data);
+    }
+
+    // remove
+    function commentRemove(commentId) {
+
+        if (!confirm("삭제하시겠습니까?"))
+            return;
+
+        const request = new XMLHttpRequest();
+        let type = "DELETE";
+        let url = `/comments/${commentId}`;
+
+        // e.parentElement.submit();
+        request.onreadystatechange = () => {
+            if (request.readyState != XMLHttpRequest.DONE)
+                return;
+
+            let results = request.response;
+
+            let message = results.msg;
+            let url = results.url;
+
+            if (message == null || message == "")
+                return;
+            alert(message);
+            resetList();
+            commentList();
+        }
+        request.open(type, url);    // 요청 초기화
+        /* Response Type을 Json으로 사전 정의 */
+        request.responseType = "json";
+        request.send();
+    }
+
 
     window.onload = (e) => {
         commentList();

@@ -58,7 +58,7 @@
             이용 비용: 12,000 원
         </div>
         <div class="edit-box">
-            <input class="btn btn-default btn-strong create" type="submit" value="등록하기">
+            <button class="btn btn-default btn-strong create" type="submit">등록하기</button>
         </div>
     </form>
 </main>
@@ -104,7 +104,7 @@
             alert("시간은 최대 3개까지만 가능합니다.");
         }
 
-        
+
         const request = new XMLHttpRequest();
         let type = "POST";
         let url = "/clubs";
@@ -113,7 +113,7 @@
         let intro = document.querySelector(".intro").value;
         let maxCnt = document.getElementById("max-count").value;
         let ingredients = document.getElementById("ingredients").value;
-        
+
         if (name == null || name == "" || category == null || category == "" || intro == null || intro == "" || maxCnt == null || ingredients == null || ingredients == "")
             return;
         e.preventDefault();
@@ -151,7 +151,12 @@
             let message = results.msg;
             let url = results.url;
 
+            if (message == null)
+                return;
             alert(message);
+
+            if (url == null)
+                return;
             location.href = url;
 
         }
