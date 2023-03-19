@@ -1,5 +1,6 @@
-package com.study.cook.controller;
+package com.study.cook.api;
 
+import com.study.cook.controller.CommentForm;
 import com.study.cook.domain.Comment;
 import com.study.cook.dto.CommentDto;
 import com.study.cook.exception.FindCommentException;
@@ -11,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
@@ -21,16 +21,15 @@ import java.util.Map;
 
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/comments")
 @Slf4j
-public class CommentController {
+public class CommentApiController {
 
     private final CommentService commentService;
     private final DateParser dateParser;
 
-    @ResponseBody
     @GetMapping("/list")
     public Map<String, Object> list(@RequestParam Long recipeId, @PageableDefault(size = 4, sort = "regDate", direction = DESC) Pageable pageable) {
 
@@ -48,8 +47,6 @@ public class CommentController {
         return map;
     }
 
-
-    @ResponseBody
     @PostMapping
     public CommentDto create(@Valid @RequestBody CommentForm form, HttpSession session) {
 
@@ -65,8 +62,6 @@ public class CommentController {
         return commentDto;
     }
 
-
-    @ResponseBody
     @PutMapping("/{commentId}")
     public Map<String, Object> update(@PathVariable Long commentId, @RequestBody @Valid CommentForm form) {
 
@@ -81,7 +76,6 @@ public class CommentController {
         return map;
     }
 
-    @ResponseBody
     @DeleteMapping("/{commentId}")
     public Map<String, Object> delete(@PathVariable Long commentId) {
         commentService.delete(commentId);

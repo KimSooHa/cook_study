@@ -115,22 +115,6 @@ public class ReservationController {
         return "reservation/create-form";
     }
 
-
-    @ResponseBody
-    @PostMapping("/reservation")
-    public ResultVO reserve(@RequestBody @Valid ReservationForm reservationForm, HttpSession session) {
-
-        Member member = memberFinder.getMember(session);
-        try {
-            reservationService.create(reservationForm, member);
-        } catch (NoSuchElementException e) {
-            throw new FindScheduleException("등록에 실패했습니다.");
-        }
-
-        return new ResultVO("등록에 성공했습니다.", "/cooking-rooms/reservations", true);
-    }
-
-
     @GetMapping("/reservation/{reservationId}")
     public String update(@PathVariable Long reservationId, Model model) {
         Reservation reservation = reservationService.findOneById(reservationId);
@@ -174,24 +158,6 @@ public class ReservationController {
         return "reservation/update-form";
     }
 
-    @ResponseBody
-    @PutMapping("/reservation/{reservationId}")
-    public ResultVO update(@PathVariable Long reservationId, @RequestBody @Valid ReservationForm reservationForm, HttpSession session) {
-
-        Member member = memberFinder.getMember(session);
-        try {
-            reservationService.update(reservationId, reservationForm, member);
-        } catch (FindScheduleException e) {
-            throw new FindScheduleException("수정 실패:" + e.getMessage());
-        } catch (FindReservationException e) {
-            throw new FindReservationException("수정 실패: " + e.getMessage());
-        } catch (FindCookingRoomException e) {
-            throw new FindCookingRoomException("수정 실패: " + e.getMessage());
-        }
-
-        return new ResultVO("수정하였습니다!", "/cooking-rooms/reservations", true);
-    }
-
     @DeleteMapping("/reservation/{reservationId}")
     public String delete(@PathVariable Long reservationId) {
 
@@ -199,6 +165,4 @@ public class ReservationController {
 
         return "redirect:/cooking-rooms/reservations";
     }
-
-
 }
