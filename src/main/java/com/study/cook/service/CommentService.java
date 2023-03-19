@@ -5,6 +5,8 @@ import com.study.cook.domain.Comment;
 import com.study.cook.domain.Member;
 import com.study.cook.domain.Recipe;
 import com.study.cook.dto.CommentDto;
+import com.study.cook.exception.FindCommentException;
+import com.study.cook.exception.FindRecipeException;
 import com.study.cook.repository.ClubRepository;
 import com.study.cook.repository.CommentRepository;
 import com.study.cook.repository.RecipeRepository;
@@ -34,7 +36,7 @@ public class CommentService {
     public Long create(CommentForm form, HttpSession session) {
 
         Comment comment = new Comment(form.getContent());
-        Recipe recipe = recipeRepository.findById(form.getRecipeId()).orElseThrow(() -> new IllegalArgumentException("댓글 쓰기 실패: 해당 레시피 글이 존재하지 않습니다."));
+        Recipe recipe = recipeRepository.findById(form.getRecipeId()).orElseThrow(() -> new FindRecipeException("댓글 쓰기 실패: 해당 레시피 글이 존재하지 않습니다."));
 
         Member member = memberFinder.getMember(session);
         Comment createdComment = Comment.createComment(comment, member, recipe);
@@ -62,7 +64,7 @@ public class CommentService {
 
     @Transactional
     public void update(Long commentId, CommentForm form) {
-        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글입니다."));
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new FindCommentException("존재하지 않는 댓글입니다."));
         comment.setContent(form.getContent());
     }
 

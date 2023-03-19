@@ -50,14 +50,9 @@ public class CommentApiController {
     @PostMapping
     public CommentDto create(@Valid @RequestBody CommentForm form, HttpSession session) {
 
-        CommentDto commentDto;
-        try {
-            Long commentId = commentService.create(form, session);
-            Comment comment = commentService.findOneById(commentId);
-            commentDto = new CommentDto(commentId, comment.getContent(), comment.getRegDate(), comment.getMember().getId(), comment.getMember().getLoginId());
-        } catch (IllegalArgumentException e) {
-            throw new FindRecipeException(e.getMessage());
-        }
+        Long commentId = commentService.create(form, session);
+        Comment comment = commentService.findOneById(commentId);
+        CommentDto commentDto = new CommentDto(commentId, comment.getContent(), comment.getRegDate(), comment.getMember().getId(), comment.getMember().getLoginId());
 
         return commentDto;
     }
@@ -65,13 +60,8 @@ public class CommentApiController {
     @PutMapping("/{commentId}")
     public Map<String, Object> update(@PathVariable Long commentId, @RequestBody @Valid CommentForm form) {
 
+        commentService.update(commentId, form);
         Map<String, Object> map = new HashMap<>();
-
-        try {
-            commentService.update(commentId, form);
-        } catch (IllegalArgumentException e) {
-            throw new FindCommentException(e.getMessage());
-        }
         map.put("success", true);
         return map;
     }

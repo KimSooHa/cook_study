@@ -1,6 +1,5 @@
 package com.study.cook.service;
 
-import com.study.cook.controller.RecipeFieldForm;
 import com.study.cook.domain.Member;
 import com.study.cook.domain.Photo;
 import com.study.cook.domain.Recipe;

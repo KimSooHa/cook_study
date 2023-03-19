@@ -35,6 +35,13 @@ public class ExceptionHandlerController {
         return resultVO;
     }
 
+    @ExceptionHandler({ReserveFailException.class})
+    public ResultVO runtimeExHandle(RuntimeException e) {
+        ResultVO resultVO = new ResultVO();
+        resultVO.setMsg(e.getMessage());
+        return resultVO;
+    }
+
 
     // @Valid 예외
     @ExceptionHandler

@@ -5,6 +5,7 @@ import com.study.cook.domain.Member;
 import com.study.cook.exception.FindCookingRoomException;
 import com.study.cook.exception.FindReservationException;
 import com.study.cook.exception.FindScheduleException;
+import com.study.cook.exception.ReserveFailException;
 import com.study.cook.service.ReservationService;
 import com.study.cook.util.MemberFinder;
 import com.study.cook.util.ResultVO;
@@ -32,11 +33,7 @@ public class ReservationApiController {
     public ResultVO reserve(@RequestBody @Valid ReservationForm reservationForm, HttpSession session) {
 
         Member member = memberFinder.getMember(session);
-        try {
-            reservationService.create(reservationForm, member);
-        } catch (NoSuchElementException e) {
-            throw new FindScheduleException("등록에 실패했습니다.");
-        }
+        reservationService.create(reservationForm, member);
 
         return new ResultVO("등록에 성공했습니다.", "/cooking-rooms/reservations", true);
     }
@@ -45,15 +42,7 @@ public class ReservationApiController {
     public ResultVO update(@PathVariable Long reservationId, @RequestBody @Valid ReservationForm reservationForm, HttpSession session) {
 
         Member member = memberFinder.getMember(session);
-        try {
-            reservationService.update(reservationId, reservationForm, member);
-        } catch (FindScheduleException e) {
-            throw new FindScheduleException("수정 실패:" + e.getMessage());
-        } catch (FindReservationException e) {
-            throw new FindReservationException("수정 실패: " + e.getMessage());
-        } catch (FindCookingRoomException e) {
-            throw new FindCookingRoomException("수정 실패: " + e.getMessage());
-        }
+        reservationService.update(reservationId, reservationForm, member);
 
         return new ResultVO("수정하였습니다!", "/cooking-rooms/reservations", true);
     }

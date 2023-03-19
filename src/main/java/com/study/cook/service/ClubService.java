@@ -94,7 +94,7 @@ public class ClubService {
 
     @Transactional
     public void update(Long clubId, ClubForm form) {
-        Club club = clubRepository.findById(clubId).orElseThrow(() -> new IllegalArgumentException("해당 쿡스터디가 존재하지 않습니다."));
+        Club club = clubRepository.findById(clubId).orElseThrow(() -> new FindClubException("수정 실패: 해당 쿡스터디가 존재하지 않습니다."));
         club.setName(form.getName());
         club.setIntroduction(form.getIntroduction());
         club.setMaxCount(form.getMaxCount());

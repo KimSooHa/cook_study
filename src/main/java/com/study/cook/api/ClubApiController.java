@@ -1,7 +1,6 @@
 package com.study.cook.api;
 
 import com.study.cook.controller.ClubForm;
-import com.study.cook.exception.FindClubException;
 import com.study.cook.service.ClubService;
 import com.study.cook.util.ResultVO;
 import lombok.RequiredArgsConstructor;
@@ -29,12 +28,7 @@ public class ClubApiController {
     @PutMapping("/{clubId}")
     public ResultVO update(@PathVariable Long clubId, @RequestBody @Valid ClubForm form) {
 
-        try {
-            clubService.update(clubId, form);
-        } catch (IllegalArgumentException e) {
-            throw new FindClubException("수정 실패: " + e.getMessage());
-        }
-
+        clubService.update(clubId, form);
         return new ResultVO("수정하였습니다!", "/clubs/" + clubId + "/detail", true);
     }
 }

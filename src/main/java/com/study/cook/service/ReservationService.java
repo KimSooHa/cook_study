@@ -5,10 +5,12 @@ import com.study.cook.domain.*;
 import com.study.cook.exception.FindCookingRoomException;
 import com.study.cook.exception.FindReservationException;
 import com.study.cook.exception.FindScheduleException;
+import com.study.cook.exception.ReserveFailException;
 import com.study.cook.repository.CookingRoomRepository;
 import com.study.cook.repository.ReservationRepository;
 import com.study.cook.repository.ScheduleRepository;
 import com.study.cook.util.DateParser;
+import com.study.cook.util.MemberFinder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +34,7 @@ public class ReservationService {
     private final ScheduleRepository scheduleRepository;
     private final ReservationRepository reservationRepository;
     private final DateParser dateParser;
+    private final MemberFinder memberFinder;
 
     /**
      * 요리실 예약
@@ -41,11 +44,19 @@ public class ReservationService {
 
         List<Long> reservationIds = new ArrayList<>();
 
+        // 예약 갯수 10개 이상이면 못함
+        Optional<List<Reservation>> recentReservations = findByMemberAndDateGt(member, LocalDateTime.now());
+        if (recentReservations.isPresent()) {
+            if (recentReservations.get().size() + form.getScheduleIds().size() >= 10) {
+                throw new ReserveFailException("전체 예약가능 수를 초과하였습니다. 현재 예약 가능 수는 " + (10-recentReservations.get().size()) + "개 입니다.");
+            }
+        }
+
         for (Long scheduleId : form.getScheduleIds()) {
 
             // 문자를 날짜로 파싱
             LocalDate date = LocalDate.parse(form.getDate());
-            Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(() -> new NoSuchElementException("no such data"));
+            Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(() -> new FindScheduleException("등록 실패: 해당 시간을 찾을 수 없습니다."));
             LocalTime startTime = schedule.getStartTime();
             LocalTime endTime = schedule.getEndTime();
 
@@ -108,17 +119,17 @@ public class ReservationService {
         // 문자를 날짜로 파싱
         LocalDate date = LocalDate.parse(form.getDate());
 
-        Schedule schedule = scheduleRepository.findById(form.getScheduleIds().get(0)).orElseThrow(() -> new FindScheduleException("해당 시간을 찾을 수 없습니다."));
+        Schedule schedule = scheduleRepository.findById(form.getScheduleIds().get(0)).orElseThrow(() -> new FindScheduleException("수정 실패: 해당 시간을 찾을 수 없습니다."));
         LocalTime startTime = schedule.getStartTime();
         LocalTime endTime = schedule.getEndTime();
 
         LocalDateTime startDateTime = dateParser.parseToDateTime(date, startTime);
         LocalDateTime endDateTime = dateParser.parseToDateTime(date, endTime);
 
-        Reservation reservation = reservationRepository.findById(id).orElseThrow(() -> new FindReservationException("예약을 찾을 수 없습니다."));
+        Reservation reservation = reservationRepository.findById(id).orElseThrow(() -> new FindReservationException("수정 실패: 예약을 찾을 수 없습니다."));
         reservation.setStartDateTime(startDateTime);
         reservation.setEndDateTime(endDateTime);
-        CookingRoom cookingRoom = cookingRoomRepository.findById(form.getCookingRoomId()).orElseThrow(() -> new FindCookingRoomException("해당 요리실을 찾을 수 없습니다."));
+        CookingRoom cookingRoom = cookingRoomRepository.findById(form.getCookingRoomId()).orElseThrow(() -> new FindCookingRoomException("수정 실패: 해당 요리실을 찾을 수 없습니다."));
         reservation.setCookingRoom(cookingRoom);
 
     }

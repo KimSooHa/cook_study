@@ -17,13 +17,11 @@ public class MemberApiController {
 
     @GetMapping("/valid-email")
     public Long emailCheck(@RequestParam("email") String email) {
-        log.info("emailCnt={}", memberService.countByEmail(email));
         return memberService.countByEmail(email);
     }
 
     @GetMapping("/valid-loginId")
     public Long loginIdCheck(@RequestParam("loginId") String loginId) {
-        log.info("loginIdCnt={}", memberService.countByLoginId(loginId));
         return memberService.countByLoginId(loginId);
     }
 
