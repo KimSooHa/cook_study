@@ -7,7 +7,6 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -18,7 +17,7 @@ public class MemberForm {
     private String name;
 
     @NotBlank(message = "아이디를 작성해주세요.")
-    @Pattern(regexp = "^[a-zA-Z]{1}[a-zA-Z0-9_]{4,11}$", message = "아이디 형식에 맞지 않습니다.")
+    @Pattern(regexp = "^[a-zA-Z]{1}[a-zA-Z0-9_-]{4,11}$", message = "아이디 형식에 맞지 않습니다.")
     @Size(max = 10, message = "아이디는 최대 10자까지 가능합니다.")
     private String loginId;
 
@@ -29,6 +28,7 @@ public class MemberForm {
 
     @NotBlank(message = "이메일을 작성해주세요.")
     @Email(message = "이메일 형식에 맞지 않습니다.")
+    @Size(max = 320, message = "이메일은 최대 320자 이하여야 합니다.")
     private String email;
 
     @NotBlank(message = "휴대폰 번호를 작성해주세요.")

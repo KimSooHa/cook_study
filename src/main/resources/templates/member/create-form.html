@@ -57,48 +57,56 @@
                 <div class="input-box">
                     <label th:for="name">이름</label>
                     <input type="text" th:field="*{name}" class="form-control" placeholder="이름을 입력하세요"
-                        th:class="${#fields.hasErrors('name')}? 'form-control fieldError' : 'form-control'" required>
+                        th:class="${#fields.hasErrors('name')}? 'form-control fieldError' : 'form-control'" required
+                        oninput="checkName()">
                 </div>
-                <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Incorrect date</p>
+                <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}">이름이 형식에 맞지 않습니다.</p>
+                <p class="name-invalid d-none">이름이 형식에 맞지 않습니다.</p>
             </div>
             <div class="form-group">
                 <div class="input-box">
                     <label th:for="loginId">아이디</label>
                     <input type="text" th:field="*{loginId}" class="form-control" placeholder="아이디를 입력하세요"
-                        th:class="${#fields.hasErrors('loginId')}? 'form-control fieldError' : 'form-control'" required oninput="checkLoginId()">
+                        th:class="${#fields.hasErrors('loginId')}? 'form-control fieldError' : 'form-control'" required
+                        oninput="checkLoginId()">
                 </div>
-                <p class="id-valid d-none">사용 가능한 아이디입니다.</p>
-                <p class="id-invalid d-none">이미 사용중인 아이디입니다.</p>
                 <p th:if="${#fields.hasErrors('loginId')}" th:errors="*{loginId}">존재하는 아이디입니다.</p>
+                <p class="id-valid d-none">사용 가능한 아이디입니다.</p>
+                <p class="id-invalid d-none">아이디가 형식에 맞지 않습니다.</p>
+                <p class="id-origin d-none">이미 사용중인 아이디입니다.</p>
             </div>
             <div class="form-group">
                 <div class="input-box">
                     <label th:for="pwd">비밀번호</label>
-                    <input type="text" th:field="*{pwd}" class="form-control" placeholder="비밀번호를 입력하세요"
-                        th:class="${#fields.hasErrors('pwd')}? 'form-control fieldError' : 'form-control'" required>
+                    <input type="password" th:field="*{pwd}" class="form-control" placeholder="비밀번호를 입력하세요"
+                        th:class="${#fields.hasErrors('pwd')}? 'form-control fieldError' : 'form-control'" required oninput="checkPwd()">
                 </div>
                 <p th:if="${#fields.hasErrors('pwd')}" th:errors="*{pwd}">비밀번호가 형식에 맞지 않습니다.</p>
+                <p class="pwd-invalid d-none">비밀번호가 형식에 맞지 않습니다.</p>
             </div>
             <div class="form-group">
                 <div class="input-box">
                     <label th:for="email">이메일</label>
                     <input type="email" th:field="*{email}" class="form-control" placeholder="이메일을 입력하세요"
-                        th:class="${#fields.hasErrors('email')}? 'form-control fieldError' : 'form-control'" required oninput="checkEmail()">
+                        th:class="${#fields.hasErrors('email')}? 'form-control fieldError' : 'form-control'" required
+                        oninput="checkEmail()">
                 </div>
                 <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}">이메일 형식에 맞지 않습니다.</p>
                 <p class="email-valid d-none">사용 가능한 이메일입니다.</p>
-                <p class="email-invalid d-none">이미 사용중인 이메일입니다.</p>
+                <p class="email-invalid d-none">이메일이 형식에 맞지 않습니다.</p>
+                <p class="email-origin d-none">이미 사용중인 이메일입니다.</p>
             </div>
             <div class="form-group">
                 <div class="input-box">
                     <label th:for="phoneNum">휴대폰 번호</label>
-                    <input type="tel" th:field="*{phoneNum}" class="form-control" placeholder="휴대폰 번호를 입력하세요"
-                        th:class="${#fields.hasErrors('phoneNum')}? 'form-control fieldError' : 'form-control'" required oninput="checkPhoneNum()">
+                    <input type="tel" th:field="*{phoneNum}" class="form-control" placeholder="'-'를 포함하여 입력해주세요"
+                        th:class="${#fields.hasErrors('phoneNum')}? 'form-control fieldError' : 'form-control'" required
+                        oninput="checkPhoneNum()">
                 </div>
-                <p th:if="${#fields.hasErrors('phoneNum')}" th:errors="*{phoneNum}">휴대폰 번호 형식에 맞지 않습니다.</p>
+                <p th:if="${#fields.hasErrors('phoneNum')}" th:errors="*{phoneNum}">휴대폰 번호가 형식에 맞지 않습니다.</p>
                 <p class="phone-valid d-none">사용 가능한 휴대폰 번호입니다.</p>
-                <p class="phone-invalid d-none">이미 사용중인 휴대폰 번호입니다.</p>
-                <p class="phone-origin d-none">기존 휴대폰 번호입니다.</p>
+                <p class="phone-invalid d-none">휴대폰 번호가 형식에 맞지 않습니다.</p>
+                <p class="phone-origin d-none">이미 사용중인 휴대폰 번호입니다.</p>
             </div>
             <div class="edit-box">
                 <button type="submit" class="btn btn-strong btn-default btn-submit">회원가입</button>
@@ -107,6 +115,7 @@
         <br />
     </section> <!-- /container -->
 </main>
+<script th:inline="javascript" layout:fragment="script" th:src="@{/script/valid-check.js}"></script>
 <script th:inline="javascript" layout:fragment="script">
 
     /* <![CDATA[ */
@@ -127,20 +136,39 @@
 
 
     submitBtn.onclick = (e) => {
+        const invalidName = document.querySelector(".name-invalid");
         const validId = document.querySelector(".id-valid");
-        const invalidId = document.querySelector(".id-invalid");
         const validEmail = document.querySelector(".email-valid");
-        const invalidEmail = document.querySelector(".email-invalid");
+        const invalidPwd = document.querySelector(".pwd-invalid");
         const validPhone = document.querySelector(".phone-valid");
-        const invalidPhone = document.querySelector(".phone-invalid");
 
-        if ((validId.classList.contains("d-none") && !invalidId.classList.contains("d-none"))  || (validEmail.classList.contains("d-none") && !invalidEmail.classList.contains("d-none"))
-        || (validPhone.classList.contains("d-none") && !invalidPhone.classList.contains("d-none"))) {
-            alert("기존에 존재하는 아이디 혹은 이메일입니다.");
+        if (!invalidName.classList.contains("d-none") || validId.classList.contains("d-none") || validEmail.classList.contains("d-none")
+            || validPhone.classList.contains("d-none") || !invalidPwd.classList.contains("d-none")) {
+            alert("입력칸을 다시 확인해주세요.");
             e.preventDefault();
             return;
         }
 
+    }
+
+    function checkName() {
+        let name = document.querySelector("#name").value;
+        const invalid = document.querySelector(".name-invalid");
+
+        if (!validNameCheck(name))
+            invalid.classList.remove("d-none");
+        else
+            invalid.classList.add("d-none");
+    }
+
+    function checkPwd() {
+        let pwd = document.querySelector("#pwd").value;
+        const invalid = document.querySelector(".pwd-invalid");
+
+        if (!validPawwsordCheck(pwd))
+            invalid.classList.remove("d-none");
+        else
+            invalid.classList.add("d-none");
     }
 
     function checkLoginId() {
@@ -149,12 +177,10 @@
         const request = new XMLHttpRequest();
         let type = "GET";
         let url = "/valid-loginId?loginId=" + loginId;
-        // let emailJson = new Object();
-        // emailJson.email = email;
-        // let json = JSON.stringify(emailJson);
 
         const valid = document.querySelector(".id-valid");
         const invalid = document.querySelector(".id-invalid");
+        const origin = document.querySelector(".id-origin");
 
         request.onreadystatechange = () => {
             if (request.readyState != XMLHttpRequest.DONE)
@@ -164,26 +190,26 @@
             console.log(response);
 
             if (response == 1) {
-                invalid.classList.remove("d-none");
+                console.log(validIdCheck(loginId));
                 valid.classList.add("d-none");
+                invalid.classList.add("d-none");
+                origin.classList.remove("d-none");
+            }
+            else if (!validIdCheck(loginId)) {
+                valid.classList.add("d-none");
+                origin.classList.add("d-none");
+                invalid.classList.remove("d-none");
             }
             else {
-                valid.classList.remove("d-none");
                 invalid.classList.add("d-none");
+                origin.classList.add("d-none");
+                valid.classList.remove("d-none");
             }
-
-
         }
 
         /* Post 방식으로 요청 */
         request.open(type, url);    // 요청 초기화
-        /* Response Type을 Json으로 사전 정의 */
-        // request.responseType = "json";
-        /* 요청 Header에 컨텐츠 타입은 Json으로 사전 정의 */
-        // request.setRequestHeader('content-type', 'application/json');
-        /* 정의된 서버에 Json 형식의 요청 Data를 포함하여 요청을 전송 */
         request.send();
-
     }
 
     function checkEmail() {
@@ -192,12 +218,10 @@
         const request = new XMLHttpRequest();
         let type = "GET";
         let url = "/valid-email?email=" + email;
-        // let emailJson = new Object();
-        // emailJson.email = email;
-        // let json = JSON.stringify(emailJson);
 
         const valid = document.querySelector(".email-valid");
         const invalid = document.querySelector(".email-invalid");
+        const origin = document.querySelector(".email-origin");
 
         request.onreadystatechange = () => {
             if (request.readyState != XMLHttpRequest.DONE)
@@ -207,12 +231,20 @@
             console.log(response);
 
             if (response == 1) {
-                invalid.classList.remove("d-none");
+                console.log(validEmailCheck(email));
                 valid.classList.add("d-none");
+                invalid.classList.add("d-none");
+                origin.classList.remove("d-none");
+            }
+            else if (!validEmailCheck(email)) {
+                valid.classList.add("d-none");
+                origin.classList.add("d-none");
+                invalid.classList.remove("d-none");
             }
             else {
-                valid.classList.remove("d-none");
                 invalid.classList.add("d-none");
+                origin.classList.add("d-none");
+                valid.classList.remove("d-none");
             }
 
 
@@ -220,11 +252,6 @@
 
         /* Post 방식으로 요청 */
         request.open(type, url);    // 요청 초기화
-        /* Response Type을 Json으로 사전 정의 */
-        // request.responseType = "json";
-        /* 요청 Header에 컨텐츠 타입은 Json으로 사전 정의 */
-        // request.setRequestHeader('content-type', 'application/json');
-        /* 정의된 서버에 Json 형식의 요청 Data를 포함하여 요청을 전송 */
         request.send();
     }
 
@@ -233,10 +260,10 @@
         const request = new XMLHttpRequest();
         let type = "GET";
         let url = "/valid-phoneNum?phoneNum=" + phone;
-        // let json = JSON.stringify(emailJson);
 
         const valid = document.querySelector(".phone-valid");
         const invalid = document.querySelector(".phone-invalid");
+        const origin = document.querySelector(".phone-origin");
 
         request.onreadystatechange = () => {
             if (request.readyState != XMLHttpRequest.DONE)
@@ -246,16 +273,19 @@
             console.log(response);
 
             if (response == 1) {
-                if (phone == [[${ memberForm.phoneNum }]]) {
-                    valid.classList.remove("d-none");
-                    return;
-                }
-
-                invalid.classList.remove("d-none");
+                console.log(validPhoneNumCheck(phone));
                 valid.classList.add("d-none");
+                invalid.classList.add("d-none");
+                origin.classList.remove("d-none");
+            }
+            else if (!validPhoneNumCheck(phone)) {
+                valid.classList.add("d-none");
+                origin.classList.add("d-none");
+                invalid.classList.remove("d-none");
             }
             else {
                 invalid.classList.add("d-none");
+                origin.classList.add("d-none");
                 valid.classList.remove("d-none");
             }
         }
@@ -265,7 +295,8 @@
         request.send();
     }
 
-/* ]]> */
+    /* ]]> */
 </script>
 <div th:replace="inc/footer :: footer"></div>
+
 </html>
