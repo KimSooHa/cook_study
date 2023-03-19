@@ -4,6 +4,7 @@ import com.study.cook.controller.ClubForm;
 import com.study.cook.domain.*;
 import com.study.cook.dto.ClubListDto;
 import com.study.cook.dto.SearchCondition;
+import com.study.cook.exception.FindClubException;
 import com.study.cook.repository.ClubRepository;
 import com.study.cook.util.MemberFinder;
 import lombok.RequiredArgsConstructor;
@@ -50,7 +51,7 @@ public class ClubService {
         clubRepository.save(createdClub);
 
         // 쿡스터디 참여
-        participationService.create(club, member);
+        participationService.tryToCreate(club.getId(), member);
 
         return club.getId();
     }
@@ -74,7 +75,7 @@ public class ClubService {
      * 그룹 조회
      */
     public Club findOneById(Long clubId) {
-        return clubRepository.findById(clubId).orElse(null);
+        return clubRepository.findById(clubId).orElseThrow(() -> new FindClubException("해당 쿡스터디가 존재하지 않습니다."));
     }
 
     /**

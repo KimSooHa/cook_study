@@ -4,6 +4,8 @@ import com.study.cook.domain.Club;
 import com.study.cook.domain.ClubStatus;
 import com.study.cook.domain.Member;
 import com.study.cook.domain.Participation;
+import com.study.cook.exception.FindClubException;
+import com.study.cook.exception.ParticipateFailException;
 import com.study.cook.service.ClubService;
 import com.study.cook.service.ParticipationService;
 import com.study.cook.util.MemberFinder;
@@ -37,21 +39,23 @@ public class ParticipationController {
     public String reserve(@PathVariable Long clubId, HttpSession session, RedirectAttributes redirectAttributes) {
 
         Member member = memberFinder.getMember(session);
-        Club club = clubService.findOneById(clubId);
+        synchronized (this) {
+            redirectAttributes.addAttribute("clubId", clubId);
 
+            try {
+                participationService.tryToCreate(clubId, member);
+            } catch (FindClubException e) {
+                redirectAttributes.addFlashAttribute("msg", e.getMessage());
+                return "redirect:/clubs/list";
+            } catch (ParticipateFailException e) {
+                redirectAttributes.addFlashAttribute("msg", e.getMessage());
+                return "redirect:/clubs/{clubId}/detail";
+            }
 
-        // 인원이 다 차지 않았으면 참여
-        if (club.getStatus() == ClubStatus.POS) {
-            participationService.create(club, member);
             // 참여 성공
             redirectAttributes.addFlashAttribute("msg", "참여되었습니다.");
-        } else {
-            redirectAttributes.addFlashAttribute("msg", "정원이 다 찼습니다.");
+            return "redirect:/clubs/{clubId}/detail";
         }
-
-
-        redirectAttributes.addAttribute("clubId", clubId);
-        return "redirect:/clubs/{clubId}/detail";
     }
 
 
