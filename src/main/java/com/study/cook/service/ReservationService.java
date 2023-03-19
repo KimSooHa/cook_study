@@ -47,7 +47,7 @@ public class ReservationService {
         // 예약 갯수 10개 이상이면 못함
         Optional<List<Reservation>> recentReservations = findByMemberAndDateGt(member, LocalDateTime.now());
         if (recentReservations.isPresent()) {
-            if (recentReservations.get().size() + form.getScheduleIds().size() >= 10) {
+            if (recentReservations.get().size() + form.getScheduleIds().size() > 10) {
                 throw new ReserveFailException("전체 예약가능 수를 초과하였습니다. 현재 예약 가능 수는 " + (10-recentReservations.get().size()) + "개 입니다.");
             }
         }
