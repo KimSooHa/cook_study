@@ -7,6 +7,13 @@ spring:
 #    password:
 #    driver-class-name: org.h2.Driver
 #
+  datasource:
+    username: root
+    password: 12341234
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost:3306/cook_study
+  messages:
+    basename: messages,errors  # 에러메시지
 #
 #  jpa:
 #    hibernate:
@@ -20,3 +27,6 @@ logging:
   level:
     org.hibernate.SQL: debug
 #    org.hibernate.type: trace #띄어쓰기 2칸
+
+file:
+  dir: /Users/sooha/SpringWorkspace/cook/files/

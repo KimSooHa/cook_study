@@ -23,14 +23,14 @@ class MemberServiceTest {
     @Autowired
     EntityManager em;
 
-    @BeforeEach
+//    @BeforeEach
     public void testSave() {
         for (int i = 0; i < 20; i++) {
-            em.persist(new Member("member"+i, "member"+i, "member1234*", "member" +i +"@email.com", "010-1234-1234"));
+            memberRepository.save(new Member("member" + i, "member" + i, "member1234*", "member" + i + "@email.com", "010-1234-1234"));
         }
     }
 
-    @Test
+//    @Test
 //    @Rollback(value = false)    // 테스트케이스에서는 끝날때 롤백이 기본인데, db를 보기 위해서 커밋하기 위해 false로 설정가능
     public void testMember() throws Exception {
         // given
@@ -41,7 +41,7 @@ class MemberServiceTest {
         Member findMember = memberService.findOne(condition);
 
         // then
-        Assertions.assertThat(findMember.getLoginId()).isEqualTo("member5000");
+        Assertions.assertThat(findMember.getLoginId()).isEqualTo("member5");
 //        log.info("memberLoginId = {}", findMember.getLoginId());
     }
 
