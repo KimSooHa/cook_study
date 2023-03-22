@@ -13,7 +13,7 @@ import static javax.persistence.FetchType.LAZY;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(of = {"id", "img", "content"})
+@ToString(of = {"id", "content"})
 public class RecipeField {
 
     @Id

@@ -14,7 +14,7 @@ import static javax.persistence.FetchType.LAZY;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(of = {"id", "title", "introduction", "img", "ingredients", "cookingTime", "servings", "regDate"})
+@ToString(of = {"id", "title", "introduction", "ingredients", "cookingTime", "servings", "regDate"})
 public class Recipe {
 
     @Id
