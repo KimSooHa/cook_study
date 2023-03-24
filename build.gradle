@@ -45,7 +45,7 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testCompileOnly 'org.projectlombok:lombok'
 	testAnnotationProcessor 'org.projectlombok:lombok'
-	implementation ('org.mariadb.jdbc:mariadb-java-client')	// mariaDB
+//	implementation ('org.mariadb.jdbc:mariadb-java-client')	// mariaDB
 
 	//querydsl 추가
 	implementation 'com.querydsl:querydsl-jpa' //querydsl 추가
