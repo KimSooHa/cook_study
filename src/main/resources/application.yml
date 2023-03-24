@@ -1,6 +1,4 @@
 spring:
-#  profiles:
-#    active: local
   datasource:
     username: root
     password: 12341234
@@ -8,7 +6,6 @@ spring:
     url: jdbc:mariadb://localhost:3306/cook_study
   messages:
     basename: messages,errors  # 에러메시지
-
 
   data:
     web:
@@ -23,7 +20,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update  # create: 자동으로 테이블 만들어줌
+      ddl-auto: update  # 2: 자동으로 테이블 만들어줌
     properties:
       hibernate:
         #        show_sql: true
@@ -44,3 +41,15 @@ server:
 
 file:
   dir: /Users/sooha/SpringWorkspace/cook/files/
+
+---
+spring:
+  config:
+    active:
+      on-profile: real
+  datasource:
+    url: jdbc:mariadb://springboot-webservice.c2fnuqugf4lp.ap-northeast-2.rds.amazonaws.com:3306/webservice
+    username: sooha
+    password: tngk1996*
+    driver-class-name: org.mariadb.jdbc.Driver
+
