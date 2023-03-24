@@ -20,7 +20,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update  # 2: 자동으로 테이블 만들어줌
+      ddl-auto: update  # create: 자동으로 테이블 만들어줌
     properties:
       hibernate:
         #        show_sql: true
@@ -52,4 +52,6 @@ spring:
     username: sooha
     password: tngk1996*
     driver-class-name: org.mariadb.jdbc.Driver
-
+  jpa:
+    hibernate:
+      ddl-auto: validate
