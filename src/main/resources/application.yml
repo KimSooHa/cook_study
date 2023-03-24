@@ -45,7 +45,7 @@ file:
 ---
 spring:
   config:
-    active:
+    activate:
       on-profile: real
   datasource:
     url: jdbc:mariadb://springboot-webservice.c2fnuqugf4lp.ap-northeast-2.rds.amazonaws.com:3306/webservice
