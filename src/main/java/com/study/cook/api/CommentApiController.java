@@ -3,8 +3,6 @@ package com.study.cook.api;
 import com.study.cook.controller.CommentForm;
 import com.study.cook.domain.Comment;
 import com.study.cook.dto.CommentDto;
-import com.study.cook.exception.FindCommentException;
-import com.study.cook.exception.FindRecipeException;
 import com.study.cook.service.CommentService;
 import com.study.cook.util.DateParser;
 import lombok.RequiredArgsConstructor;
