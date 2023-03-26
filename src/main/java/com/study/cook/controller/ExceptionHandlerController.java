@@ -1,6 +1,7 @@
 package com.study.cook.controller;
 
-import com.study.cook.exception.*;
+import com.study.cook.exception.ReserveFailException;
+import com.study.cook.exception.SelectMissException;
 import com.study.cook.util.ResultVO;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -19,7 +20,7 @@ public class ExceptionHandlerController {
         return resultVO;
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(NoSuchElementException.class)
     public ResultVO reserveExHandle(NoSuchElementException e) {
         ResultVO resultVO = new ResultVO();
         resultVO.setMsg(e.getMessage());
@@ -27,8 +28,7 @@ public class ExceptionHandlerController {
     }
 
     // 데이터 찾기 예외
-    @ExceptionHandler({FindClubException.class, FindCommentException.class, FindRecipeException.class,
-            FindScheduleException.class, FindReservationException.class, FindCookingRoomException.class})
+    @ExceptionHandler(IllegalArgumentException.class)
     public ResultVO findExHandle(IllegalArgumentException e) {
         ResultVO resultVO = new ResultVO();
         resultVO.setMsg(e.getMessage());
