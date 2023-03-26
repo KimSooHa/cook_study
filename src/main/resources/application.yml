@@ -1,6 +1,6 @@
 spring:
-  profiles:
-    active: real
+#  profiles:
+#    active: local
   messages:
     basename: messages,errors  # 에러메시지
 
@@ -41,9 +41,8 @@ file:
 
 ---
 spring:
-  config:
-    activate:
-      on-profile: local
+  profiles:
+    active: local
   datasource:
     username: root
     password: 12341234
@@ -62,3 +61,6 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
+server:
+  port: 8081
+---
