@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    active: real
   messages:
     basename: messages,errors  # 에러메시지
 
