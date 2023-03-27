@@ -6,6 +6,7 @@ import com.study.cook.domain.Recipe;
 import com.study.cook.domain.RecipeField;
 import com.study.cook.exception.StoreFailException;
 import com.study.cook.file.FileStore;
+import com.study.cook.repository.PhotoRepository;
 import com.study.cook.repository.RecipeFieldRepository;
 import com.study.cook.repository.RecipeRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ import java.util.Optional;
 public class RecipeFieldService {
     private final RecipeRepository recipeRepository;
     private final RecipeFieldRepository recipeFieldRepository;
+    private final PhotoRepository photoRepository;
     private final FileStore fileStore;
 
     /**
@@ -86,16 +88,18 @@ public class RecipeFieldService {
             recipeField.setContent(fieldForms.get(i));
             if (imgIndexes.isPresent() && imgIndexes.get().contains(i)) {
                 Photo photo = null;
+                Photo originPhoto = recipeField.getPhoto();
                 try {
                     // 기존 파일 삭제
-                    fileStore.deleteFile(recipeField.getPhoto().getStoreFileName());
+                    fileStore.deleteFile(originPhoto.getStoreFileName());
                     photo = fileStore.storeFile(files.get().get(cnt));
+
                 } catch (IOException e) {
                     throw new StoreFailException(e);
                 }
                 // 새로운 이미지 파일 세팅
-                recipeField.setPhoto(photo);
-                Photo.createPhoto(photo, recipeField);
+                originPhoto.setStoreFileName(photo.getStoreFileName());
+                originPhoto.setUploadFileName(photo.getUploadFileName());
                 cnt++;
             }
         }

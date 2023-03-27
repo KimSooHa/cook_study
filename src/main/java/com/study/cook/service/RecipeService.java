@@ -10,6 +10,7 @@ import com.study.cook.dto.RecipeListDto;
 import com.study.cook.dto.SearchCondition;
 import com.study.cook.exception.StoreFailException;
 import com.study.cook.file.FileStore;
+import com.study.cook.repository.PhotoRepository;
 import com.study.cook.repository.RecipeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,6 +29,7 @@ import java.util.Optional;
 public class RecipeService {
     private final CategoryService categoryService;
     private final RecipeRepository recipeRepository;
+    private final PhotoRepository photoRepository;
     private final FileStore fileStore;
 
     /**
@@ -40,7 +42,7 @@ public class RecipeService {
         try {
             photo = fileStore.storeFile(file);
         } catch (IOException e) {
-            throw new StoreFailException("등록 실패: 이미지 파일 저장 실패");
+            throw new StoreFailException("등록 실패: 이미지 파일 저장 실패", e);
         }
 
         Category category = categoryService.findOneById(form.getCategoryId());
@@ -94,13 +96,15 @@ public class RecipeService {
                 photo = fileStore.storeFile(file.get());
             }
         } catch (IOException e) {
-            throw new StoreFailException("등록 실패: 이미지 파일 저장 실패");
+            throw new StoreFailException("등록 실패: 이미지 파일 저장 실패", e);
         }
 
-        // 기존 파일 삭제
         if (photo != null) {
-            fileStore.deleteFile(recipe.getPhoto().getStoreFileName());
-            recipe.setPhoto(photo);
+            Photo originPhoto = recipe.getPhoto();
+            // 기존 파일 삭제
+            fileStore.deleteFile(originPhoto.getStoreFileName());
+            recipe.getPhoto().setUploadFileName(photo.getUploadFileName());
+            recipe.getPhoto().setStoreFileName(photo.getStoreFileName());
         }
 
         Category category = categoryService.findOneById(form.getCategoryId());
