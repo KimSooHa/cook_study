@@ -21,7 +21,7 @@ public class CookingRoomService {
     /**
      * 요리실 등록
      */
-    @Transactional  // 변경해야 하기 때문에 읽기, 쓰기가 가능해야 함
+    @Transactional
     public Long create(CookingRoom cookingRoom, List<Schedule> schedules) {
 
         for (Schedule schedule : schedules) {
@@ -47,17 +47,17 @@ public class CookingRoomService {
      * 단건 조회
      */
     public CookingRoom findOneById(Long cookingRoomId) {
-        return cookingRoomRepository.findById(cookingRoomId).orElse(null);
+        return cookingRoomRepository.findById(cookingRoomId).orElseThrow(() -> new IllegalArgumentException("no such data"));
     }
 
     public CookingRoom findOneByRoomNum(int roomNum) {
-        return cookingRoomRepository.findByRoomNum(roomNum).orElse(null);
+        return cookingRoomRepository.findByRoomNum(roomNum).orElseThrow(() -> new IllegalArgumentException("no such data"));
     }
 
 
     @Transactional
     public void update(Long id, int maxCount, int roomNum) {
-        CookingRoom cookingRoom = cookingRoomRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("no such data"));
+        CookingRoom cookingRoom = findOneById(id);
         cookingRoom.setMaxCount(maxCount);
         cookingRoom.setRoomNum(roomNum);
     }

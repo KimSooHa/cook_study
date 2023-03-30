@@ -39,10 +39,8 @@ public class ReservationApiController {
     }
 
     @PutMapping("/reservation/{reservationId}")
-    public ResultVO update(@PathVariable Long reservationId, @RequestBody @Valid ReservationForm reservationForm, HttpSession session) {
-
-        Member member = memberFinder.getMember(session);
-        reservationService.update(reservationId, reservationForm, member);
+    public ResultVO update(@PathVariable Long reservationId, @RequestBody @Valid ReservationForm reservationForm) {
+        reservationService.update(reservationId, reservationForm);
 
         return new ResultVO("수정하였습니다!", "/cooking-rooms/reservations", true);
     }

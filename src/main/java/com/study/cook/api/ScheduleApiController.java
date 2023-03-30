@@ -46,7 +46,7 @@ public class ScheduleApiController {
                     Schedule reservedSchedule = scheduleService.findListByCookingRoomAndStartTime(cookingRoom, time);
 
                     Long id = reservedSchedule.getId();
-                    if (schedule.getId() == id)
+                    if (schedule.getId().equals(id))
                         reservedIdList.add(id);
                 }
             }

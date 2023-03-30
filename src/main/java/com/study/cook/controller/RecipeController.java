@@ -8,7 +8,6 @@ import com.study.cook.dto.RecipeDto;
 import com.study.cook.dto.RecipeFieldDto;
 import com.study.cook.dto.RecipeListDto;
 import com.study.cook.dto.SearchCondition;
-import com.study.cook.file.FileStore;
 import com.study.cook.service.CategoryService;
 import com.study.cook.service.RecipeFieldService;
 import com.study.cook.service.RecipeService;

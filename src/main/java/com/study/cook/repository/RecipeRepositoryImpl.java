@@ -115,9 +115,4 @@ public class RecipeRepositoryImpl implements RecipeRepositoryCustom {
         return StringUtils.hasText(title) ? recipe.title.contains(title) : null;
     }
 
-//    private BooleanExpression orderByDesc(String commentCount, String heartCount, String regDate) {
-//        return regDate != null ? recipe.regDate.desc() : null;
-//    }
-
-
 }

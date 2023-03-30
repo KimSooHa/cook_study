@@ -1,7 +1,10 @@
 package com.study.cook.service;
 
 import com.study.cook.controller.ClubForm;
-import com.study.cook.domain.*;
+import com.study.cook.domain.Category;
+import com.study.cook.domain.Club;
+import com.study.cook.domain.Member;
+import com.study.cook.domain.Reservation;
 import com.study.cook.dto.ClubListDto;
 import com.study.cook.dto.SearchCondition;
 import com.study.cook.exception.FindClubException;
@@ -24,7 +27,6 @@ import static java.util.stream.Collectors.toList;
 public class ClubService {
 
     private final ClubRepository clubRepository;
-    private final MemberService memberService;
     private final CategoryService categoryService;
     private final ReservationService reservationService;
     private final ParticipationService participationService;

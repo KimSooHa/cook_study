@@ -2,7 +2,6 @@ package com.study.cook.api;
 
 import com.study.cook.controller.RecipeForm;
 import com.study.cook.domain.Member;
-import com.study.cook.exception.StoreFailException;
 import com.study.cook.file.FileStore;
 import com.study.cook.service.RecipeFieldService;
 import com.study.cook.service.RecipeService;
@@ -42,19 +41,12 @@ public class RecipeApiController {
             return new ResultVO("등록에 실패하였습니다! 선택을 안하거나 빈칸이 있는지 확인해주세요.", "/recipes", false);
         }
         Member member = memberFinder.getMember(session);
-
-        Long id = null;
+        Long id = recipeService.create(recipeForm, imageFile, member);
         int cnt = 0;
-        try {
-            id = recipeService.create(recipeForm, imageFile, member);
             for (String fieldForm : fieldForms) {
                 Long fieldId = recipeFieldService.create(id, fieldForm, multipartFiles.get(cnt), member);
                 cnt++;
             }
-
-        } catch (StoreFailException e) {
-            return new ResultVO(e.getMessage(), "/recipes", false);
-        }
 
         return new ResultVO("등록되었습니다!", "/recipes/" + id, true);
 
@@ -73,7 +65,7 @@ public class RecipeApiController {
     public ResultVO update(@PathVariable Long recipeId,
                            @Valid @RequestPart RecipeForm recipeForm, @RequestPart(required = false) Optional<MultipartFile> imageFile,
                            @Valid @RequestPart List<String> fieldForms, @RequestPart(required = false) Optional<List<MultipartFile>> multipartFiles,
-                           @RequestPart(required = false) Optional<List<Integer>> imgIndexes, HttpSession session) throws StoreFailException {
+                           @RequestPart(required = false) Optional<List<Integer>> imgIndexes, HttpSession session) {
 
         if ((multipartFiles.isPresent() && imgIndexes.isPresent())) {
             if (multipartFiles.get().size() != imgIndexes.get().size())
@@ -81,14 +73,8 @@ public class RecipeApiController {
         }
 
         Member member = memberFinder.getMember(session);
-
-        try {
-            recipeService.update(recipeId, recipeForm, imageFile);
-            recipeFieldService.update(recipeId, fieldForms, multipartFiles, imgIndexes, member);
-
-        } catch (StoreFailException e) {
-            return new ResultVO(e.getMessage(), "/recipes/" + recipeId + "/edit", false);
-        }
+        recipeService.update(recipeId, recipeForm, imageFile);
+        recipeFieldService.update(recipeId, fieldForms, multipartFiles, imgIndexes, member);
 
         return new ResultVO("저장되었습니다!", "/recipes/" + recipeId, true);
     }

@@ -7,7 +7,6 @@ import com.study.cook.domain.Recipe;
 import com.study.cook.dto.CommentDto;
 import com.study.cook.exception.FindCommentException;
 import com.study.cook.exception.FindRecipeException;
-import com.study.cook.repository.ClubRepository;
 import com.study.cook.repository.CommentRepository;
 import com.study.cook.repository.RecipeRepository;
 import com.study.cook.util.MemberFinder;

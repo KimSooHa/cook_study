@@ -10,7 +10,6 @@ import com.study.cook.repository.CookingRoomRepository;
 import com.study.cook.repository.ReservationRepository;
 import com.study.cook.repository.ScheduleRepository;
 import com.study.cook.util.DateParser;
-import com.study.cook.util.MemberFinder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,7 +33,6 @@ public class ReservationService {
     private final ScheduleRepository scheduleRepository;
     private final ReservationRepository reservationRepository;
     private final DateParser dateParser;
-    private final MemberFinder memberFinder;
 
     /**
      * 요리실 예약
@@ -114,7 +112,7 @@ public class ReservationService {
 
 
     @Transactional
-    public void update(Long id, ReservationForm form, Member member) {
+    public void update(Long id, ReservationForm form) {
 
         // 문자를 날짜로 파싱
         LocalDate date = LocalDate.parse(form.getDate());

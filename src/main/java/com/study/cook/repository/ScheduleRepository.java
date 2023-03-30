@@ -1,7 +1,5 @@
 package com.study.cook.repository;
 
-import com.study.cook.domain.Category;
-import com.study.cook.domain.CookingRoom;
 import com.study.cook.domain.Schedule;
 import org.springframework.data.jpa.repository.JpaRepository;
 

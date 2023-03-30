@@ -6,7 +6,6 @@ import com.study.cook.domain.Recipe;
 import com.study.cook.domain.RecipeField;
 import com.study.cook.exception.StoreFailException;
 import com.study.cook.file.FileStore;
-import com.study.cook.repository.PhotoRepository;
 import com.study.cook.repository.RecipeFieldRepository;
 import com.study.cook.repository.RecipeRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,20 +23,19 @@ import java.util.Optional;
 public class RecipeFieldService {
     private final RecipeRepository recipeRepository;
     private final RecipeFieldRepository recipeFieldRepository;
-    private final PhotoRepository photoRepository;
     private final FileStore fileStore;
 
     /**
      * 레시피 필드 등록
      */
     @Transactional
-    public Long create(Long recipeId, String content, MultipartFile file, Member member) throws StoreFailException {
+    public Long create(Long recipeId, String content, MultipartFile file, Member member) {
 
         Photo photo = null;
         try {
             photo = fileStore.storeFile(file);
         } catch (IOException e) {
-            throw new StoreFailException(e);
+            throw new StoreFailException("등록 실패: 이미지 파일 저장 실패", e);
         }
 
         RecipeField recipeField = new RecipeField(photo, content);
@@ -74,7 +72,7 @@ public class RecipeFieldService {
 
 
     @Transactional
-    public void update(Long id, List<String> fieldForms, Optional<List<MultipartFile>> files, Optional<List<Integer>> imgIndexes, Member member) throws StoreFailException {
+    public void update(Long id, List<String> fieldForms, Optional<List<MultipartFile>> files, Optional<List<Integer>> imgIndexes, Member member) {
         List<RecipeField> recipeFields = findByRecipeId(id).get();
         int cnt = 0;
         for (int i = 0; i < recipeFields.size(); i++) {
@@ -95,7 +93,7 @@ public class RecipeFieldService {
                     photo = fileStore.storeFile(files.get().get(cnt));
 
                 } catch (IOException e) {
-                    throw new StoreFailException(e);
+                    throw new StoreFailException("등록 실패: 이미지 파일 저장 실패", e);
                 }
                 // 새로운 이미지 파일 세팅
                 originPhoto.setStoreFileName(photo.getStoreFileName());

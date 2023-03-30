@@ -2,7 +2,7 @@ package com.study.cook.exception;
 
 import java.io.IOException;
 
-public class StoreFailException extends IOException {
+public class StoreFailException extends RuntimeException {
     public StoreFailException() {
         super();
     }

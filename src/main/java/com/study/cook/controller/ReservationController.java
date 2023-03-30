@@ -1,19 +1,14 @@
 package com.study.cook.controller;
 
 import com.study.cook.domain.CookingRoom;
-import com.study.cook.domain.Member;
 import com.study.cook.domain.Reservation;
 import com.study.cook.domain.Schedule;
 import com.study.cook.dto.ReservationListDto;
-import com.study.cook.exception.FindCookingRoomException;
-import com.study.cook.exception.FindReservationException;
-import com.study.cook.exception.FindScheduleException;
 import com.study.cook.service.CookingRoomService;
 import com.study.cook.service.ReservationService;
 import com.study.cook.service.ScheduleService;
 import com.study.cook.util.DateParser;
 import com.study.cook.util.MemberFinder;
-import com.study.cook.util.ResultVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -22,16 +17,17 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 

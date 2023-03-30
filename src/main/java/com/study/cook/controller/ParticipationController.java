@@ -39,23 +39,23 @@ public class ParticipationController {
     public String reserve(@PathVariable Long clubId, HttpSession session, RedirectAttributes redirectAttributes) {
 
         Member member = memberFinder.getMember(session);
-        synchronized (this) {
-            redirectAttributes.addAttribute("clubId", clubId);
+        redirectAttributes.addAttribute("clubId", clubId);
 
-            try {
+        try {
+            synchronized (this) {
                 participationService.tryToCreate(clubId, member);
-            } catch (FindClubException e) {
-                redirectAttributes.addFlashAttribute("msg", e.getMessage());
-                return "redirect:/clubs/list";
-            } catch (ParticipateFailException e) {
-                redirectAttributes.addFlashAttribute("msg", e.getMessage());
-                return "redirect:/clubs/{clubId}/detail";
             }
-
-            // 참여 성공
-            redirectAttributes.addFlashAttribute("msg", "참여되었습니다.");
+        } catch (FindClubException e) {
+            redirectAttributes.addFlashAttribute("msg", e.getMessage());
+            return "redirect:/clubs/list";
+        } catch (ParticipateFailException e) {
+            redirectAttributes.addFlashAttribute("msg", e.getMessage());
             return "redirect:/clubs/{clubId}/detail";
         }
+
+        // 참여 성공
+        redirectAttributes.addFlashAttribute("msg", "참여되었습니다.");
+        return "redirect:/clubs/{clubId}/detail";
     }
 
 

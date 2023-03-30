@@ -5,12 +5,10 @@ import com.study.cook.domain.Category;
 import com.study.cook.domain.Member;
 import com.study.cook.domain.Photo;
 import com.study.cook.domain.Recipe;
-import com.study.cook.dto.ClubListDto;
 import com.study.cook.dto.RecipeListDto;
 import com.study.cook.dto.SearchCondition;
 import com.study.cook.exception.StoreFailException;
 import com.study.cook.file.FileStore;
-import com.study.cook.repository.PhotoRepository;
 import com.study.cook.repository.RecipeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -29,14 +27,13 @@ import java.util.Optional;
 public class RecipeService {
     private final CategoryService categoryService;
     private final RecipeRepository recipeRepository;
-    private final PhotoRepository photoRepository;
     private final FileStore fileStore;
 
     /**
      * 레시피 등록
      */
     @Transactional
-    public Long create(RecipeForm form, MultipartFile file, Member member) throws StoreFailException {
+    public Long create(RecipeForm form, MultipartFile file, Member member) {
 
         Photo photo = null;
         try {
@@ -85,7 +82,7 @@ public class RecipeService {
 
 
     @Transactional
-    public void update(Long id, RecipeForm form, Optional<MultipartFile> file) throws StoreFailException {
+    public void update(Long id, RecipeForm form, Optional<MultipartFile> file) {
 
         Recipe recipe = recipeRepository.findById(id).orElseThrow();
 
