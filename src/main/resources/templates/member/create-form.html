@@ -79,7 +79,8 @@
                 <div class="input-box">
                     <label th:for="pwd">비밀번호</label>
                     <input type="password" th:field="*{pwd}" class="form-control" placeholder="비밀번호를 입력하세요"
-                        th:class="${#fields.hasErrors('pwd')}? 'form-control fieldError' : 'form-control'" required oninput="checkPwd()">
+                        th:class="${#fields.hasErrors('pwd')}? 'form-control fieldError' : 'form-control'" required
+                        oninput="checkPwd()">
                 </div>
                 <p th:if="${#fields.hasErrors('pwd')}" th:errors="*{pwd}">비밀번호가 형식에 맞지 않습니다.</p>
                 <p class="pwd-invalid d-none">비밀번호가 형식에 맞지 않습니다.</p>
@@ -115,8 +116,10 @@
         <br />
     </section> <!-- /container -->
 </main>
-<script th:inline="javascript" layout:fragment="script" th:src="@{/script/valid-check.js}"></script>
-<script th:inline="javascript" layout:fragment="script">
+<script th:inline="javascript" th:src="@{/script/valid-check.js}"></script>
+<script th:inline="javascript" th:src="@{/script/set-data.js}"></script>
+<script th:inline="javascript" th:src="@{/script/input_check-display.js}"></script>
+<script th:inline="javascript">
 
     /* <![CDATA[ */
     window.onload = () => {
@@ -129,7 +132,6 @@
         alert(message);
         location.href = url;
     }
-
 
     const editBox = document.querySelector(".edit-box");
     const submitBtn = editBox.querySelector("button");
@@ -148,7 +150,6 @@
             e.preventDefault();
             return;
         }
-
     }
 
     function checkName() {
@@ -173,9 +174,7 @@
 
     function checkLoginId() {
         let loginId = document.querySelector("#loginId").value;
-        // console.log(email);
         const request = new XMLHttpRequest();
-        let type = "GET";
         let url = "/valid-loginId?loginId=" + loginId;
 
         const valid = document.querySelector(".id-valid");
@@ -187,36 +186,22 @@
                 return;
             let response = request.responseText;
 
-            console.log(response);
-
-            if (response == 1) {
-                console.log(validIdCheck(loginId));
-                valid.classList.add("d-none");
-                invalid.classList.add("d-none");
-                origin.classList.remove("d-none");
-            }
-            else if (!validIdCheck(loginId)) {
-                valid.classList.add("d-none");
-                origin.classList.add("d-none");
-                invalid.classList.remove("d-none");
-            }
-            else {
-                invalid.classList.add("d-none");
-                origin.classList.add("d-none");
-                valid.classList.remove("d-none");
-            }
+            if (response == 1) 
+                originDisplay(valid, invalid, null, origin);
+            
+            else if (!validIdCheck(loginId)) 
+                invalidDisplay(valid, invalid, null, origin);
+            
+            else 
+                validDisplay(valid, invalid, null, origin);
         }
 
-        /* Post 방식으로 요청 */
-        request.open(type, url);    // 요청 초기화
-        request.send();
+        methodGet(request, url);
     }
 
     function checkEmail() {
         let email = document.querySelector("input[type=email]").value;
-        // console.log(email);
         const request = new XMLHttpRequest();
-        let type = "GET";
         let url = "/valid-email?email=" + email;
 
         const valid = document.querySelector(".email-valid");
@@ -228,37 +213,22 @@
                 return;
             let response = request.responseText;
 
-            console.log(response);
-
-            if (response == 1) {
-                console.log(validEmailCheck(email));
-                valid.classList.add("d-none");
-                invalid.classList.add("d-none");
-                origin.classList.remove("d-none");
-            }
-            else if (!validEmailCheck(email)) {
-                valid.classList.add("d-none");
-                origin.classList.add("d-none");
-                invalid.classList.remove("d-none");
-            }
-            else {
-                invalid.classList.add("d-none");
-                origin.classList.add("d-none");
-                valid.classList.remove("d-none");
-            }
-
-
+            if (response == 1)
+                originDisplay(valid, invalid, null, origin);
+            
+            else if (!validEmailCheck(email))
+                invalidDisplay(valid, invalid, null, origin);
+            
+            else
+                validDisplay(valid, invalid, null, origin);
         }
 
-        /* Post 방식으로 요청 */
-        request.open(type, url);    // 요청 초기화
-        request.send();
+        methodGet(request, url);
     }
 
     function checkPhoneNum() {
         let phone = document.querySelector("input[type=tel]").value;
         const request = new XMLHttpRequest();
-        let type = "GET";
         let url = "/valid-phoneNum?phoneNum=" + phone;
 
         const valid = document.querySelector(".phone-valid");
@@ -270,29 +240,17 @@
                 return;
             let response = request.responseText;
 
-            console.log(response);
+            if (response == 1) 
+                originDisplay(valid, invalid, null, origin);
 
-            if (response == 1) {
-                console.log(validPhoneNumCheck(phone));
-                valid.classList.add("d-none");
-                invalid.classList.add("d-none");
-                origin.classList.remove("d-none");
-            }
-            else if (!validPhoneNumCheck(phone)) {
-                valid.classList.add("d-none");
-                origin.classList.add("d-none");
-                invalid.classList.remove("d-none");
-            }
-            else {
-                invalid.classList.add("d-none");
-                origin.classList.add("d-none");
-                valid.classList.remove("d-none");
-            }
+            else if (!validPhoneNumCheck(phone))
+                invalidDisplay(valid, invalid, null, origin);
+
+            else 
+                validDisplay(valid, invalid, null, origin);
         }
 
-        /* Post 방식으로 요청 */
-        request.open(type, url);    // 요청 초기화
-        request.send();
+        methodGet(request, url);
     }
 
     /* ]]> */

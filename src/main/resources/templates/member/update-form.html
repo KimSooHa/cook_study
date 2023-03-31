@@ -14,7 +14,8 @@
                     <div class="input-box">
                         <label th:for="name">이름</label>
                         <input type="text" th:field="*{name}" class="form-control" placeholder="이름을 입력하세요"
-                            th:class="${#fields.hasErrors('name')}? 'form-control fieldError' : 'form-control'" required>
+                            th:class="${#fields.hasErrors('name')}? 'form-control fieldError' : 'form-control'"
+                            required>
                     </div>
                     <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Incorrect date</p>
                     <p class="name-invalid d-none">이름이 형식에 맞지 않습니다.</p>
@@ -23,7 +24,8 @@
                     <div class="input-box">
                         <label th:for="loginId">아이디</label>
                         <input type="text" th:field="*{loginId}" class="form-control" placeholder="아이디를 입력하세요"
-                            th:class="${#fields.hasErrors('loginId')}? 'form-control fieldError' : 'form-control'" required>
+                            th:class="${#fields.hasErrors('loginId')}? 'form-control fieldError' : 'form-control'"
+                            required>
                     </div>
                     <p th:if="${#fields.hasErrors('loginId')}" th:errors="*{loginId}">존재하는 아이디입니다.</p>
                     <p class="id-valid d-none">사용 가능한 아이디입니다.</p>
@@ -44,7 +46,8 @@
                     <div class="input-box">
                         <label th:for="email">이메일</label>
                         <input type="email" th:field="*{email}" class="form-control" placeholder="이메일을 입력하세요"
-                            th:class="${#fields.hasErrors('email')}? 'form-control fieldError' : 'form-control'" required>
+                            th:class="${#fields.hasErrors('email')}? 'form-control fieldError' : 'form-control'"
+                            required>
                     </div>
                     <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}">이메일 형식에 맞지 않습니다.</p>
                     <p class="email-valid d-none">사용 가능한 이메일입니다.</p>
@@ -56,7 +59,8 @@
                     <div class="input-box">
                         <label th:for="phoneNum">휴대폰 번호</label>
                         <input type="tel" th:field="*{phoneNum}" class="form-control" placeholder="'-'를 포함하여 입력해주세요"
-                            th:class="${#fields.hasErrors('phoneNum')}? 'form-control fieldError' : 'form-control'" required>
+                            th:class="${#fields.hasErrors('phoneNum')}? 'form-control fieldError' : 'form-control'"
+                            required>
                     </div>
                     <p th:if="${#fields.hasErrors('phoneNum')}" th:errors="*{phoneNum}">휴대폰 번호 형식에 맞지 않습니다.</p>
                     <p class="phone-valid d-none">사용 가능한 휴대폰 번호입니다.</p>
@@ -72,6 +76,8 @@
         </section> <!-- /container -->
     </main>
     <script th:inline="javascript" layout:fragment="script" th:src="@{/script/valid-check.js}"></script>
+    <script th:inline="javascript" th:src="@{/script/set-data.js}"></script>
+    <script th:inline="javascript" th:src="@{/script/input_check-display.js}"></script>
     <script th:inline="javascript" layout:fragment="script">
 
         /* <![CDATA[ */
@@ -122,18 +128,16 @@
         loginIdInput.oninput = () => {
             checkLoginId();
         };
-        
+
         pwdInput.oninput = () => {
             checkPwd();
         };
-        
+
         emailInput.oninput = () => {
-            console.log("changed!");
             checkEmail();
         };
-        
+
         phoneNumInput.oninput = () => {
-            console.log("changed!");
             checkPhoneNum();
         };
 
@@ -161,7 +165,6 @@
         function checkLoginId() {
             let loginId = document.querySelector("#loginId").value;
             const request = new XMLHttpRequest();
-            let type = "GET";
             let url = "/valid-loginId?loginId=" + loginId;
             const valid = document.querySelector(".id-valid");
             const invalid = document.querySelector(".id-invalid");
@@ -174,45 +177,26 @@
                     return;
                 let response = request.responseText;
 
-                console.log(response);
-
                 if (response == 1) {
                     if (loginId == [[${ memberForm.loginId }]]) {
-                        valid.classList.add("d-none");
-                        invalid.classList.add("d-none");
-                        exist.classList.add("d-none");
-                        origin.classList.remove("d-none");
+                        originDisplay(valid, invalid, exist, origin);
                         return;
                     }
-                    origin.classList.add("d-none");
-                    valid.classList.add("d-none");
-                    invalid.classList.add("d-none");
-                    exist.classList.remove("d-none");
+                    existDisplay(valid, invalid, exist, origin);
                 }
-                else if (!validIdCheck(loginId)) {
-                    exist.classList.add("d-none");
-                    valid.classList.add("d-none");
-                    origin.classList.add("d-none");
-                    invalid.classList.remove("d-none");
-                }
-                else {
-                    exist.classList.add("d-none");
-                    invalid.classList.add("d-none");
-                    origin.classList.add("d-none");
-                    valid.classList.remove("d-none");
-                }
-
+                else if (!validIdCheck(loginId)) 
+                    invalidDisplay(valid, invalid, exist, origin);
+                
+                else 
+                    validDisplay(valid, invalid, exist, origin);   
             }
 
-            /* Post 방식으로 요청 */
-            request.open(type, url);    // 요청 초기화
-            request.send();
+            methodGet(request, url);
         }
 
         function checkEmail() {
             let email = document.querySelector("input[type=email]").value;
             const request = new XMLHttpRequest();
-            let type = "GET";
             let url = "/valid-email?email=" + email;
 
             const valid = document.querySelector(".email-valid");
@@ -225,49 +209,28 @@
                     return;
                 let response = request.responseText;
 
-                console.log(response);
-
                 if (response == 1) {
                     if (email == [[${ memberForm.email }]]) {
-                        valid.classList.add("d-none");
-                        invalid.classList.add("d-none");
-                        exist.classList.add("d-none");
-                        origin.classList.remove("d-none");
+                        validDisplay(valid, invalid, exist, origin);
                         return;
                     }
-                    origin.classList.add("d-none");
-                    valid.classList.add("d-none");
-                    invalid.classList.add("d-none");
-                    exist.classList.remove("d-none");
+                    existDisplay(valid, invalid, exist, origin);
                 }
-                else if (!validEmailCheck(email)) {
-                    exist.classList.add("d-none");
-                    valid.classList.add("d-none");
-                    origin.classList.add("d-none");
-                    invalid.classList.remove("d-none");
-                }
-                else {
-                    exist.classList.add("d-none");
-                    invalid.classList.add("d-none");
-                    origin.classList.add("d-none");
-                    valid.classList.remove("d-none");
-                }
-
-
+                else if (!validEmailCheck(email)) 
+                    invalidDisplay(valid, invalid, exist, origin);
+                
+                else
+                    validDisplay(valid, invalid, exist, origin);
             }
 
-            /* Post 방식으로 요청 */
-            request.open(type, url);    // 요청 초기화
-            request.send();
+            methodGet(request, url);
         }
 
 
         function checkPhoneNum() {
             let phone = document.querySelector("input[type=tel]").value;
             const request = new XMLHttpRequest();
-            let type = "GET";
             let url = "/valid-phoneNum?phoneNum=" + phone;
-            // let json = JSON.stringify(emailJson);
 
             const valid = document.querySelector(".phone-valid");
             const invalid = document.querySelector(".phone-invalid");
@@ -279,38 +242,21 @@
                     return;
                 let response = request.responseText;
 
-                console.log(response);
-
                 if (response == 1) {
                     if (phone == [[${ memberForm.phoneNum }]]) {
-                        valid.classList.add("d-none");
-                        invalid.classList.add("d-none");
-                        exist.classList.add("d-none");
-                        origin.classList.remove("d-none");
+                        originDisplay(valid, invalid, exist, origin);
                         return;
                     }
-                    origin.classList.add("d-none");
-                    valid.classList.add("d-none");
-                    invalid.classList.add("d-none");
-                    exist.classList.remove("d-none");
+                    existDisplay(valid, invalid, exist, origin);
                 }
-                else if (!validPhoneNumCheck(phone)) {
-                    exist.classList.add("d-none");
-                    valid.classList.add("d-none");
-                    origin.classList.add("d-none");
-                    invalid.classList.remove("d-none");
-                }
-                else {
-                    exist.classList.add("d-none");
-                    invalid.classList.add("d-none");
-                    origin.classList.add("d-none");
-                    valid.classList.remove("d-none");
-                }
+                else if (!validPhoneNumCheck(phone))
+                    invalidDisplay(valid, invalid, exist, origin);
+                
+                else 
+                    validDisplay(valid, invalid, exist, origin);
             }
 
-            /* Post 방식으로 요청 */
-            request.open(type, url);    // 요청 초기화
-            request.send();
+            methodGet(request, url);
         }
 /* ]]> */
     </script>
