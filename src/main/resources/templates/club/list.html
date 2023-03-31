@@ -17,7 +17,6 @@
             </form>
         </header>
 
-
         <nav class="nav-category">
             <ul>
                 <li class="nav-selected">
@@ -29,7 +28,6 @@
                 </li>
             </ul>
         </nav>
-
 
         <div class="intro">
             <span>총 <span class="text-strong" th:text="${list.totalElements}">8</span>개의 그룹이 있습니다.</span>
@@ -43,7 +41,6 @@
                     <th>#</th>
                     <th>스터디명</th>
                     <th>운영자</th>
-                    <!-- <th></th> -->
                 </tr>
             </thead>
             <tbody>
@@ -55,19 +52,6 @@
                         </a>
                     </td>
                     <td th:text="${club.memberLoginId}"></td>
-
-                    <!-- <td> -->
-                    <!-- <form action="/cooking-rooms/${reservation.id}" method="put"> -->
-                    <!-- <input type="submit" th:href="'javascript:cancel('+${reservation.id}+')'" -->
-                    <!-- <input type="submit" class="btn btn-default btn-basic" value="취소하기"> -->
-                    <!-- </form> -->
-                    <!-- </td> -->
-                    <!-- <td> -->
-                    <!-- <form action="/cooking-rooms/${reservation.id}" method="delete"> -->
-                    <!-- <a href="#"th:href="'javascript:edit('+${reservation.id}+')'" -->
-                    <!-- <input type="submit" class="btn btn-default btn-strong" value="수정하기"> -->
-                    <!-- </form> -->
-                    <!-- </td> -->
                 </tr>
             </tbody>
         </table>
@@ -100,5 +84,4 @@
     }
     /* ]]> */
 </script>
-
 </html>

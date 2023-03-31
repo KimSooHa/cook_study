@@ -1,181 +1,152 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
     layout:decorate="inc/layout">
-<main layout:fragment="content">
-    <form role="form" class="detail-container create-container" action="/clubs" method="post">
-        <div class="detail-container-title">쿡스터디 등록</div>
+<div layout:fragment="content">
+    <main>
+        <form role="form" class="detail-container create-container" action="/clubs" method="post">
+            <div class="detail-container-title">쿡스터디 등록</div>
 
-        <div class="detail-intro">
-            <fieldset class="info checkbox-info"
-                th:class="${#lists.isEmpty(reservationDtos)} ? 'd-none info checkbox-info' : 'info checkbox-info'">
-                <legend class="detail-title">예약된 요리실 선택</legend>
-                <div class="checkbox-container" th:each="reservation : ${reservationDtos}">
-                    <input th:field="*{clubForm.reservationIds}" th:value="${reservation.reservationId}"
-                        class="checkbox" type="checkbox" name="selected-time">
-                    <label th:for="${#ids.next('reservationDtos')}"
-                        th:text="|예약일 : ${reservation.date} ${reservation.startTime} ~ ${reservation.endTime} / 요리실 ${reservation.cookingRoomNum}호|">예약일:
-                        2023.3.24 10:00 ~ 11:00 / 요리실 101호</label>
+            <div class="detail-intro">
+                <fieldset class="info checkbox-info"
+                    th:class="${#lists.isEmpty(reservationDtos)} ? 'd-none info checkbox-info' : 'info checkbox-info'">
+                    <legend class="detail-title">예약된 요리실 선택</legend>
+                    <div class="checkbox-container" th:each="reservation : ${reservationDtos}">
+                        <input th:field="*{clubForm.reservationIds}" th:value="${reservation.reservationId}"
+                            class="checkbox" type="checkbox" name="selected-time">
+                        <label th:for="${#ids.next('reservationDtos')}"
+                            th:text="|예약일 : ${reservation.date} ${reservation.startTime} ~ ${reservation.endTime} / 요리실 ${reservation.cookingRoomNum}호|">예약일:
+                            2023.3.24 10:00 ~ 11:00 / 요리실 101호</label>
+                    </div>
+                </fieldset>
+
+                <div class="detail-input-box d-flex-md">
+                    <label th:for="name" class="detail-title">제목</label>
+                    <input type="text" th:field="*{clubForm.name}" placeholder="내용을 입력해주세요." required id="name"
+                        th:class="${#fields.hasErrors('clubForm.name')}? 'form-control fieldError' : 'form-control'" />
+                    <p th:if="${#fields.hasErrors('clubForm.name')}" th:errors="*{clubForm.name}">제목을 입력해주세요.</p>
                 </div>
-            </fieldset>
-
-            <div class="detail-input-box d-flex-md">
-                <label th:for="name" class="detail-title">제목</label>
-                <input type="text" th:field="*{clubForm.name}" placeholder="내용을 입력해주세요." required id="name"
-                    th:class="${#fields.hasErrors('clubForm.name')}? 'form-control fieldError' : 'form-control'" />
-                <p th:if="${#fields.hasErrors('clubForm.name')}" th:errors="*{clubForm.name}">제목을 입력해주세요.</p>
-            </div>
-            <div class="category-select">
-                <label class="detail-title" for="select">카테고리 선택</label>
-                <select id="select" class="form-control" th:field="*{categories}" required>
-                    <option value="">카테고리 선택</option>
-                    <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}">카테고리
-                    </option>
-                </select>
+                <div class="category-select">
+                    <label class="detail-title" for="select">카테고리 선택</label>
+                    <select id="select" class="form-control" th:field="*{categories}" required>
+                        <option value="">카테고리 선택</option>
+                        <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}">
+                            카테고리
+                        </option>
+                    </select>
+                </div>
+                <div class="info explanation input-content">
+                    <span class="detail-title">그룹 설명글</span>
+                    <textarea th:field="*{clubForm.introduction}" cols="30" rows="7" placeholder="내용을 입력해주세요."
+                        class="intro" required></textarea>
+                    <p th:if="${#fields.hasErrors('clubForm.introduction')}" th:errors="*{clubForm.introduction}">설명글을
+                        입력해주세요.</p>
+                </div>
+                <div class="info">
+                    <div class="cooking-info">
+                        <label class="detail-title" for="max-count">모집인원</label>
+                        <input type="number" th:field="*{clubForm.maxCount}" value="2" name="" id="max-count" max="10"
+                            min="2" required inputmode="numeric" onkeyup="preventText(this)">
+                        <span class="detail-title">명</span>
+                    </div>
+                </div>
             </div>
             <div class="info explanation input-content">
-                <span class="detail-title">그룹 설명글</span>
-                <textarea th:field="*{clubForm.introduction}" cols="30" rows="7" placeholder="내용을 입력해주세요." class="intro"
-                    required></textarea>
-                <p th:if="${#fields.hasErrors('clubForm.introduction')}" th:errors="*{clubForm.introduction}">설명글을
-                    입력해주세요.</p>
+                <span class="detail-title">재료</span>
+                <textarea th:field="*{clubForm.ingredients}" name="" id="ingredients" cols="30" rows="5" required
+                    placeholder="내용을 입력해주세요."></textarea>
+                <p th:if="${#fields.hasErrors('clubForm.ingredients')}" th:errors="*{clubForm.ingredients}">재료를 입력해주세요.
+                </p>
             </div>
-            <div class="info">
-                <div class="cooking-info">
-                    <label class="detail-title" for="max-count">모집인원</label>
-                    <input type="number" th:field="*{clubForm.maxCount}" value="2" name="" id="max-count" max="10"
-                        min="2" required inputmode="numeric" onkeyup="preventText(this)">
-                    <span class="detail-title">명</span>
-                </div>
+            <div class="info price detail-title">
+                이용 비용: 12,000 원
             </div>
-        </div>
-        <div class="info explanation input-content">
-            <span class="detail-title">재료</span>
-            <textarea th:field="*{clubForm.ingredients}" name="" id="ingredients" cols="30" rows="5" required
-                placeholder="내용을 입력해주세요."></textarea>
-            <p th:if="${#fields.hasErrors('clubForm.ingredients')}" th:errors="*{clubForm.ingredients}">재료를 입력해주세요.</p>
-        </div>
-        <div class="info price detail-title">
-            이용 비용: 12,000 원
-        </div>
-        <div class="edit-box">
-            <button class="btn btn-default btn-strong create" type="submit">등록하기</button>
-        </div>
-    </form>
-</main>
+            <div class="edit-box">
+                <button class="btn btn-default btn-strong create" type="submit">등록하기</button>
+            </div>
+        </form>
+    </main>
+    <script th:src="@{/script/set-data.js}"></script>
+    <script th:src="@{/script/alert.js}"></script>
+    <script th:inline="javascript" layout:fragment="script">
 
-<script th:inline="javascript" layout:fragment="script">
-
-    function preventText(e) {
-        e.value = "";
-    }
-
-    /* <![CDATA[ */
-    window.onload = () => {
-
-        let message = [[${ msg }]];
-        let url = [[${ url }]];
-        if (message == null)
-            return;
-
-        alert(message);
-        location.href = url;
-    }
-
-    /* ]]> */
-
-
-
-
-    const submitBtn = document.querySelector(".create");
-
-    /* <![CDATA[ */
-    submitBtn.onclick = (e) => {
-
-        let checkboxes = document.querySelectorAll(".checkbox");
-        let cnt = 0;
-        for (let i = 0; i < checkboxes.length; i++) {
-            if (checkboxes[i].checked) {
-                cnt++;
-            }
+        /* <![CDATA[ */
+        function preventText(e) {
+            e.value = "";
         }
 
-        if (cnt > 3) {
-            e.preventDefault();
-            alert("시간은 최대 3개까지만 가능합니다.");
-        }
+        window.onload = () => {
 
-
-        const request = new XMLHttpRequest();
-        let type = "POST";
-        let url = "/clubs";
-        let name = document.querySelector("#name").value;
-        let category = document.querySelector("select").value;
-        let intro = document.querySelector(".intro").value;
-        let maxCnt = document.getElementById("max-count").value;
-        let ingredients = document.getElementById("ingredients").value;
-
-        if (name == null || name == "" || category == null || category == "" || intro == null || intro == "" || maxCnt == null || ingredients == null || ingredients == "")
-            return;
-        e.preventDefault();
-
-        // let formData = new FormData();
-
-        let reservationId = [];
-        let form = {
-            name: name,
-            categoryId: category,
-            introduction: intro,
-            maxCount: maxCnt,
-            ingredients: ingredients
-        };
-
-        for (let i = 0; i < checkboxes.length; i++) {
-            if (checkboxes[i].checked) {
-                reservationId.push(checkboxes[i].value);
-            }
-        }
-
-        form.reservationIds = reservationId;
-
-
-        // formData.append('form', [JSON.stringify(data)]);
-        let data = JSON.stringify(form);
-
-        request.onreadystatechange = () => {
-            if (request.readyState != XMLHttpRequest.DONE)
-                return;
-            let results = request.response;
-            // let obj = JSON.parse(result);
-            console.log(results);
-
-            let message = results.msg;
-            let url = results.url;
-
+            let message = [[${ msg }]];
+            let url = [[${ url }]];
             if (message == null)
                 return;
+
             alert(message);
-
-            if (url == null)
-                return;
             location.href = url;
-
         }
 
-        /* Post 방식으로 요청 */
-        request.open(type, url);    // 요청 초기화
-        /* Response Type을 Json으로 사전 정의 */
-        request.responseType = "json";
-        /* 요청 Header에 컨텐츠 타입은 Json으로 사전 정의 */
-        request.setRequestHeader('content-type', 'application/json');
-        // request.setRequestHeader('content-type', 'multipart/formed-data');
-        // request.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
 
-        /* 정의된 서버에 Json 형식의 요청 Data를 포함하여 요청을 전송 */
-        request.send(data);
-    };
-/* ]]> */
+        const submitBtn = document.querySelector(".create");
+
+        submitBtn.onclick = (e) => {
+
+            let checkboxes = document.querySelectorAll(".checkbox");
+            let cnt = 0;
+            for (let i = 0; i < checkboxes.length; i++) {
+                if (checkboxes[i].checked) {
+                    cnt++;
+                }
+            }
+
+            if (cnt > 3) {
+                e.preventDefault();
+                alert("시간은 최대 3개까지만 가능합니다.");
+            }
 
 
-</script>
+            const request = new XMLHttpRequest();
+            let url = "/clubs";
+            let name = document.querySelector("#name").value;
+            let category = document.querySelector("select").value;
+            let intro = document.querySelector(".intro").value;
+            let maxCnt = document.getElementById("max-count").value;
+            let ingredients = document.getElementById("ingredients").value;
+
+            if (name == null || name == "" || category == null || category == "" || intro == null || intro == "" || maxCnt == null || ingredients == null || ingredients == "")
+                return;
+            e.preventDefault();
+
+            let reservationId = [];
+            let form = {
+                name: name,
+                categoryId: category,
+                introduction: intro,
+                maxCount: maxCnt,
+                ingredients: ingredients
+            };
+
+            for (let i = 0; i < checkboxes.length; i++) {
+                if (checkboxes[i].checked) {
+                    reservationId.push(checkboxes[i].value);
+                }
+            }
+
+            form.reservationIds = reservationId;
+
+            let data = JSON.stringify(form);
+
+            request.onreadystatechange = () => {
+                if (request.readyState != XMLHttpRequest.DONE)
+                    return;
+                let results = request.response;
+                setMessageAndUrl(results.msg, results.url);
+            }
+            
+            methodPost(request, url, data);
+        };
+        /* ]]> */
+
+    </script>
+</div>
 
 </html>
