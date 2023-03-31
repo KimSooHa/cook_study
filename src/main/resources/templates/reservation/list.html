@@ -54,10 +54,8 @@
         let today = Date.now();
         let tr = e.parentElement.parentElement;
         let date = Date.parse(tr.querySelector(".date").innerText);
-        console.log(date);
 
         if (date < today) {
-            // e.preventDefault();
             e.href = "#";
             alert("지난 날짜는 수정이 불가능합니다.");
         }

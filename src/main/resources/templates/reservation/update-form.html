@@ -1,202 +1,159 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
     layout:decorate="inc/layout">
-<main layout:fragment="content">
-    <form class="detail-container create-container">
-        <div class="detail-container-title">요리실 수정</div>
-        <!-- id -->
-        <input type="hidden" th:field="*{reservationForm.id}" />
-        <div class="detail-intro">
+<div layout:fragment="content">
+    <main>
+        <form class="detail-container create-container">
+            <div class="detail-container-title">요리실 수정</div>
+            <!-- id -->
+            <input type="hidden" th:field="*{reservationForm.id}" />
+            <div class="detail-intro">
 
-            <div class="detail-input-box d-flex-md">
-                <label for="select-date" class="detail-title">날짜 선택</label>
-                <input th:field="*{reservationForm.date}" class="date" type="date" th:name="${reservationForm.date}"
-                    th:value="${reservationForm.date}" id="select-date" required th:onchange="getTimeList()">
-            </div>
-
-            <div class="info">
-                <label class="detail-title">요리실 선택</label>
-                <select th:field="*{reservationForm.cookingRoomId}" required class="form-control"
-                    th:onchange="getTimeList()">
-                    <option value="">요리실 선택</option>
-                    <option th:each="cookingRoom : ${cookingRooms}" th:value="${cookingRoom.id}"
-                        th:text="|${cookingRoom.roomNum}호(${cookingRoom.maxCount}명)|">101호(10명)
-                    </option>
-                </select>
-            </div>
-            <fieldset class="info checkbox-info">
-                <legend class="detail-title">시간 선택</legend>
-                <div th:each="schedule : ${schedules}" class="checkbox-container">
-                    <input th:field="*{schedules}" th:value="${schedule.scheduleId}" class="checkbox" type="checkbox"
-                        name="selected-time" disabled>
-                    <label th:for="${schedule.scheduleId}" th:text="|${schedule.startDate} ~ ${schedule.endDate}|">10:00
-                        ~ 11:00
-                    </label>
+                <div class="detail-input-box d-flex-md">
+                    <label for="select-date" class="detail-title">날짜 선택</label>
+                    <input th:field="*{reservationForm.date}" class="date" type="date" th:name="${reservationForm.date}"
+                        th:value="${reservationForm.date}" id="select-date" required th:onchange="getTimeList()">
                 </div>
 
-            </fieldset>
-        </div>
+                <div class="info">
+                    <label class="detail-title">요리실 선택</label>
+                    <select th:field="*{reservationForm.cookingRoomId}" required class="form-control"
+                        th:onchange="getTimeList()">
+                        <option value="">요리실 선택</option>
+                        <option th:each="cookingRoom : ${cookingRooms}" th:value="${cookingRoom.id}"
+                            th:text="|${cookingRoom.roomNum}호(${cookingRoom.maxCount}명)|">101호(10명)
+                        </option>
+                    </select>
+                </div>
+                <fieldset class="info checkbox-info">
+                    <legend class="detail-title">시간 선택</legend>
+                    <div th:each="schedule : ${schedules}" class="checkbox-container">
+                        <input th:field="*{schedules}" th:value="${schedule.scheduleId}" class="checkbox"
+                            type="checkbox" name="selected-time" disabled>
+                        <label th:for="${schedule.scheduleId}"
+                            th:text="|${schedule.startDate} ~ ${schedule.endDate}|">10:00
+                            ~ 11:00
+                        </label>
+                    </div>
 
-        <div class="edit-box">
-            <input class="btn btn-default btn-basic edit" type="submit" value="저장">
-        </div>
-    </form>
-</main>
-<script th:inline="javascript" layout:fragment="script">
-    /* <![CDATA[ */
-    window.onload = () => {
-        getTimeList();
-    }
+                </fieldset>
+            </div>
 
-    // 현재날짜부터 선택 가능
-    let now_utc = Date.now(); //지금 날짜를 밀리초로
-    let timeOff = new Date().getTimezoneOffset() / (60 * 24) + (1000 * 60 * 60 * 24 * 2); // 로캘 시간과의 차이를 분단위로 반환
-    let laterTwoDays = new Date(now_utc + timeOff).toISOString().split("T")[0];  // new Date(now_utc-timeOff).toISOString()은 '2022-05-11T18:09:38.134Z'를 반환
-    document.querySelector(".date").setAttribute("min", laterTwoDays);
+            <div class="edit-box">
+                <input class="btn btn-default btn-basic edit" type="submit" value="저장">
+            </div>
+        </form>
+    </main>
+    <script th:src="@{/script/set-data.js}"></script>
+    <script th:src="@{/script/alert.js}"></script>
+    <script th:inline="javascript">
+        /* <![CDATA[ */
+        window.onload = () => {
+            getTimeList();
+        }
+
+        // 현재날짜부터 선택 가능
+        let now_utc = Date.now(); //지금 날짜를 밀리초로
+        let timeOff = new Date().getTimezoneOffset() / (60 * 24) + (1000 * 60 * 60 * 24 * 2); // 로캘 시간과의 차이를 분단위로 반환
+        let laterTwoDays = new Date(now_utc + timeOff).toISOString().split("T")[0];  // new Date(now_utc-timeOff).toISOString()은 '2022-05-11T18:09:38.134Z'를 반환
+        document.querySelector(".date").setAttribute("min", laterTwoDays);
 
 
-    function getTimeList() {
-        let date = document.querySelector("input[type=date]").value;
-        let cookingRoomId = document.querySelector("select").value;
-        let checkboxes = document.querySelectorAll(".checkbox");
+        function getTimeList() {
+            let date = document.querySelector("input[type=date]").value;
+            let cookingRoomId = document.querySelector("select").value;
+            let checkboxes = document.querySelectorAll(".checkbox");
 
-        if (date == null || date == "" || cookingRoomId == null || cookingRoomId == "")
-            return;
-
-        const request = new XMLHttpRequest();
-        let type = "GET";
-        let url = "/reserved-time?date=" + date + "&cookingRoomId=" + cookingRoomId;
-
-        request.onreadystatechange = () => {
-            if (request.readyState != XMLHttpRequest.DONE)
+            if (date == null || date == "" || cookingRoomId == null || cookingRoomId == "")
                 return;
-            let results = request.response;
-            // let obj = JSON.parse(result);
-            console.log(results);
 
-            for (let i = 0; i < checkboxes.length; i++) {
-                checkboxes[i].disabled = false;
-                checkboxes[i].checked = false;
-            }
+            const request = new XMLHttpRequest();
+            let url = "/reserved-time?date=" + date + "&cookingRoomId=" + cookingRoomId;
 
+            request.onreadystatechange = () => {
+                if (request.readyState != XMLHttpRequest.DONE)
+                    return;
+                let results = request.response;
 
-            console.log("read");
-
-
-            for (let i = 0; i < checkboxes.length; i++) {
-
-                if (results.length == 0) {
+                for (let i = 0; i < checkboxes.length; i++) {
                     checkboxes[i].disabled = false;
-                    continue;
+                    checkboxes[i].checked = false;
                 }
 
-                for (let result of results) {
-                    if ((result % 8) == checkboxes[i].value) {
-                        if (checkboxes[i].value == ([[${ reservationForm.scheduleIds[0] }]] % 8)) {
-                            checkboxes[i].checked = true;
-                            continue;
-                        }
-                        checkboxes[i].disabled = true;
+                for (let i = 0; i < checkboxes.length; i++) {
+
+                    if (results.length == 0) {
+                        checkboxes[i].disabled = false;
+                        continue;
                     }
 
+                    for (let result of results) {
+                        if ((result % 8) == checkboxes[i].value) {
+                            if (checkboxes[i].value == ([[${ reservationForm.scheduleIds[0] }]] % 8)) {
+                                checkboxes[i].checked = true;
+                                continue;
+                            }
+                            checkboxes[i].disabled = true;
+                        }
+                    }
                 }
             }
 
-
+            methodGetJson(request, url);
         }
 
-        /* Post 방식으로 요청 */
-        request.open(type, url);    // 요청 초기화
-        /* Response Type을 Json으로 사전 정의 */
-        request.responseType = "json";
-        /* 요청 Header에 컨텐츠 타입은 Json으로 사전 정의 */
-        // request.setRequestHeader('content-type', 'application/json');
-        /* 정의된 서버에 Json 형식의 요청 Data를 포함하여 요청을 전송 */
-        request.send();
+        const submitBtn = document.querySelector(".edit");
 
-    }
+        submitBtn.onclick = (e) => {
+            e.preventDefault();
 
-    const submitBtn = document.querySelector(".edit");
-
-
-    submitBtn.onclick = (e) => {
-        e.preventDefault();
-
-        let checkboxes = document.querySelectorAll(".checkbox");
-        let cnt = 0;
-        for (let i = 0; i < checkboxes.length; i++) {
-            if (checkboxes[i].checked) {
-                cnt++;
+            let checkboxes = document.querySelectorAll(".checkbox");
+            let cnt = 0;
+            for (let i = 0; i < checkboxes.length; i++) {
+                if (checkboxes[i].checked) {
+                    cnt++;
+                }
             }
-        }
 
-        if (cnt > 1) {
-            alert("시간은 1개만 선택 가능합니다.");
-            return;
-        } else if (cnt == 0) {
-            alert("예약하실 시간을 선택해주세요.");
-            return;
-        }
+            if (cnt > 1) {
+                alert("시간은 1개만 선택 가능합니다.");
+                return;
+            } else if (cnt == 0) {
+                alert("예약하실 시간을 선택해주세요.");
+                return;
+            }
 
-        const request = new XMLHttpRequest();
-        let type = "PUT";
-        let url = "/cooking-rooms/reservation/[[${ reservationForm.id }]]";
-        let inputDate = document.querySelector("input[type=date]").value;
-        let cookingRoomId = document.querySelector("select").value;
-        // let formData = new FormData();
+            const request = new XMLHttpRequest();
+            let url = "/cooking-rooms/reservation/[[${ reservationForm.id }]]";
+            let inputDate = document.querySelector("input[type=date]").value;
+            let cookingRoomId = document.querySelector("select").value;
+            let scheduleId = [];
+            let form = {
+                date: inputDate,
+                cookingRoomId: cookingRoomId
+            };
 
+            for (let i = 0; i < checkboxes.length; i++) {
+                if (checkboxes[i].checked) {
+                    scheduleId.push(checkboxes[i].value);
+                }
+            }
 
-        let scheduleId = [];
-        let form = {
-            date: inputDate,
-            cookingRoomId: cookingRoomId
+            form.scheduleIds = scheduleId;
+
+            let data = JSON.stringify(form);
+
+            request.onreadystatechange = () => {
+                if (request.readyState != XMLHttpRequest.DONE)
+                    return;
+                let results = request.response;
+                setMessageAndUrl(results.msg, results.url);
+            }
+
+            methodPut(request, url, data);
         };
-
-        for (let i = 0; i < checkboxes.length; i++) {
-            if (checkboxes[i].checked) {
-                scheduleId.push(checkboxes[i].value);
-            }
-        }
-
-        form.scheduleIds = scheduleId;
-
-
-        // formData.append('form', [JSON.stringify(data)]);
-        let data = JSON.stringify(form);
-
-        request.onreadystatechange = () => {
-            if (request.readyState != XMLHttpRequest.DONE)
-                return;
-            let results = request.response;
-            // let obj = JSON.parse(result);
-
-            let message = results.msg;
-            let url = results.url;
-
-            if (message == null)
-                return;
-            alert(message);
-
-            if (url == null)
-                return;
-            location.href = url;
-
-        }
-
-        /* Post 방식으로 요청 */
-        request.open(type, url);    // 요청 초기화
-        /* Response Type을 Json으로 사전 정의 */
-        request.responseType = "json";
-        /* 요청 Header에 컨텐츠 타입은 Json으로 사전 정의 */
-        request.setRequestHeader('content-type', 'application/json');
-        // request.setRequestHeader('content-type', 'multipart/formed-data');
-        // request.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
-
-        /* 정의된 서버에 Json 형식의 요청 Data를 포함하여 요청을 전송 */
-        request.send(data);
-
-    };
      /* ]]> */
-</script>
+    </script>
+</div>
 
 </html>
