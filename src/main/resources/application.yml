@@ -63,8 +63,8 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
-server:
-  port: 8081
+#server:
+#  port: 8081
 
 file:
   dir: /home/ec2-user/app/files/
