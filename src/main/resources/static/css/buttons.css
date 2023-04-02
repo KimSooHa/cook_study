@@ -33,6 +33,15 @@
     font-size: var(--text-content);
 }
 
+.btn-default-color {
+    padding: var(--btn-p-v) var(--btn-p-h);
+    border : solid var(--border-weight-light) var(--color-border);
+    border-radius: var(--border-radius-1);
+
+    font-size: var(--text-content);
+    color: var(--color-text-emphasis);
+}
+
 .btn-basic {
     background-color: var(--color-text);
     color: white !important;
@@ -47,6 +56,11 @@
     font-size: var(--text-content);
     color: var(--color-text-invert);
 
+}
+
+/* 인풋 버튼 */
+.btn-submit {
+    background-color: transparent;
 }
 
 .btn-icon {
@@ -84,16 +98,6 @@
     font-size: var(--text-tag-small);
     color: var(--color-text-dark);
 }
-
-.btn-profile-sm {
-    width: var(--profile-size);
-    height: var(--profile-size);
-    object-fit: cover;
-
-    overflow: hidden;
-    text-indent: var(--text-indent);
-}
-
 
 .btn-close{
 
