@@ -3,6 +3,7 @@ package com.study.cook.controller;
 import com.study.cook.domain.Member;
 import com.study.cook.dto.MemberLoginIdSearchCondition;
 import com.study.cook.dto.MemberPwdSearchCondition;
+import com.study.cook.service.LoginService;
 import com.study.cook.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 @Controller
@@ -22,6 +24,7 @@ import javax.validation.Valid;
 public class MemberController {
 
     private final MemberService memberService;
+    private final LoginService loginService;
 
     @GetMapping
     public String createForm(Model model) {
@@ -86,9 +89,11 @@ public class MemberController {
 
     // 탈퇴
     @DeleteMapping("/{memberId}")
-    public String delete(@PathVariable Long memberId) {
+    public String delete(@PathVariable Long memberId, HttpSession session, Model model) {
         memberService.delete(memberId);
-
-        return "redirect:/";
+        loginService.logout(session);
+        model.addAttribute("msg", "탈퇴되었습니다.");
+        model.addAttribute("url", "/");
+        return "mypage/index";
     }
 }

@@ -13,6 +13,11 @@
                     레시피</a></div>
             <div class="detail-title"><a class="btn btn-basic btn-default"
                     th:href="@{/members/{param1}(param1=${memberId})}">프로필 수정</a></div>
+            <form class="detail-title delete-form" method="post" th:action="@{/members/{param1}(param1=${memberId})}">
+                <input type="hidden" name="_method" value="delete">
+                <button th:method="post" class="btn btn-basic btn-default" type="submit"
+                    th:href="@{/members/{param1}(param1=${memberId})}">회원 탈퇴</button>
+            </form>
         </div>
     </section>
 </main>
@@ -31,6 +36,16 @@
         if (url == null)
             return;
         location.href = url;
+    }
+
+    const submitBtn = document.querySelector("button");
+    submitBtn.onclick = (e) => {
+        e.preventDefault();
+
+        if(!(confirm("탈퇴하시겠습니까?")))
+            return;
+
+        document.querySelector(".delete-form").submit();
     }
     /* ]]> */
 </script>
