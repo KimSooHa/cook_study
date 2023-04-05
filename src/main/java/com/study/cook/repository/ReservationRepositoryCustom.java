@@ -11,6 +11,6 @@ import java.util.Optional;
 public interface ReservationRepositoryCustom {
 
     Optional<List<Reservation>> findByMemberIdAndDateTimeGt(Long memberId, LocalDateTime today);
-    Optional<List<Reservation>> findByCookingRoomAndStartDate(Long cookingRoomId, @Param("date") String startDate);
+    Optional<List<Reservation>> findByCookingRoomAndStartDate(Long cookingRoomId, String startDate);
 
 }

@@ -41,7 +41,7 @@ public class ReservationRepositoryImpl implements ReservationRepositoryCustom {
     }
 
     @Override
-    public Optional<List<Reservation>> findByCookingRoomAndStartDate(Long cookingRoomId, @Param("date") String startDate) {
+    public Optional<List<Reservation>> findByCookingRoomAndStartDate(Long cookingRoomId, String startDate) {
 
         StringTemplate formattedDate = getFormattedDate();
 
@@ -51,7 +51,7 @@ public class ReservationRepositoryImpl implements ReservationRepositoryCustom {
                 .fetch());
     }
 
-    private static StringTemplate getFormattedDate() {
+    private StringTemplate getFormattedDate() {
         return Expressions.stringTemplate(
 
                 "DATE_FORMAT({0}, {1})"
