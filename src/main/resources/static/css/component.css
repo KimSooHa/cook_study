@@ -622,6 +622,7 @@
             width: 100%;
             display: flex;
             justify-content: space-between;
+            align-items: center;
         }
 
         .comment-container .comment .edit-content input[type="text"] {
