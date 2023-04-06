@@ -21,8 +21,8 @@
         <nav class="nav-category">
             <ul>
                 <li class="nav-selected">
-                    <a th:class="${categoryName} == null ? 'btn btn-tag selected' : 'btn btn-tag'"
-                        th:href="@{/clubs/list/created(title=${title})}">전체</a>
+                    <a th:class="${categoryName} == '' ? 'btn btn-tag selected' : 'btn btn-tag'"
+                        th:href="@{/clubs/list/created(categoryName='', title=${title})}">전체</a>
                 </li>
                 <li th:each="category : ${categories}" th:value="${category.id}">
                     <a th:text="${category.name}" class="btn btn-tag"

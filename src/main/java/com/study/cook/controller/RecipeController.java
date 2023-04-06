@@ -161,6 +161,6 @@ public class RecipeController {
     public String delete(@PathVariable Long recipeId, RedirectAttributes redirectAttributes, @RequestParam(defaultValue = "/recipes/list") String redirectURL) {
         recipeService.delete(recipeId);
         redirectAttributes.addFlashAttribute("msg", "삭제하였습니다.");
-        return "redirect:" + redirectURL;
+        return "redirect:" + redirectURL + "?categoryName=";
     }
 }

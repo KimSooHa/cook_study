@@ -42,8 +42,8 @@
     <div class="header-bottom">
         <nav>
             <ul class="d-flex">
-                <li><a href="/recipes/list">레시피</a></li>
-                <li><a href="/clubs/list">쿡스터디</a></li>
+                <li><a th:href="@{/recipes/list(categoryName='')}">레시피</a></li>
+                <li><a th:href="@{/clubs/list(categoryName='')}">쿡스터디</a></li>
                 <li><a href="/cooking-rooms/reservations">요리실</a></li>
                 <li><a href="/mypage">마이페이지</a></li>
             </ul>

@@ -5,11 +5,11 @@
     <section class="detail-container">
         <h1 class="detail-container-title">마이 페이지</h1>
         <div class="link-box">
-            <div class="detail-title"><a class="btn btn-basic btn-default" th:href="@{/clubs/list/created}">등록한 쿡스터디</a>
+            <div class="detail-title"><a class="btn btn-basic btn-default" th:href="@{/clubs/list/created(categoryName='')}">등록한 쿡스터디</a>
             </div>
-            <div class="detail-title"><a class="btn btn-basic btn-default" th:href="@{/clubs/list/joined}">참여하는 쿡스터디</a>
+            <div class="detail-title"><a class="btn btn-basic btn-default" th:href="@{/clubs/list/joined(categoryName='')}">참여하는 쿡스터디</a>
             </div>
-            <div class="detail-title"><a class="btn btn-basic btn-default" th:href="@{/recipes/list/created}">등록한
+            <div class="detail-title"><a class="btn btn-basic btn-default" th:href="@{/recipes/list/created(categoryName='')}">등록한
                     레시피</a></div>
             <div class="detail-title"><a class="btn btn-basic btn-default"
                     th:href="@{/members/{param1}(param1=${memberId})}">프로필 수정</a></div>

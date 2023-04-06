@@ -237,11 +237,10 @@ public class ClubController {
     }
 
     @DeleteMapping("/{clubId}")
-    public String delete(@PathVariable Long clubId, RedirectAttributes redirectAttributes, @RequestParam(defaultValue = "/clubs/list") String redirectURL) {
+    public String delete(@PathVariable Long clubId, RedirectAttributes redirectAttributes, @RequestParam(defaultValue = "/clubs/list?categoryName=") String redirectURL) {
         clubService.delete(clubId);
         redirectAttributes.addFlashAttribute("msg", "삭제되었습니다!");
-        log.info("redirectURL={}", redirectURL);
-        return "redirect:" + redirectURL;
+        return "redirect:" + redirectURL + "?categoryName=";
     }
 
     private void makeReservationListDto(List<ReservationDto> reservationDtos, Reservation reservation) {
