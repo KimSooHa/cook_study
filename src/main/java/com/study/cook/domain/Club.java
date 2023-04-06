@@ -64,7 +64,7 @@ public class Club {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @OneToMany(mappedBy = "club", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "club", cascade = CascadeType.PERSIST)
     private List<Reservation> reservations = new ArrayList<>();
 
 

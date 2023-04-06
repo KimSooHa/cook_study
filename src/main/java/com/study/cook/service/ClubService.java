@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -119,6 +120,10 @@ public class ClubService {
     @Transactional
     public void delete(Long clubId) {
         Club club = findOneById(clubId);
+        Optional<List<Reservation>> findReservations = reservationService.findByClub(club);
+        if(findReservations.isPresent()) {
+            findReservations.get().stream().forEach(fr -> fr.setClub(null));
+        }
         clubRepository.delete(club);
     }
 }
