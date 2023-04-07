@@ -29,7 +29,7 @@
                     <legend class="detail-title">시간 선택</legend>
                     <div th:each="schedule : ${schedules}" class="checkbox-container">
                         <input th:field="*{schedules}" th:value="${schedule.scheduleId}" class="checkbox"
-                            type="checkbox" name="selected-time" disabled>
+                            type="checkbox" name="selected-time" disabled th:onchange="changeChecked(this)">
                         <label th:for="${schedule.scheduleId}"
                             th:text="|${schedule.startDate} ~ ${schedule.endDate}|">10:00
                             ~ 11:00
@@ -56,7 +56,10 @@
         let now_utc = Date.now(); //지금 날짜를 밀리초로
         let timeOff = new Date().getTimezoneOffset() / (60 * 24) + (1000 * 60 * 60 * 24 * 2); // 로캘 시간과의 차이를 분단위로 반환
         let laterTwoDays = new Date(now_utc + timeOff).toISOString().split("T")[0];  // new Date(now_utc-timeOff).toISOString()은 '2022-05-11T18:09:38.134Z'를 반환
-        document.querySelector(".date").setAttribute("min", laterTwoDays);
+        if(document.querySelector("input[type=date]").value < laterTwoDays)
+            document.querySelector(".date").setAttribute("min", document.querySelector("input[type=date]").value);
+        else
+            document.querySelector(".date").setAttribute("min", laterTwoDays);
 
 
         function getTimeList() {
@@ -101,6 +104,19 @@
 
             methodGetJson(request, url);
         }
+
+        // 하나의 체크박스만 선택
+        function changeChecked(e) {
+            console.log("changed!");
+            let checkboxes = document.querySelectorAll(".checkbox");
+    
+            for (let i = 0; i < checkboxes.length; i++) {
+                if(checkboxes[i].checked)
+                    checkboxes[i].checked = false;
+            }
+            e.checked = true;
+        }
+
 
         const submitBtn = document.querySelector(".edit");
 
