@@ -1,10 +1,7 @@
 package com.study.cook.service;
 
 import com.study.cook.controller.RecipeForm;
-import com.study.cook.domain.Category;
-import com.study.cook.domain.Member;
-import com.study.cook.domain.Photo;
-import com.study.cook.domain.Recipe;
+import com.study.cook.domain.*;
 import com.study.cook.dto.RecipeListDto;
 import com.study.cook.dto.SearchCondition;
 import com.study.cook.exception.StoreFailException;
@@ -115,6 +112,15 @@ public class RecipeService {
     @Transactional
     public void delete(Long recipeId) {
         Recipe recipe = findOneById(recipeId);
+
+        Photo photo = recipe.getPhoto();
+        fileStore.deleteFile(photo.getStoreFileName());
+
+        List<RecipeField> recipeFields = recipe.getRecipeFields();
+        recipeFields.stream().forEach(rf -> {
+            Photo rfPhoto = rf.getPhoto();
+            fileStore.deleteFile(rfPhoto.getStoreFileName());
+        });
         recipeRepository.delete(recipe);
     }
 
