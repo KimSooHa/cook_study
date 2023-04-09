@@ -31,7 +31,6 @@ public class RecipeApiController {
     private final MemberFinder memberFinder;
     private final FileStore fileStore;
 
-    @ResponseBody
     @PostMapping
     public ResultVO create(@Valid @RequestPart RecipeForm recipeForm, @RequestPart MultipartFile imageFile,
                            @Valid @RequestPart List<String> fieldForms, @RequestPart List<MultipartFile> multipartFiles,  // @RequestPart를 사용하면 Json 파일로 넘어온 데이터를 바인딩
@@ -54,13 +53,11 @@ public class RecipeApiController {
 
 
     // <img> 이미지 조회 -> 이미지 바이너리 반환
-    @ResponseBody
     @GetMapping("/images/{filename}")
     public Resource downloadImage(@PathVariable String filename) throws MalformedURLException {
         return new UrlResource("file:" + fileStore.getFullPath(filename));  // 파일에 직접 접근해서 스트링으로 반환
     }
 
-    @ResponseBody
     @PutMapping("/{recipeId}")
     public ResultVO update(@PathVariable Long recipeId,
                            @Valid @RequestPart RecipeForm recipeForm, @RequestPart(required = false) Optional<MultipartFile> imageFile,
