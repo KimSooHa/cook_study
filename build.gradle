@@ -83,11 +83,11 @@ configurations {
 	querydsl.extendsFrom compileClasspath
 }
 
-// submodule 의 yml 파일 빌드시에 가져오기
+// 서브모듈 가져오기
 task copyPrivate(type: Copy) {
-    copy {
-        from './cook_study-private'
-        include "*.yml"
-        into 'src/main/resources'
-    }
+	copy {
+		from './cook_study-private'
+		include "*.yml"
+		into 'src/main/resources'
+	}
 }
