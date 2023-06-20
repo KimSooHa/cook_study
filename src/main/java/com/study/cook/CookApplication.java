@@ -11,7 +11,7 @@ import org.springframework.web.filter.HiddenHttpMethodFilter;
 @SpringBootApplication
 public class CookApplication {
 
-	public static final String APPLICATION_LOCATIONS = "spring.config.location=classpath:application.yml, /app/config/springboot-webservice/real-application.yml";
+	public static final String APPLICATION_LOCATIONS = "spring.config.location=classpath:application.yml, /home/ec2-user/app/config/springboot-webservice/real-application.yml";
 	
 	public static void main(String[] args) {
 //		SpringApplication.run(CookApplication.class, args);
