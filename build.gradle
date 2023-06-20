@@ -84,10 +84,10 @@ configurations {
 }
 
 // 서브모듈 가져오기
-task copyPrivate(type: Copy) {
-	copy {
-		from './cook_study-private'
-		include "*.yml"
-		into 'src/main/resources'
-	}
-}
+//task copyPrivate(type: Copy) {
+//	copy {
+//		from './cook_study-private'
+//		include "*.yml"
+//		into 'src/main/resources'
+//	}
+//}
