@@ -34,7 +34,13 @@ class MemberServiceTest {
     @Transactional
     public void testSave() {
         for (int i = 0; i < 20; i++) {
-            memberRepository.save(new Member("member" + i, "member" + i, "member1234*", "member" + i + "@email.com", "010-1234-1234"));
+            MemberForm form = new MemberForm();
+            form.setName("testMember" + i);
+            form.setLoginId("test" + i);
+            form.setPwd("testMember1234*");
+            form.setEmail("testMember" + i + "@email.com");
+            form.setPhoneNum("010-1234-1234");
+            memberService.join(form);
         }
     }
 
@@ -70,6 +76,27 @@ class MemberServiceTest {
 
         // then
         assertThat(memberService.findOneById(joinedId)).isEqualTo(memberService.findOneByEmail(form.getEmail()));
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("회원정보 수정")
+    public void updateTest() {
+        // given
+        String email = "testMember1@email.com";
+        Member member = memberService.findOneByEmail(email);
+
+        MemberForm form = new MemberForm();
+        form.setLoginId(member.getLoginId());
+        form.setName(member.getName());
+        form.setPwd(member.getPwd());
+        form.setPhoneNum("010-1234-5678");
+
+        // when
+        memberService.update(member.getId(), form);
+
+        // then
+        assertThat(member.getPhoneNum()).isEqualTo(form.getPhoneNum());
     }
 
 }
