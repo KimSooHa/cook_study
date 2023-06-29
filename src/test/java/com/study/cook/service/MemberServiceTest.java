@@ -5,18 +5,18 @@ import com.study.cook.domain.Member;
 import com.study.cook.dto.MemberLoginIdSearchCondition;
 import com.study.cook.repository.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
 
 @SpringBootTest
 @Slf4j
@@ -29,6 +29,7 @@ class MemberServiceTest {
 
     @Autowired
     EntityManager em;
+
 
     @BeforeEach
     @Transactional
@@ -54,6 +55,7 @@ class MemberServiceTest {
         // when
         Member findMember = memberService.findOne(condition);
 
+
         // then
         assertThat(findMember.getLoginId()).isEqualTo("member5");
 //        log.info("memberLoginId = {}", findMember.getLoginId());
@@ -74,8 +76,27 @@ class MemberServiceTest {
         // when
         Long joinedId = memberService.join(form);
 
+        MemberRepository mock = mock(MemberRepository.class);
+
+
         // then
         assertThat(memberService.findOneById(joinedId)).isEqualTo(memberService.findOneByEmail(form.getEmail()));
+    }
+
+    @Test
+    @DisplayName("중복회원 예외 검사")
+    @Transactional
+    public void validateDuplicateMemberTest() throws IllegalStateException {
+        // given
+        MemberForm form = new MemberForm();
+        form.setName("testMember1");
+        form.setLoginId("test1");
+        form.setPwd("testMember1234*");
+        form.setEmail("testMember1@email.com");
+        form.setPhoneNum("010-1234-1234");
+
+        // then
+        assertThatThrownBy(() -> memberService.join(form)).isInstanceOf(IllegalStateException.class);
     }
 
     @Test
