@@ -120,4 +120,19 @@ class MemberServiceTest {
         assertThat(member.getPhoneNum()).isEqualTo(form.getPhoneNum());
     }
 
+    @Test
+    @Transactional
+    @DisplayName("회원 삭제")
+    public void deleteTest() {
+        // given
+        String email = "testMember1@email.com";
+        Member member = memberService.findOneByEmail(email);
+
+        // when
+        memberService.delete(member.getId());
+
+        // then
+        assertThatThrownBy(() -> memberService.findOneById(member.getId()))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
 }
