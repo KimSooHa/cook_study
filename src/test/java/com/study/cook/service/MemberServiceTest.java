@@ -112,6 +112,19 @@ class MemberServiceTest {
     }
 
     @Test
+    @DisplayName("이메일로 카운트")
+    public void countByEmailTest() {
+        // given
+        String email = "testMember1@email.com";
+
+        // when
+        Long count = memberService.countByEmail(email);
+
+        // then
+        assertThat(count).isEqualTo(1);
+    }
+
+    @Test
     @DisplayName("회원정보 수정")
     public void updateTest() {
         // given
