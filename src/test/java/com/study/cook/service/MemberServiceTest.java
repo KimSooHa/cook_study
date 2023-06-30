@@ -150,6 +150,19 @@ class MemberServiceTest {
     }
 
     @Test
+    @DisplayName("이메일로 찾기")
+    public void findOneByEmailTest() {
+        // given
+        String email = "testMember1@email.com";
+
+        // when
+        Member member = memberService.findOneByEmail(email);
+
+        // then
+        assertThat(member).isNotNull();
+    }
+
+    @Test
     @DisplayName("회원정보 수정")
     public void updateTest() {
         // given
