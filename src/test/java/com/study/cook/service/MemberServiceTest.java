@@ -19,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 
 @SpringBootTest
+@Transactional
 @Slf4j
 class MemberServiceTest {
 
@@ -32,7 +33,6 @@ class MemberServiceTest {
 
 
     @BeforeEach
-    @Transactional
     public void testSave() {
         for (int i = 0; i < 20; i++) {
             MemberForm form = new MemberForm();
@@ -62,7 +62,6 @@ class MemberServiceTest {
     }
 
     @Test
-    @Transactional
     @DisplayName("회원가입")
     public void signupTest() {
         // given
@@ -85,7 +84,6 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("중복회원 예외 검사")
-    @Transactional
     public void validateDuplicateMemberTest() throws IllegalStateException {
         // given
         MemberForm form = new MemberForm();
@@ -100,7 +98,20 @@ class MemberServiceTest {
     }
 
     @Test
-    @Transactional
+    @DisplayName("로그인 아이디로 카운트")
+    public void countByLoginIdTest() {
+        // given
+        String email = "testMember1@email.com";
+        Member member = memberService.findOneByEmail(email);
+
+        // when
+        String loginId = member.getLoginId();
+
+        // then
+        assertThat(memberService.countByLoginId(loginId)).isEqualTo(1);
+    }
+
+    @Test
     @DisplayName("회원정보 수정")
     public void updateTest() {
         // given
@@ -121,7 +132,6 @@ class MemberServiceTest {
     }
 
     @Test
-    @Transactional
     @DisplayName("회원 삭제")
     public void deleteTest() {
         // given
