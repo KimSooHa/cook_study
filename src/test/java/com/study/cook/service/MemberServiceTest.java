@@ -34,13 +34,13 @@ class MemberServiceTest {
 
     @BeforeEach
     public void testSave() {
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 10; i++) {
             MemberForm form = new MemberForm();
             form.setName("testMember" + i);
             form.setLoginId("test" + i);
             form.setPwd("testMember1234*");
             form.setEmail("testMember" + i + "@email.com");
-            form.setPhoneNum("010-1234-1234");
+            form.setPhoneNum("010-1234-123"+i);
             memberService.join(form);
         }
     }
@@ -119,6 +119,20 @@ class MemberServiceTest {
 
         // when
         Long count = memberService.countByEmail(email);
+
+        // then
+        assertThat(count).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("휴대폰 번호로 카운트")
+    public void countByPhoneNumTest() {
+        // given
+        String email = "testMember1@email.com";
+        Member member = memberService.findOneByEmail(email);
+
+        // when
+        Long count = memberService.countByPhoneNum(member.getPhoneNum());
 
         // then
         assertThat(count).isEqualTo(1);
