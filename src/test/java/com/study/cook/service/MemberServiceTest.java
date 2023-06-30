@@ -75,9 +75,6 @@ class MemberServiceTest {
         // when
         Long joinedId = memberService.join(form);
 
-        MemberRepository mock = mock(MemberRepository.class);
-
-
         // then
         assertThat(memberService.findOneById(joinedId)).isEqualTo(memberService.findOneByEmail(form.getEmail()));
     }
@@ -136,6 +133,20 @@ class MemberServiceTest {
 
         // then
         assertThat(count).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("아이디로 찾기")
+    public void findOneByIdTest() {
+        // given
+        String email = "testMember1@email.com";
+        Member member = memberService.findOneByEmail(email);
+
+        // when
+        Member findMember = memberService.findOneById(member.getId());
+
+        // then
+        assertThat(findMember.getEmail()).isEqualTo(email);
     }
 
     @Test
