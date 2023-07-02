@@ -16,7 +16,6 @@ import javax.persistence.EntityManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.mock;
 
 @SpringBootTest
 @Transactional
@@ -33,15 +32,10 @@ class MemberServiceTest {
 
 
     @BeforeEach
-    public void testSave() {
+    void testSave() {
         for (int i = 0; i < 10; i++) {
-            MemberForm form = new MemberForm();
-            form.setName("testMember" + i);
-            form.setLoginId("test" + i);
-            form.setPwd("testMember1234*");
-            form.setEmail("testMember" + i + "@email.com");
-            form.setPhoneNum("010-1234-123"+i);
-            memberService.join(form);
+            Member member = new Member("testMember" + i, "test" + i, "testMember1234*", "testMember" + i + "@email.com", "010-1234-123"+i);
+            memberRepository.save(member);
         }
     }
 
@@ -63,7 +57,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("회원가입")
-    public void signupTest() {
+    void signupTest() {
         // given
         MemberForm form = new MemberForm();
         form.setName("member");
@@ -81,7 +75,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("중복회원 예외 검사")
-    public void validateDuplicateMemberTest() throws IllegalStateException {
+    void validateDuplicateMemberTest() throws IllegalStateException {
         // given
         MemberForm form = new MemberForm();
         form.setName("testMember1");
@@ -96,7 +90,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("로그인 아이디로 카운트")
-    public void countByLoginIdTest() {
+    void countByLoginIdTest() {
         // given
         String email = "testMember1@email.com";
         Member member = memberService.findOneByEmail(email);
@@ -110,7 +104,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("이메일로 카운트")
-    public void countByEmailTest() {
+    void countByEmailTest() {
         // given
         String email = "testMember1@email.com";
 
@@ -123,7 +117,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("휴대폰 번호로 카운트")
-    public void countByPhoneNumTest() {
+    void countByPhoneNumTest() {
         // given
         String email = "testMember1@email.com";
         Member member = memberService.findOneByEmail(email);
@@ -137,7 +131,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("아이디로 찾기")
-    public void findOneByIdTest() {
+    void findOneByIdTest() {
         // given
         String email = "testMember1@email.com";
         Member member = memberService.findOneByEmail(email);
@@ -151,7 +145,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("이메일로 찾기")
-    public void findOneByEmailTest() {
+    void findOneByEmailTest() {
         // given
         String email = "testMember1@email.com";
 
@@ -164,7 +158,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("회원정보 수정")
-    public void updateTest() {
+    void updateTest() {
         // given
         String email = "testMember1@email.com";
         Member member = memberService.findOneByEmail(email);
@@ -184,7 +178,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("회원 삭제")
-    public void deleteTest() {
+    void deleteTest() {
         // given
         String email = "testMember1@email.com";
         Member member = memberService.findOneByEmail(email);

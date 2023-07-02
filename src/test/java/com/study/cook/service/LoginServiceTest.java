@@ -5,7 +5,6 @@ import com.study.cook.controller.LoginForm;
 import com.study.cook.controller.MemberForm;
 import com.study.cook.domain.Member;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
