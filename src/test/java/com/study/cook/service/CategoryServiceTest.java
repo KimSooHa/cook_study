@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -22,19 +24,6 @@ class CategoryServiceTest {
 
     @Autowired
     CategoryRepository categoryRepository;
-
-    @BeforeEach
-    void testSave() {
-        Category category1 = new Category("한식");
-        Category category2 = new Category("양식");
-        Category category3 = new Category("일식");
-        Category category4 = new Category("중식");
-
-        categoryRepository.save(category1);
-        categoryRepository.save(category2);
-        categoryRepository.save(category3);
-        categoryRepository.save(category4);
-    }
 
     @Test
     @DisplayName("카테고리 생성")
@@ -50,7 +39,13 @@ class CategoryServiceTest {
     }
 
     @Test
+    @DisplayName("카테고리 목록 조회")
     void findList() {
+        // when
+        List<Category> list = categoryService.findList();
+
+        // then
+        assertThat(list.size()).isEqualTo(5);
     }
 
     @Test
