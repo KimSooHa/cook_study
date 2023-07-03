@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @Transactional
@@ -21,9 +22,6 @@ class CategoryServiceTest {
 
     @Autowired
     CategoryService categoryService;
-
-    @Autowired
-    CategoryRepository categoryRepository;
 
     @Test
     @DisplayName("카테고리 생성")
@@ -63,10 +61,31 @@ class CategoryServiceTest {
     }
 
     @Test
+    @DisplayName("카테고리 수정")
     void update() {
+        // given
+        Category category = new Category("디저트");
+        Long categoryId = categoryService.create(category);
+        String name = category.getName();
+
+        // when
+        categoryService.update(categoryId, "음료");
+
+        // then
+        assertThat(category.getName()).isNotEqualTo(name);
     }
 
     @Test
+    @DisplayName("카테고리 삭제")
     void delete() {
+        // given
+        Category category = new Category("디저트");
+        Long categoryId = categoryService.create(category);
+
+        // when
+        categoryService.delete(category);
+
+        // then
+        assertThatThrownBy(() -> categoryService.findOneById(categoryId)).isInstanceOf(IllegalArgumentException.class);
     }
 }
