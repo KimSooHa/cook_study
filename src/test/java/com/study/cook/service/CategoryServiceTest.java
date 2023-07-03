@@ -49,7 +49,17 @@ class CategoryServiceTest {
     }
 
     @Test
+    @DisplayName("아이디로 조회")
     void findOneById() {
+        // given
+        Category category = new Category("디저트");
+        Long categoryId = categoryService.create(category);
+
+        // when
+        Category findCategory = categoryService.findOneById(categoryId);
+
+        // then
+        assertThat(findCategory.getName()).isEqualTo(category.getName());
     }
 
     @Test
