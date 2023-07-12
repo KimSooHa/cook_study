@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -156,6 +155,18 @@ class ScheduleServiceTest {
     }
 
     @Test
+    @DisplayName("시작시간 기준으로 전체 일정 삭제")
     void deleteAllByTime() {
+        // given
+        LocalTime startTime = LocalTime.of(10, 0);
+        List<Schedule> list = scheduleService.findList();
+        int size = list.size();
+        long count = cookingRoomRepository.count();
+
+        // when
+        scheduleService.deleteAllByTime(startTime);
+
+        // then
+        assertThat(scheduleService.findList().size()).isEqualTo(size - count);
     }
 }
