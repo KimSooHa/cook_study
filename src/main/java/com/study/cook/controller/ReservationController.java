@@ -126,7 +126,7 @@ public class ReservationController {
         form.setCookingRoomId(cookingRoom.getId());
 
         // 스케줄 세팅
-        Schedule findSchedule = scheduleService.findListByCookingRoomAndStartTime(cookingRoom, dateParser.parseToTime(startDateTime));
+        Schedule findSchedule = scheduleService.findOneByCookingRoomAndStartTime(cookingRoom, dateParser.parseToTime(startDateTime));
         form.getScheduleIds().add(findSchedule.getId());
 
         List<CookingRoom> cookingRooms = cookingRoomService.findList();

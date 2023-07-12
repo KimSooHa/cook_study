@@ -61,7 +61,7 @@ public class ScheduleService {
         return scheduleRepository.findByCookingRoomId(cookingRoom.getId());
     }
 
-    public Schedule findListByCookingRoomAndStartTime(CookingRoom cookingRoom, LocalTime time) {
+    public Schedule findOneByCookingRoomAndStartTime(CookingRoom cookingRoom, LocalTime time) {
         return scheduleRepository.findByCookingRoomIdAndStartTime(cookingRoom.getId(), time);
     }
 

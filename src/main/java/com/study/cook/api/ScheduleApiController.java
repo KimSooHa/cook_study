@@ -43,7 +43,7 @@ public class ScheduleApiController {
             for (Reservation reservation : reservations) {
                 for (Schedule schedule : scheduleList) {
                     LocalTime time = dateParser.parseToTime(reservation.getStartDateTime());
-                    Schedule reservedSchedule = scheduleService.findListByCookingRoomAndStartTime(cookingRoom, time);
+                    Schedule reservedSchedule = scheduleService.findOneByCookingRoomAndStartTime(cookingRoom, time);
 
                     Long id = reservedSchedule.getId();
                     if (schedule.getId().equals(id))

@@ -89,7 +89,18 @@ class ScheduleServiceTest {
     }
 
     @Test
-    void findListByCookingRoomAndStartTime() {
+    @DisplayName("요리실과 시작시간으로 일정 조회")
+    void findOneByCookingRoomAndStartTime() {
+        // given
+        CookingRoom cookingRoom = cookingRoomRepository.findByRoomNum(101).orElseThrow(() -> new IllegalArgumentException("no such data"));
+        LocalTime time = LocalTime.of(10, 0);
+
+        // when
+        Schedule schedule = scheduleService.findOneByCookingRoomAndStartTime(cookingRoom, time);
+
+        // then
+        assertThat(schedule.getStartTime()).isEqualTo(time);
+        assertThat(schedule.getCookingRoom().getId()).isEqualTo(cookingRoom.getId());
     }
 
     @Test
