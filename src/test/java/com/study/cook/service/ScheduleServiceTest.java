@@ -121,7 +121,20 @@ class ScheduleServiceTest {
     }
 
     @Test
+    @DisplayName("일정 수정")
     void update() {
+        // given
+        LocalTime startTime = LocalTime.of(10, 0);
+        LocalTime endTime = LocalTime.of(11, 0);
+        Schedule schedule = new Schedule(startTime, endTime);
+        CookingRoom cookingRoom = new CookingRoom(10, 101);
+        Long scheduleId = scheduleService.create(schedule, cookingRoom);
+
+        // when
+        scheduleService.update(scheduleId, startTime, LocalTime.of(12, 0));
+
+        // then
+        assertThat(schedule.getEndTime()).isNotEqualTo(endTime);
     }
 
     @Test
