@@ -104,7 +104,20 @@ class ScheduleServiceTest {
     }
 
     @Test
+    @DisplayName("아이디로 조회")
     void findOneById() {
+        // given
+        LocalTime startTime = LocalTime.of(10, 0);
+        LocalTime endTime = LocalTime.of(11, 0);
+        Schedule schedule = new Schedule(startTime, endTime);
+        CookingRoom cookingRoom = new CookingRoom(10, 101);
+        Long scheduleId = scheduleService.create(schedule, cookingRoom);
+
+        // when
+        Schedule findSchedule = scheduleService.findOneById(scheduleId);
+
+        // then
+        assertThat(findSchedule.getCookingRoom().getId()).isEqualTo(cookingRoom.getId());
     }
 
     @Test
