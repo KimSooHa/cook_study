@@ -69,7 +69,7 @@ public class ScheduleService {
      * 단건 조회
      */
     public Schedule findOneById(Long scheduleId) {
-        return scheduleRepository.findById(scheduleId).orElse(null);
+        return scheduleRepository.findById(scheduleId).orElseThrow(() -> new IllegalArgumentException("no such data"));
     }
 
 

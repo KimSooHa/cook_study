@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @Transactional
@@ -138,7 +139,20 @@ class ScheduleServiceTest {
     }
 
     @Test
+    @DisplayName("일정 삭제")
     void delete() {
+        // given
+        LocalTime startTime = LocalTime.of(10, 0);
+        LocalTime endTime = LocalTime.of(11, 0);
+        Schedule schedule = new Schedule(startTime, endTime);
+        CookingRoom cookingRoom = new CookingRoom(10, 101);
+        Long scheduleId = scheduleService.create(schedule, cookingRoom);
+
+        // when
+        scheduleService.delete(schedule);
+
+        // then
+        assertThatThrownBy(() -> scheduleService.findOneById(scheduleId)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
