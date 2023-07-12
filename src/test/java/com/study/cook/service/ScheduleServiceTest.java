@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -75,7 +76,16 @@ class ScheduleServiceTest {
     }
 
     @Test
+    @DisplayName("요리실로 일정 목록 조회")
     void findListByCookingRoom() {
+        // given
+        CookingRoom cookingRoom = cookingRoomRepository.findByRoomNum(101).orElseThrow(() -> new IllegalArgumentException("no such data"));
+
+        // when
+        List<Schedule> list = scheduleService.findListByCookingRoom(cookingRoom);
+
+        // then
+        assertThat(list.size()).isEqualTo(8);
     }
 
     @Test
