@@ -13,6 +13,7 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -61,7 +62,16 @@ class ScheduleServiceTest {
     }
 
     @Test
+    @DisplayName("일정 목록 조회")
     void findList() {
+        // given
+        Mockito.when(cookingRoomRepository.count()).thenReturn(5L);
+
+        // when
+        List<Schedule> list = scheduleService.findList();
+
+        // then
+        assertThat(list.size()).isEqualTo(8 * cookingRoomRepository.count());
     }
 
     @Test
