@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @Transactional
@@ -95,6 +96,17 @@ class CookingRoomServiceTest {
     }
 
     @Test
+    @DisplayName("요리실 삭제")
     void delete() {
+        // given
+        CookingRoom cookingRoom = new CookingRoom(10, 101);
+        List<Schedule> schedules = scheduleRepository.findAll();
+        Long cookingRoomId = cookingRoomService.create(cookingRoom, schedules);
+
+        // when
+        cookingRoomService.delete(cookingRoom);
+
+        // then
+        assertThatThrownBy(() -> cookingRoomService.findOneById(cookingRoomId)).isInstanceOf(IllegalArgumentException.class);
     }
 }
