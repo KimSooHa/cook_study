@@ -3,6 +3,7 @@ package com.study.cook.service;
 import com.study.cook.controller.ReservationForm;
 import com.study.cook.domain.CookingRoom;
 import com.study.cook.domain.Member;
+import com.study.cook.domain.Reservation;
 import com.study.cook.domain.Schedule;
 import com.study.cook.repository.CookingRoomRepository;
 import com.study.cook.repository.MemberRepository;
@@ -13,6 +14,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -52,7 +56,7 @@ class ReservationServiceTest {
     void create() {
         // given
         ReservationForm form = setForm();
-        Member member = memberRepository.findByLoginId("test1").orElseThrow(() -> new IllegalArgumentException("해당하는 회원이 없습니다."));
+        Member member = getMember();
 
         // when
         List<Long> reservations = reservationService.create(form, member);
@@ -62,7 +66,21 @@ class ReservationServiceTest {
     }
 
     @Test
+    @DisplayName("예약된 요리실 목록 조회")
     void findList() {
+        // given
+        PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.DESC, "startDateTime");
+        ReservationForm form = setForm();
+        Member member = getMember();
+        List<Long> reservationIds = reservationService.create(form, member);
+
+        // when
+        Page<Reservation> list = reservationService.findList(pageRequest);
+        List<Reservation> reservations = list.toList();
+
+        // then
+        assertThat(list.getSize()).isEqualTo(10);
+        assertThat(reservations.get(0).getId()).isEqualTo(reservationIds.get(0));
     }
 
     @Test
@@ -116,5 +134,9 @@ class ReservationServiceTest {
         form.setCookingRoomId(cookingRoom.getId());
 
         return form;
+    }
+
+    private Member getMember() {
+        return memberRepository.findByLoginId("test1").orElseThrow(() -> new IllegalArgumentException("해당하는 회원이 없습니다."));
     }
 }
