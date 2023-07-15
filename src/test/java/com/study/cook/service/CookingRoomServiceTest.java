@@ -79,7 +79,19 @@ class CookingRoomServiceTest {
     }
 
     @Test
+    @DisplayName("요리실 수정")
     void update() {
+        // given
+        CookingRoom cookingRoom = new CookingRoom(10, 101);
+        int maxCount = cookingRoom.getMaxCount();
+        List<Schedule> schedules = scheduleRepository.findAll();
+        Long cookingRoomId = cookingRoomService.create(cookingRoom, schedules);
+
+        // when
+        cookingRoomService.update(cookingRoomId, 15, cookingRoom.getRoomNum());
+
+        // then
+        assertThat(cookingRoom.getMaxCount()).isNotEqualTo(maxCount);
     }
 
     @Test
