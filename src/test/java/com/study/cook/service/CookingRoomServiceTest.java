@@ -51,7 +51,18 @@ class CookingRoomServiceTest {
     }
 
     @Test
+    @DisplayName("아이디로 조회")
     void findOneById() {
+        // given
+        CookingRoom cookingRoom = new CookingRoom(10, 101);
+        List<Schedule> schedules = scheduleRepository.findAll();
+        Long cookingRoomId = cookingRoomService.create(cookingRoom, schedules);
+
+        // when
+        CookingRoom findCookingRoom = cookingRoomService.findOneById(cookingRoomId);
+
+        // then
+        assertThat(findCookingRoom.getId()).isEqualTo(cookingRoom.getId());
     }
 
     @Test
