@@ -66,7 +66,16 @@ class CookingRoomServiceTest {
     }
 
     @Test
+    @DisplayName("요리실 번호로 조회")
     void findOneByRoomNum() {
+        // given
+        int roomNum = 101;
+
+        // when
+        CookingRoom cookingRoom = cookingRoomService.findOneByRoomNum(roomNum);
+
+        // then
+        assertThat(cookingRoom).isNotNull();
     }
 
     @Test
