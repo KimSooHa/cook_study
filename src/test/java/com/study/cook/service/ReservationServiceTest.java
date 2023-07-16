@@ -5,9 +5,12 @@ import com.study.cook.domain.CookingRoom;
 import com.study.cook.domain.Member;
 import com.study.cook.domain.Reservation;
 import com.study.cook.domain.Schedule;
+import com.study.cook.exception.FindCookingRoomException;
+import com.study.cook.exception.FindReservationException;
 import com.study.cook.repository.CookingRoomRepository;
 import com.study.cook.repository.MemberRepository;
 import com.study.cook.repository.ScheduleRepository;
+import com.study.cook.util.DateParser;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -44,6 +47,9 @@ class ReservationServiceTest {
 
     @Autowired
     MemberRepository memberRepository;
+
+    @Autowired
+    DateParser dateParser;
 
     @BeforeEach
     void testSave() {
@@ -84,7 +90,21 @@ class ReservationServiceTest {
     }
 
     @Test
+    @DisplayName("요리실과 시작 날짜로 조회")
     void findByCookingRoomIdAndDate() {
+        // given
+        CookingRoom cookingRoom = cookingRoomRepository.findByRoomNum(101).orElseThrow(() -> new FindCookingRoomException("해당하는 요리실이 없습니다."));
+        ReservationForm form = setForm();
+        Member member = getMember();
+        List<Long> reservations = reservationService.create(form, member);
+        String date = form.getDate();
+
+        // when
+        List<Reservation> findReservations = reservationService.findByCookingRoomIdAndDate(cookingRoom.getId(), date).orElseThrow();
+
+        // then
+        assertThat(findReservations.size()).isEqualTo(1);
+        assertThat(findReservations.get(0).getId()).isEqualTo(reservations.get(0));
     }
 
     @Test
