@@ -1,12 +1,10 @@
 package com.study.cook.service;
 
 import com.study.cook.controller.ReservationForm;
-import com.study.cook.domain.CookingRoom;
-import com.study.cook.domain.Member;
-import com.study.cook.domain.Reservation;
-import com.study.cook.domain.Schedule;
+import com.study.cook.domain.*;
 import com.study.cook.exception.FindCookingRoomException;
 import com.study.cook.exception.FindReservationException;
+import com.study.cook.repository.ClubRepository;
 import com.study.cook.repository.CookingRoomRepository;
 import com.study.cook.repository.MemberRepository;
 import com.study.cook.repository.ScheduleRepository;
@@ -50,6 +48,9 @@ class ReservationServiceTest {
 
     @Autowired
     MemberRepository memberRepository;
+
+    @Autowired
+    ClubRepository clubRepository;
 
     @Autowired
     DateParser dateParser;
@@ -164,7 +165,23 @@ class ReservationServiceTest {
     }
 
     @Test
+    @DisplayName("예약 수정")
     void update() {
+        // given
+        ReservationForm form = setForm();
+        Member member = getMember();
+        List<Long> reservations = reservationService.create(form, member);
+        String date = form.getDate();
+
+        // when
+        LocalDateTime now = LocalDateTime.now();
+        LocalDate newDate = LocalDate.of(now.getYear()+1, now.getMonth(), now.getDayOfMonth());
+        String formatDate = newDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        form.setDate(formatDate);
+        reservationService.update(reservations.get(0), form);
+
+        // then
+        assertThat(form.getDate()).isNotEqualTo(date);
     }
 
     @Test
