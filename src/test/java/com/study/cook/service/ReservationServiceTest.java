@@ -127,7 +127,19 @@ class ReservationServiceTest {
     }
 
     @Test
+    @DisplayName("회원으로 예약목록 조회")
     void findByMember() {
+        // given
+        Member member = getMember();
+        ReservationForm form = setForm();
+        reservationService.create(form, member);
+        PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.DESC, "startDateTime");
+
+        // when
+        Page<Reservation> reservations = reservationService.findByMember(member, pageRequest).orElseThrow(() -> new FindReservationException("해당하는 회원의 예약 목록이 없습니다."));
+
+        // then
+        assertThat(reservations.get().count()).isEqualTo(1);
     }
 
     @Test
