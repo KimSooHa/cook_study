@@ -108,7 +108,18 @@ class ReservationServiceTest {
     }
 
     @Test
+    @DisplayName("아이디로 조회")
     void findOneById() {
+        // given
+        ReservationForm form = setForm();
+        Member member = getMember();
+        List<Long> reservationIds = reservationService.create(form, member);
+
+        // when
+        Reservation reservation = reservationService.findOneById(reservationIds.get(0));
+
+        // then
+        assertThat(reservation.getId()).isEqualTo(reservationIds.get(0));
     }
 
     @Test
