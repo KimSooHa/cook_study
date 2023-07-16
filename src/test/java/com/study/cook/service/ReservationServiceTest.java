@@ -11,6 +11,7 @@ import com.study.cook.repository.CookingRoomRepository;
 import com.study.cook.repository.MemberRepository;
 import com.study.cook.repository.ScheduleRepository;
 import com.study.cook.util.DateParser;
+import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -31,9 +32,11 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @Transactional
+@Slf4j
 class ReservationServiceTest {
 
     @Autowired
@@ -143,7 +146,17 @@ class ReservationServiceTest {
     }
 
     @Test
+    @DisplayName("회원과 현재 날짜보다 뒤의 목록 조회")
     void findByMemberAndDateGt() {
+        // given
+        Member member = getMember();
+        LocalDateTime now = LocalDateTime.now();
+
+        // when
+        Optional<List<Reservation>> reservations = reservationService.findByMemberAndDateGt(member, now);
+
+        // then
+        assertThat(reservations.get()).isEmpty();
     }
 
     @Test
