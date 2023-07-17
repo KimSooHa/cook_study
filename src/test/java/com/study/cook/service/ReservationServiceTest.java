@@ -1,16 +1,16 @@
 package com.study.cook.service;
 
 import com.study.cook.controller.ReservationForm;
-import com.study.cook.domain.*;
+import com.study.cook.domain.CookingRoom;
+import com.study.cook.domain.Member;
+import com.study.cook.domain.Reservation;
+import com.study.cook.domain.Schedule;
 import com.study.cook.exception.FindCookingRoomException;
 import com.study.cook.exception.FindReservationException;
-import com.study.cook.repository.ClubRepository;
 import com.study.cook.repository.CookingRoomRepository;
 import com.study.cook.repository.MemberRepository;
 import com.study.cook.repository.ScheduleRepository;
-import com.study.cook.util.DateParser;
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @Transactional
@@ -49,11 +48,6 @@ class ReservationServiceTest {
     @Autowired
     MemberRepository memberRepository;
 
-    @Autowired
-    ClubRepository clubRepository;
-
-    @Autowired
-    DateParser dateParser;
 
     @BeforeEach
     void testSave() {
@@ -185,7 +179,18 @@ class ReservationServiceTest {
     }
 
     @Test
+    @DisplayName("예약 삭제")
     void delete() {
+        // given
+        ReservationForm form = setForm();
+        Member member = getMember();
+        List<Long> reservations = reservationService.create(form, member);
+
+        // when
+        reservationService.delete(reservations.get(0));
+
+        // then
+        assertThat(reservationService.findOneById(reservations.get(0))).isNull();
     }
 
     private ReservationForm setForm() {
