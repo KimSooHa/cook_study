@@ -1,15 +1,13 @@
 package com.study.cook.service;
 
 import com.study.cook.controller.ReservationForm;
-import com.study.cook.domain.CookingRoom;
-import com.study.cook.domain.Member;
-import com.study.cook.domain.Reservation;
-import com.study.cook.domain.Schedule;
+import com.study.cook.domain.*;
 import com.study.cook.exception.FindCookingRoomException;
 import com.study.cook.exception.FindReservationException;
-import com.study.cook.repository.CookingRoomRepository;
-import com.study.cook.repository.MemberRepository;
-import com.study.cook.repository.ScheduleRepository;
+import com.study.cook.exception.FindScheduleException;
+import com.study.cook.exception.ReserveFailException;
+import com.study.cook.repository.*;
+import com.study.cook.util.DateParser;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -27,6 +25,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,6 +39,9 @@ class ReservationServiceTest {
     ReservationService reservationService;
 
     @Autowired
+    ReservationRepository reservationRepository;
+
+    @Autowired
     ScheduleRepository scheduleRepository;
 
     @Autowired
@@ -47,6 +49,12 @@ class ReservationServiceTest {
 
     @Autowired
     MemberRepository memberRepository;
+
+    @Autowired
+    ClubRepository clubRepository;
+
+    @Autowired
+    DateParser dateParser;
 
 
     @BeforeEach
@@ -76,7 +84,7 @@ class ReservationServiceTest {
         PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.DESC, "startDateTime");
         ReservationForm form = setForm();
         Member member = getMember();
-        List<Long> reservationIds = reservationService.create(form, member);
+        List<Long> reservationIds = save(form, member);
 
         // when
         Page<Reservation> list = reservationService.findList(pageRequest);
@@ -94,7 +102,7 @@ class ReservationServiceTest {
         CookingRoom cookingRoom = cookingRoomRepository.findByRoomNum(101).orElseThrow(() -> new FindCookingRoomException("해당하는 요리실이 없습니다."));
         ReservationForm form = setForm();
         Member member = getMember();
-        List<Long> reservations = reservationService.create(form, member);
+        List<Long> reservationIds = save(form, member);
         String date = form.getDate();
 
         // when
@@ -102,7 +110,7 @@ class ReservationServiceTest {
 
         // then
         assertThat(findReservations.size()).isEqualTo(1);
-        assertThat(findReservations.get(0).getId()).isEqualTo(reservations.get(0));
+        assertThat(findReservations.get(0).getId()).isEqualTo(reservationIds.get(0));
     }
 
     @Test
@@ -111,7 +119,7 @@ class ReservationServiceTest {
         // given
         ReservationForm form = setForm();
         Member member = getMember();
-        List<Long> reservationIds = reservationService.create(form, member);
+        List<Long> reservationIds = save(form, member);
 
         // when
         Reservation reservation = reservationService.findOneById(reservationIds.get(0));
@@ -130,7 +138,7 @@ class ReservationServiceTest {
         // given
         Member member = getMember();
         ReservationForm form = setForm();
-        reservationService.create(form, member);
+        save(form, member);
         PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.DESC, "startDateTime");
 
         // when
@@ -164,7 +172,7 @@ class ReservationServiceTest {
         // given
         ReservationForm form = setForm();
         Member member = getMember();
-        List<Long> reservations = reservationService.create(form, member);
+        List<Long> reservationIds = save(form, member);
         String date = form.getDate();
 
         // when
@@ -172,7 +180,7 @@ class ReservationServiceTest {
         LocalDate newDate = LocalDate.of(now.getYear()+1, now.getMonth(), now.getDayOfMonth());
         String formatDate = newDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         form.setDate(formatDate);
-        reservationService.update(reservations.get(0), form);
+        reservationService.update(reservationIds.get(0), form);
 
         // then
         assertThat(form.getDate()).isNotEqualTo(date);
@@ -184,13 +192,13 @@ class ReservationServiceTest {
         // given
         ReservationForm form = setForm();
         Member member = getMember();
-        List<Long> reservations = reservationService.create(form, member);
+        List<Long> reservationIds = save(form, member);
 
         // when
-        reservationService.delete(reservations.get(0));
+        reservationService.delete(reservationIds.get(0));
 
         // then
-        assertThat(reservationService.findOneById(reservations.get(0))).isNull();
+        assertThat(reservationRepository.findById(reservationIds.get(0))).isNotPresent();
     }
 
     private ReservationForm setForm() {
@@ -216,5 +224,38 @@ class ReservationServiceTest {
 
     private Member getMember() {
         return memberRepository.findByLoginId("test1").orElseThrow(() -> new IllegalArgumentException("해당하는 회원이 없습니다."));
+    }
+
+    private List<Long> save(ReservationForm form, Member member) {
+        List<Long> reservationIds = new ArrayList<>();
+
+        // 예약 갯수 10개 이상이면 못함
+        Optional<List<Reservation>> recentReservations = reservationRepository.findByMemberIdAndDateTimeGt(member.getId(), LocalDateTime.now());
+        if (recentReservations.isPresent()) {
+            if (recentReservations.get().size() + form.getScheduleIds().size() > 10) {
+                throw new ReserveFailException("전체 예약가능 수를 초과하였습니다. 현재 예약 가능 수는 " + (10-recentReservations.get().size()) + "개 입니다.");
+            }
+        }
+
+        for (Long scheduleId : form.getScheduleIds()) {
+
+            // 문자를 날짜로 파싱
+            LocalDate date = LocalDate.parse(form.getDate());
+            Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(() -> new FindScheduleException("등록 실패: 해당 시간을 찾을 수 없습니다."));
+            LocalTime startTime = schedule.getStartTime();
+            LocalTime endTime = schedule.getEndTime();
+
+            LocalDateTime startDateTime = dateParser.parseToDateTime(date, startTime);
+            LocalDateTime endDateTime = dateParser.parseToDateTime(date, endTime);
+
+            Reservation reservation = new Reservation(startDateTime, endDateTime);
+            CookingRoom cookingRoom = cookingRoomRepository.findById(form.getCookingRoomId()).orElseThrow(() -> new NoSuchElementException("no such data"));
+            Reservation.createReservation(reservation, member, cookingRoom);
+
+            reservationRepository.save(reservation);
+            reservationIds.add(reservation.getId());
+        }
+
+        return reservationIds;
     }
 }
