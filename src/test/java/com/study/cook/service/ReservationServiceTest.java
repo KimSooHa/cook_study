@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -52,6 +53,9 @@ class ReservationServiceTest {
 
     @Autowired
     ClubRepository clubRepository;
+
+    @Autowired
+    CategoryRepository categoryRepository;
 
     @Autowired
     DateParser dateParser;
@@ -163,7 +167,22 @@ class ReservationServiceTest {
     }
 
     @Test
+    @DisplayName("스터디와 매핑된 예약목록 조회")
     void findByClub() {
+        // given
+        Club club = new Club("테스트용 스터디", "Test", 5, "");
+        Member member = getMember();
+        Category category = categoryRepository.findAll().get(0);
+        List<Reservation> reservations = reservationRepository.findAll();
+
+        Club createdClub = Club.createClub(club, member, category, reservations);
+        clubRepository.save(createdClub);
+
+        // when
+        List<Reservation> findReservations = reservationService.findByClub(club).get();
+
+        // then
+        assertThat(findReservations.size()).isEqualTo(reservations.size());
     }
 
     @Test
