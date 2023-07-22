@@ -28,8 +28,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @Transactional
@@ -38,6 +38,7 @@ class ReservationServiceTest {
 
     @Autowired
     ReservationService reservationService;
+
 
     @Autowired
     ReservationRepository reservationRepository;
@@ -71,7 +72,7 @@ class ReservationServiceTest {
     @DisplayName("요리실 예약")
     void create() {
         // given
-        ReservationForm form = setForm();
+        ReservationForm form = setForm(101, 10);
         Member member = getMember();
 
         // when
@@ -82,11 +83,34 @@ class ReservationServiceTest {
     }
 
     @Test
+    @DisplayName("요리실 예약 실패")
+    void failToCreate() {
+        // given
+        Member member = getMember();
+        for (int i = 0; i < 10; i++) {
+            if(i >= 8)
+                save(setForm(102, 10 + i), member);
+
+            else {
+                ReservationForm form = setForm(101, 10 + i);
+                save(form, member);
+            }
+        }
+
+        // when
+        ReservationForm form = setForm(101, 10);
+
+        // then
+        // 전체 예약가능 수 초과로 인한 예약 실패
+        assertThatThrownBy(() -> reservationService.create(form, member)).isInstanceOf(ReserveFailException.class);
+    }
+
+    @Test
     @DisplayName("예약된 요리실 목록 조회")
     void findList() {
         // given
         PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.DESC, "startDateTime");
-        ReservationForm form = setForm();
+        ReservationForm form = setForm(101, 10);
         Member member = getMember();
         List<Long> reservationIds = save(form, member);
 
@@ -104,7 +128,7 @@ class ReservationServiceTest {
     void findByCookingRoomIdAndDate() {
         // given
         CookingRoom cookingRoom = cookingRoomRepository.findByRoomNum(101).orElseThrow(() -> new FindCookingRoomException("해당하는 요리실이 없습니다."));
-        ReservationForm form = setForm();
+        ReservationForm form = setForm(101, 10);
         Member member = getMember();
         List<Long> reservationIds = save(form, member);
         String date = form.getDate();
@@ -121,7 +145,7 @@ class ReservationServiceTest {
     @DisplayName("아이디로 조회")
     void findOneById() {
         // given
-        ReservationForm form = setForm();
+        ReservationForm form = setForm(101, 10);
         Member member = getMember();
         List<Long> reservationIds = save(form, member);
 
@@ -141,7 +165,7 @@ class ReservationServiceTest {
     void findByMember() {
         // given
         Member member = getMember();
-        ReservationForm form = setForm();
+        ReservationForm form = setForm(101, 10);
         save(form, member);
         PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.DESC, "startDateTime");
 
@@ -189,14 +213,14 @@ class ReservationServiceTest {
     @DisplayName("예약 수정")
     void update() {
         // given
-        ReservationForm form = setForm();
+        ReservationForm form = setForm(101, 10);
         Member member = getMember();
         List<Long> reservationIds = save(form, member);
         String date = form.getDate();
 
         // when
         LocalDateTime now = LocalDateTime.now();
-        LocalDate newDate = LocalDate.of(now.getYear()+1, now.getMonth(), now.getDayOfMonth());
+        LocalDate newDate = LocalDate.of(now.getYear() + 1, now.getMonth(), now.getDayOfMonth());
         String formatDate = newDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         form.setDate(formatDate);
         reservationService.update(reservationIds.get(0), form);
@@ -209,7 +233,7 @@ class ReservationServiceTest {
     @DisplayName("예약 삭제")
     void delete() {
         // given
-        ReservationForm form = setForm();
+        ReservationForm form = setForm(101, 10);
         Member member = getMember();
         List<Long> reservationIds = save(form, member);
 
@@ -220,22 +244,22 @@ class ReservationServiceTest {
         assertThat(reservationRepository.findById(reservationIds.get(0))).isNotPresent();
     }
 
-    private ReservationForm setForm() {
+    private ReservationForm setForm(int roomNum, int time) {
         ReservationForm form = new ReservationForm();
         LocalDateTime now = LocalDateTime.now();
         LocalDate date = LocalDate.of(now.getYear(), now.getMonth(), now.getDayOfMonth());
         String formatDate = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         form.setDate(formatDate);
 
-        LocalTime startTime = LocalTime.of(10, 0);
-        LocalTime endTime = LocalTime.of(11, 0);
+        LocalTime startTime = LocalTime.of(time, 0);
+        LocalTime endTime = LocalTime.of(time + 1, 0);
         Schedule schedule = new Schedule(startTime, endTime);
         scheduleRepository.save(schedule);
         List<Long> scheduleIds = new ArrayList<>();
         scheduleIds.add(schedule.getId());
         form.setScheduleIds(scheduleIds);
 
-        CookingRoom cookingRoom = cookingRoomRepository.findByRoomNum(101).orElseThrow(() -> new IllegalArgumentException("해당하는 요리실이 없습니다."));
+        CookingRoom cookingRoom = cookingRoomRepository.findByRoomNum(roomNum).orElseThrow(() -> new IllegalArgumentException("해당하는 요리실이 없습니다."));
         form.setCookingRoomId(cookingRoom.getId());
 
         return form;
@@ -252,7 +276,7 @@ class ReservationServiceTest {
         Optional<List<Reservation>> recentReservations = reservationRepository.findByMemberIdAndDateTimeGt(member.getId(), LocalDateTime.now());
         if (recentReservations.isPresent()) {
             if (recentReservations.get().size() + form.getScheduleIds().size() > 10) {
-                throw new ReserveFailException("전체 예약가능 수를 초과하였습니다. 현재 예약 가능 수는 " + (10-recentReservations.get().size()) + "개 입니다.");
+                throw new ReserveFailException("전체 예약가능 수를 초과하였습니다. 현재 예약 가능 수는 " + (10 - recentReservations.get().size()) + "개 입니다.");
             }
         }
 
