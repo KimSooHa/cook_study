@@ -2,9 +2,11 @@ package com.study.cook.service;
 
 import com.study.cook.domain.CookingRoom;
 import com.study.cook.domain.Schedule;
+import com.study.cook.repository.CookingRoomRepository;
 import com.study.cook.repository.ScheduleRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +22,9 @@ class CookingRoomServiceTest {
 
     @Autowired
     CookingRoomService cookingRoomService;
+
+    @Autowired
+    CookingRoomRepository cookingRoomRepository;
 
     @Autowired
     ScheduleRepository scheduleRepository;
@@ -55,10 +60,10 @@ class CookingRoomServiceTest {
         // given
         CookingRoom cookingRoom = new CookingRoom(10, 101);
         List<Schedule> schedules = scheduleRepository.findAll();
-        Long cookingRoomId = cookingRoomService.create(cookingRoom, schedules);
+        save(cookingRoom, schedules);
 
         // when
-        CookingRoom findCookingRoom = cookingRoomService.findOneById(cookingRoomId);
+        CookingRoom findCookingRoom = cookingRoomService.findOneById(cookingRoom.getId());
 
         // then
         assertThat(findCookingRoom.getId()).isEqualTo(cookingRoom.getId());
@@ -84,10 +89,10 @@ class CookingRoomServiceTest {
         CookingRoom cookingRoom = new CookingRoom(10, 101);
         int maxCount = cookingRoom.getMaxCount();
         List<Schedule> schedules = scheduleRepository.findAll();
-        Long cookingRoomId = cookingRoomService.create(cookingRoom, schedules);
+        save(cookingRoom, schedules);
 
         // when
-        cookingRoomService.update(cookingRoomId, 15, cookingRoom.getRoomNum());
+        cookingRoomService.update(cookingRoom.getId(), 15, cookingRoom.getRoomNum());
 
         // then
         assertThat(cookingRoom.getMaxCount()).isNotEqualTo(maxCount);
@@ -99,12 +104,25 @@ class CookingRoomServiceTest {
         // given
         CookingRoom cookingRoom = new CookingRoom(10, 101);
         List<Schedule> schedules = scheduleRepository.findAll();
-        Long cookingRoomId = cookingRoomService.create(cookingRoom, schedules);
+        save(cookingRoom, schedules);
 
         // when
         cookingRoomService.delete(cookingRoom);
 
         // then
-        assertThatThrownBy(() -> cookingRoomService.findOneById(cookingRoomId)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> cookingRoomService.findOneById(cookingRoom.getId())).isInstanceOf(IllegalArgumentException.class);
     }
+
+    private Long save(CookingRoom cookingRoom, List<Schedule> schedules) {
+        for (Schedule schedule : schedules) {
+            Schedule createdSchedule = new Schedule(schedule.getStartTime(), schedule.getEndTime());
+            scheduleRepository.save(createdSchedule);
+            CookingRoom.createCookingRoom(cookingRoom, createdSchedule);
+        }
+
+        cookingRoomRepository.save(cookingRoom);
+
+        return cookingRoom.getId();
+    }
+
 }
