@@ -23,6 +23,9 @@ class CategoryServiceTest {
     @Autowired
     CategoryService categoryService;
 
+    @Autowired
+    CategoryRepository categoryRepository;
+
     @Test
     @DisplayName("카테고리 생성")
     void create() {
@@ -51,10 +54,10 @@ class CategoryServiceTest {
     void findOneById() {
         // given
         Category category = new Category("디저트");
-        Long categoryId = categoryService.create(category);
+        categoryRepository.save(category);
 
         // when
-        Category findCategory = categoryService.findOneById(categoryId);
+        Category findCategory = categoryService.findOneById(category.getId());
 
         // then
         assertThat(findCategory.getName()).isEqualTo(category.getName());
@@ -65,11 +68,11 @@ class CategoryServiceTest {
     void update() {
         // given
         Category category = new Category("디저트");
-        Long categoryId = categoryService.create(category);
+        categoryRepository.save(category);
         String name = category.getName();
 
         // when
-        categoryService.update(categoryId, "음료");
+        categoryService.update(category.getId(), "음료");
 
         // then
         assertThat(category.getName()).isNotEqualTo(name);
@@ -80,12 +83,12 @@ class CategoryServiceTest {
     void delete() {
         // given
         Category category = new Category("디저트");
-        Long categoryId = categoryService.create(category);
+        categoryRepository.save(category);
 
         // when
         categoryService.delete(category);
 
         // then
-        assertThatThrownBy(() -> categoryService.findOneById(categoryId)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> categoryService.findOneById(category.getId())).isInstanceOf(IllegalArgumentException.class);
     }
 }
