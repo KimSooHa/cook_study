@@ -2,8 +2,8 @@ package com.study.cook.service;
 
 import com.study.cook.SessionConst;
 import com.study.cook.controller.LoginForm;
-import com.study.cook.controller.MemberForm;
 import com.study.cook.domain.Member;
+import com.study.cook.repository.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,26 +26,22 @@ class LoginServiceTest {
     LoginService loginService;
 
     @Autowired
-    MemberService memberService;
+    MemberRepository memberRepository;
 
     private HttpSession session;
 
     @BeforeEach
     public void testSave() {
-        MemberForm form = new MemberForm();
-        form.setName("testMember1");
-        form.setLoginId("test1");
-        form.setPwd("testMember1234*");
-        form.setEmail("testMember1@email.com");
-        form.setPhoneNum("010-1234-1231");
-        memberService.join(form);
+        Member member = new Member("testMember1", "test1", "testMember1234*", "testMember1@email.com", "010-1234-1231");
+        memberRepository.save(member);
     }
 
     @Test
     @DisplayName("로그인")
     void login() {
         // given
-        Member member = memberService.findOneByEmail("testMember1@email.com");
+        String email = "testMember1@email.com";
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("no such data"));
         LoginForm form = new LoginForm();
         form.setLoginId(member.getLoginId());
         form.setPwd(member.getPwd());
