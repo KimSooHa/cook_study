@@ -3,6 +3,7 @@ package com.study.cook.service;
 import com.study.cook.domain.CookingRoom;
 import com.study.cook.domain.Schedule;
 import com.study.cook.repository.CookingRoomRepository;
+import com.study.cook.repository.ScheduleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,6 @@ import java.time.LocalTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @Transactional
@@ -25,6 +25,9 @@ class ScheduleServiceTest {
 
     @Autowired
     ScheduleService scheduleService;
+
+    @Autowired
+    ScheduleRepository scheduleRepository;
 
     @SpyBean
     CookingRoomRepository cookingRoomRepository;
@@ -111,13 +114,22 @@ class ScheduleServiceTest {
         LocalTime endTime = LocalTime.of(11, 0);
         Schedule schedule = new Schedule(startTime, endTime);
         CookingRoom cookingRoom = new CookingRoom(10, 101);
-        Long scheduleId = scheduleService.create(schedule, cookingRoom);
+        Long scheduleId = save(schedule, cookingRoom);
 
         // when
         Schedule findSchedule = scheduleService.findOneById(scheduleId);
 
         // then
         assertThat(findSchedule.getCookingRoom().getId()).isEqualTo(cookingRoom.getId());
+    }
+
+    private Long save(Schedule schedule, CookingRoom cookingRoom) {
+        // 생성하는 시간 요리실과 매칭
+        schedule.setCookingRoom(cookingRoom);
+        cookingRoom.getSchedules().add(schedule);
+
+        scheduleRepository.save(schedule);
+        return schedule.getId();
     }
 
     @Test
@@ -128,7 +140,7 @@ class ScheduleServiceTest {
         LocalTime endTime = LocalTime.of(11, 0);
         Schedule schedule = new Schedule(startTime, endTime);
         CookingRoom cookingRoom = new CookingRoom(10, 101);
-        Long scheduleId = scheduleService.create(schedule, cookingRoom);
+        Long scheduleId = save(schedule, cookingRoom);
 
         // when
         scheduleService.update(scheduleId, startTime, LocalTime.of(12, 0));
@@ -145,13 +157,13 @@ class ScheduleServiceTest {
         LocalTime endTime = LocalTime.of(11, 0);
         Schedule schedule = new Schedule(startTime, endTime);
         CookingRoom cookingRoom = new CookingRoom(10, 101);
-        Long scheduleId = scheduleService.create(schedule, cookingRoom);
+        Long scheduleId = save(schedule, cookingRoom);
 
         // when
         scheduleService.delete(schedule);
 
         // then
-        assertThatThrownBy(() -> scheduleService.findOneById(scheduleId)).isInstanceOf(IllegalArgumentException.class);
+        assertThat(scheduleRepository.findById(scheduleId)).isEmpty();
     }
 
     @Test
@@ -167,6 +179,6 @@ class ScheduleServiceTest {
         scheduleService.deleteAllByTime(startTime);
 
         // then
-        assertThat(scheduleService.findList().size()).isEqualTo(size - count);
+        assertThat(scheduleRepository.findAll().size()).isEqualTo(size - count);
     }
 }
