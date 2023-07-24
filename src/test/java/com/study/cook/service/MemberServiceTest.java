@@ -12,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -26,10 +24,6 @@ class MemberServiceTest {
     MemberService memberService;
     @Autowired
     MemberRepository memberRepository;
-
-    @Autowired
-    EntityManager em;
-
 
     @BeforeEach
     void testSave() {
@@ -57,7 +51,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("회원가입")
-    void signupTest() {
+    void signup() {
         // given
         MemberForm form = new MemberForm();
         form.setName("member");
@@ -75,7 +69,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("중복회원 예외 검사")
-    void validateDuplicateMemberTest() throws IllegalStateException {
+    void validateDuplicateMember() throws IllegalStateException {
         // given
         MemberForm form = new MemberForm();
         form.setName("testMember1");
@@ -90,10 +84,10 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("로그인 아이디로 카운트")
-    void countByLoginIdTest() {
+    void countByLoginId() {
         // given
         String email = "testMember1@email.com";
-        Member member = memberService.findOneByEmail(email);
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("해당하는 회원이 없습니다."));
 
         // when
         String loginId = member.getLoginId();
@@ -104,7 +98,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("이메일로 카운트")
-    void countByEmailTest() {
+    void countByEmail() {
         // given
         String email = "testMember1@email.com";
 
@@ -117,10 +111,10 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("휴대폰 번호로 카운트")
-    void countByPhoneNumTest() {
+    void countByPhoneNum() {
         // given
         String email = "testMember1@email.com";
-        Member member = memberService.findOneByEmail(email);
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("해당하는 회원이 없습니다."));
 
         // when
         Long count = memberService.countByPhoneNum(member.getPhoneNum());
@@ -131,10 +125,10 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("아이디로 찾기")
-    void findOneByIdTest() {
+    void findOneById() {
         // given
         String email = "testMember1@email.com";
-        Member member = memberService.findOneByEmail(email);
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("해당하는 회원이 없습니다."));
 
         // when
         Member findMember = memberService.findOneById(member.getId());
@@ -145,7 +139,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("이메일로 찾기")
-    void findOneByEmailTest() {
+    void findOneByEmail() {
         // given
         String email = "testMember1@email.com";
 
@@ -158,10 +152,10 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("회원정보 수정")
-    void updateTest() {
+    void update() {
         // given
         String email = "testMember1@email.com";
-        Member member = memberService.findOneByEmail(email);
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("해당하는 회원이 없습니다."));
 
         MemberForm form = new MemberForm();
         form.setLoginId(member.getLoginId());
@@ -178,10 +172,10 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("회원 삭제")
-    void deleteTest() {
+    void delete() {
         // given
         String email = "testMember1@email.com";
-        Member member = memberService.findOneByEmail(email);
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("해당하는 회원이 없습니다."));
 
         // when
         memberService.delete(member.getId());
