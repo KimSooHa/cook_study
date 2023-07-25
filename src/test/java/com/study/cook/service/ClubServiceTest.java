@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -79,7 +80,16 @@ class ClubServiceTest {
     }
 
     @Test
+    @DisplayName("참여자 많은 순으로 갯수 제한된 목록 조회")
     void findLimitList() {
+        // given
+        int limit = 4;
+
+        // when
+        List<ClubListDto> list = clubService.findLimitList(limit);
+
+        // then
+        assertThat(list.size()).isEqualTo(limit);
     }
 
     @Test
