@@ -3,6 +3,8 @@ package com.study.cook.service;
 import com.study.cook.SessionConst;
 import com.study.cook.controller.ClubForm;
 import com.study.cook.domain.Member;
+import com.study.cook.dto.ClubListDto;
+import com.study.cook.dto.SearchCondition;
 import com.study.cook.repository.CategoryRepository;
 import com.study.cook.repository.ClubRepository;
 import com.study.cook.repository.MemberRepository;
@@ -12,6 +14,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,7 +65,17 @@ class ClubServiceTest {
     }
 
     @Test
+    @DisplayName("클럽 목록 조회")
     void findList() {
+        // given
+        SearchCondition condition = new SearchCondition();
+        PageRequest pageRequest = PageRequest.of(0, 8, Sort.Direction.DESC, "regDate");
+
+        // when
+        Page<ClubListDto> list = clubService.findList(condition, pageRequest);
+
+        // then
+        assertThat(list.get().count()).isEqualTo(pageRequest.getPageSize());
     }
 
     @Test
