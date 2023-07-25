@@ -2,7 +2,10 @@ package com.study.cook.service;
 
 import com.study.cook.SessionConst;
 import com.study.cook.controller.ClubForm;
+import com.study.cook.domain.Category;
+import com.study.cook.domain.Club;
 import com.study.cook.domain.Member;
+import com.study.cook.domain.Reservation;
 import com.study.cook.dto.ClubListDto;
 import com.study.cook.dto.SearchCondition;
 import com.study.cook.repository.CategoryRepository;
@@ -24,6 +27,7 @@ import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -80,7 +84,7 @@ class ClubServiceTest {
     }
 
     @Test
-    @DisplayName("참여자 많은 순으로 갯수 제한된 목록 조회")
+    @DisplayName("참여자 많은 순으로 갯수 제한된 클럽 목록 조회")
     void findLimitList() {
         // given
         int limit = 4;
@@ -93,7 +97,23 @@ class ClubServiceTest {
     }
 
     @Test
+    @DisplayName("아이디로 클럽 조회")
     void findOneById() {
+        // given
+        Club club = new Club("테스트용 쿡스터디 모집", "테스트", 5, "추후 공지");
+
+        Member member = memberRepository.findByLoginId("test1").get();
+        Category category = categoryRepository.findAll().get(0);
+        List<Reservation> reservations = new ArrayList<>();
+        Club createdClub = Club.createClub(club, member, category, reservations);
+
+        clubRepository.save(createdClub);
+
+        // when
+        Club findClub = clubService.findOneById(club.getId());
+
+        // then
+        assertThat(findClub.getName()).isEqualTo(club.getName());
     }
 
     @Test
