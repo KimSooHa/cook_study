@@ -2,15 +2,13 @@ package com.study.cook.service;
 
 import com.study.cook.SessionConst;
 import com.study.cook.controller.ClubForm;
-import com.study.cook.domain.Category;
-import com.study.cook.domain.Club;
-import com.study.cook.domain.Member;
-import com.study.cook.domain.Reservation;
+import com.study.cook.domain.*;
 import com.study.cook.dto.ClubListDto;
 import com.study.cook.dto.SearchCondition;
 import com.study.cook.repository.CategoryRepository;
 import com.study.cook.repository.ClubRepository;
 import com.study.cook.repository.MemberRepository;
+import com.study.cook.repository.ParticipationRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -40,6 +38,9 @@ class ClubServiceTest {
 
     @Autowired
     ClubRepository clubRepository;
+
+    @Autowired
+    ParticipationRepository participationRepository;
 
     @Autowired
     CategoryRepository categoryRepository;
@@ -103,11 +104,7 @@ class ClubServiceTest {
         Club club = new Club("테스트용 쿡스터디 모집", "테스트", 5, "추후 공지");
 
         Member member = memberRepository.findByLoginId("test1").get();
-        Category category = categoryRepository.findAll().get(0);
-        List<Reservation> reservations = new ArrayList<>();
-        Club createdClub = Club.createClub(club, member, category, reservations);
-
-        clubRepository.save(createdClub);
+        save(club, member);
 
         // when
         Club findClub = clubService.findOneById(club.getId());
@@ -117,7 +114,22 @@ class ClubServiceTest {
     }
 
     @Test
+    @DisplayName("참여하는 클럽 목록 조회")
     void findByParticipant() {
+        // given
+        SearchCondition condition = new SearchCondition();
+        PageRequest pageRequest = PageRequest.of(0, 8, Sort.Direction.DESC, "regDate");
+
+        Club club = new Club("테스트용 쿡스터디 모집", "테스트", 5, "추후 공지");
+        Member member = memberRepository.findByLoginId("test1").get();
+        save(club, member);
+        participate(club, member);
+
+        // when
+        Page<ClubListDto> list = clubService.findByParticipant(member.getId(), condition, pageRequest);
+
+        // then
+        assertThat(list.get().count()).isEqualTo(1);
     }
 
     @Test
@@ -148,5 +160,17 @@ class ClubServiceTest {
         form.setCategoryId(categoryRepository.findAll().get(0).getId());
         form.setReservationIds(new ArrayList<>());
         return form;
+    }
+
+    private void participate(Club club, Member member) {
+        Participation participation = Participation.createParticipation(member, club);
+        participationRepository.save(participation);
+    }
+
+    private void save(Club club, Member member) {
+        List<Reservation> reservations = new ArrayList<>();
+        Category category = categoryRepository.findAll().get(0);
+        Club createdClub = Club.createClub(club, member, category, reservations);
+        clubRepository.save(createdClub);
     }
 }
