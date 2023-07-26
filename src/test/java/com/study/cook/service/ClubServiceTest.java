@@ -25,7 +25,6 @@ import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -150,11 +149,36 @@ class ClubServiceTest {
     }
 
     @Test
+    @DisplayName("클럽 수정")
     void update() {
+        // given
+        Club club = new Club("테스트용 쿡스터디 모집", "테스트", 5, "추후 공지");
+        Member member = memberRepository.findByLoginId("test1").get();
+        save(club, member);
+        String introduction = club.getIntroduction();
+
+        // when
+        ClubForm form = setForm();
+        form.setIntroduction("test");
+        clubService.update(club.getId(), form);
+
+        // then
+        assertThat(club.getIntroduction()).isNotEqualTo(introduction);
     }
 
     @Test
+    @DisplayName("클럽 삭제")
     void delete() {
+        // given
+        Club club = new Club("테스트용 쿡스터디 모집", "테스트", 5, "추후 공지");
+        Member member = memberRepository.findByLoginId("test1").get();
+        save(club, member);
+
+        // when
+        clubService.delete(club.getId());
+
+        // then
+        assertThat(clubRepository.findById(club.getId())).isEmpty();
     }
 
     private HttpSession setSession() {
