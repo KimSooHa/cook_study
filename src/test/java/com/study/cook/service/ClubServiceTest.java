@@ -133,7 +133,20 @@ class ClubServiceTest {
     }
 
     @Test
+    @DisplayName("회원이 운영하는 클럽목록 조회")
     void findByMember() {
+        // given
+        SearchCondition condition = new SearchCondition();
+        PageRequest pageRequest = PageRequest.of(0, 8, Sort.Direction.DESC, "regDate");
+        Club club = new Club("테스트용 쿡스터디 모집", "테스트", 5, "추후 공지");
+        Member member = memberRepository.findByLoginId("test1").get();
+        save(club, member);
+
+        // when
+        Page<ClubListDto> list = clubService.findByMember(member.getId(), condition, pageRequest);
+
+        // then
+        assertThat(list.get().count()).isEqualTo(1);
     }
 
     @Test
