@@ -96,11 +96,20 @@ class ParticipationServiceTest {
      }
 
     @Test
-    void findByMember() {
-    }
-
-    @Test
+    @DisplayName("회원과 클럽으로 참여 조회")
     void findByClubAndMember() {
+        // given
+        Club club = new Club("테스트용 쿡스터디 모집", "테스트", 5, "추후 공지");
+        Member member = memberRepository.findByLoginId("test1").get();
+        clubSave(club, member);
+        participate(club, member);
+
+        // when
+        Participation participation = participationService.findByClubAndMember(club, member);
+
+        // then
+        assertThat(participation.getMember().getId()).isEqualTo(member.getId());
+        assertThat(participation.getClub().getId()).isEqualTo(club.getId());
     }
 
     @Test
