@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.study.cook.domain.ClubStatus.COMP;
+import static com.study.cook.domain.Role.PARTICIPANT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -80,7 +81,7 @@ class ParticipationServiceTest {
     }
 
     @Test
-    @DisplayName("클럽의 참여자 수 조회")
+    @DisplayName("스터디의 참여자 수 조회")
     void countByClub() {
         // given
         Club club = new Club("테스트용 쿡스터디 모집", "테스트", 5, "추후 공지");
@@ -96,7 +97,7 @@ class ParticipationServiceTest {
      }
 
     @Test
-    @DisplayName("회원과 클럽으로 참여 조회")
+    @DisplayName("회원과 스터디로 참여 조회")
     void findByClubAndMember() {
         // given
         Club club = new Club("테스트용 쿡스터디 모집", "테스트", 5, "추후 공지");
@@ -113,11 +114,26 @@ class ParticipationServiceTest {
     }
 
     @Test
-    void update() {
-    }
-
-    @Test
+    @DisplayName("스터디 탈퇴")
     void delete() {
+        // given
+        List<Participation> list = participationRepository.findAll();
+        Club club = null;
+        Member member = null;
+        for (int i = 0; i < list.size(); i++) {
+            if(list.get(i).getRole() == PARTICIPANT) {
+                club = list.get(i).getClub();
+                member = list.get(i).getMember();
+                break;
+            }
+        }
+
+        // when
+        Participation participation = participationRepository.findByClubIdAndMemberId(club.getId(), member.getId()).get();
+        participationService.delete(participation);
+
+        // then
+        assertThat(participationRepository.findByClubIdAndMemberId(club.getId(), member.getId())).isNotPresent();
     }
 
     private void clubSave(Club club, Member member) {
