@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -66,6 +67,31 @@ class RecipeServiceTest {
     @Test
     @DisplayName("레시피 등록")
     void create() {
+        // given
+        Member member = memberRepository.findByLoginId("test1").get();
+
+        RecipeForm form = new RecipeForm();
+        form.setTitle("피자 만들기");
+        form.setIntroduction("피자 만드는 레시피를 공유해요~");
+        form.setIngredients("토마토 소스, 양파, 등 ..");
+        form.setCategoryId(categoryRepository.findAll().get(1).getId());
+        form.setServings(2);
+        form.setCookingTime(2);
+        MockMultipartFile file = null;
+        try {
+            file = new MockMultipartFile("file",
+                    "pizza_img.jpeg",
+                    "application/json",
+                    new FileInputStream(fileDir));
+        } catch (IOException e) {
+            throw new StoreFailException(e);
+        }
+
+        // when
+        Long recipeId = recipeService.create(form, file, member);
+
+        // then
+        assertThat(recipeRepository.findById(recipeId).get().getPhoto().getUploadFileName()).isEqualTo(file.getOriginalFilename());
     }
 
     @Test
@@ -103,7 +129,16 @@ class RecipeServiceTest {
     }
 
     @Test
+    @DisplayName("댓글 많은 순으로 제한된 레시피 목록 조회")
     void findLimitList() {
+        // given
+        int limit = 4;
+
+        // when
+        List<RecipeListDto> limitList = recipeService.findLimitList(limit);
+
+        // then
+        assertThat(limitList.size()).isEqualTo(limit);
     }
 
     @Test
