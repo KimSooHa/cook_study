@@ -10,7 +10,6 @@ import com.study.cook.repository.CategoryRepository;
 import com.study.cook.repository.MemberRepository;
 import com.study.cook.repository.RecipeRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -50,9 +49,6 @@ class RecipeServiceTest {
     @Autowired
     FileStore fileStore;
 
-    @Value("${file.dir}")
-    private String fileDir;
-
     @BeforeEach
     public void testSave() {
         Member member = new Member("testMember1", "test1", "testMember1234*", "testMember1@email.com", "010-1234-1231");
@@ -77,12 +73,12 @@ class RecipeServiceTest {
         form.setCategoryId(categoryRepository.findAll().get(1).getId());
         form.setServings(2);
         form.setCookingTime(2);
+
         MockMultipartFile file = null;
+        String fileName = "pizza_img.jpeg";
+        String filePath = "/Users/sooha/Desktop/image/food/";
         try {
-            file = new MockMultipartFile("file",
-                    "pizza_img.jpeg",
-                    "application/json",
-                    new FileInputStream(fileDir));
+            file = getMockMultipartFile(fileName, filePath);
         } catch (IOException e) {
             throw new StoreFailException(e);
         }
@@ -92,6 +88,10 @@ class RecipeServiceTest {
 
         // then
         assertThat(recipeRepository.findById(recipeId).get().getPhoto().getUploadFileName()).isEqualTo(file.getOriginalFilename());
+
+        // after test
+        String storeFileName = recipeRepository.findById(recipeId).get().getPhoto().getStoreFileName();
+        fileStore.deleteFile(storeFileName);
     }
 
     @Test
@@ -151,5 +151,13 @@ class RecipeServiceTest {
 
     @Test
     void delete() {
+    }
+
+    private static MockMultipartFile getMockMultipartFile(String fileName, String filePath) throws IOException {
+        return new MockMultipartFile(
+                "image",
+                    fileName,
+                    "image/png",
+                    new FileInputStream(filePath + fileName));
     }
 }

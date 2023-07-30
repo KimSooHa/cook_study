@@ -29,4 +29,4 @@ logging:
 #    org.hibernate.type: trace #띄어쓰기 2칸
 
 file:
-  dir: /Users/sooha/SpringWorkspace/cook/files/
+  dir: /Users/sooha/SpringWorkspace/cook/src/main/resources/static/files/
