@@ -158,7 +158,25 @@ class RecipeServiceTest {
     }
 
     @Test
+    @DisplayName("아이디로 레시피 조회")
     void findOneById() {
+        // given
+        Member member = memberRepository.findByLoginId("test1").get();
+
+        RecipeForm form = setForm();
+        String fileName = "pizza_img.jpeg";
+        String filePath = "/Users/sooha/Desktop/image/food/";
+
+        Long recipeId = save(member, form, fileName, filePath);
+
+        // when
+        Recipe recipe = recipeService.findOneById(recipeId);
+
+        // then
+        assertThat(recipe.getTitle()).isEqualTo(form.getTitle());
+
+        // after test
+        deleteFile(recipeId);
     }
 
     @Test
