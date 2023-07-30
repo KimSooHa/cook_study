@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -180,11 +181,50 @@ class RecipeServiceTest {
     }
 
     @Test
+    @DisplayName("레시피 수정")
     void update() {
+        // given
+        Member member = memberRepository.findByLoginId("test1").get();
+
+        RecipeForm form = setForm();
+        String fileName = "pizza_img.jpeg";
+        String filePath = "/Users/sooha/Desktop/image/food/";
+
+        Long recipeId = save(member, form, fileName, filePath);
+
+        // when
+        MockMultipartFile file;
+        try {
+            file = getMockMultipartFile("pizza1.jpeg", filePath);
+        } catch (IOException e) {
+            throw new StoreFailException(e);
+        }
+        recipeService.update(recipeId, form, Optional.of(file));
+
+        // then
+        assertThat(recipeRepository.findById(recipeId).get().getPhoto().getUploadFileName()).isNotEqualTo(fileName);
+
+        // after test
+        deleteFile(recipeId);
     }
 
     @Test
+    @DisplayName("레시피 삭제")
     void delete() {
+        // given
+        Member member = memberRepository.findByLoginId("test1").get();
+
+        RecipeForm form = setForm();
+        String fileName = "pizza_img.jpeg";
+        String filePath = "/Users/sooha/Desktop/image/food/";
+
+        Long recipeId = save(member, form, fileName, filePath);
+
+        // when
+        recipeService.delete(recipeId);
+
+        // then
+        assertThat(recipeRepository.findById(recipeId)).isEmpty();
     }
 
     private RecipeForm setForm() {
