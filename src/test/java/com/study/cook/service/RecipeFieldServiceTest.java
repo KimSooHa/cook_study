@@ -101,7 +101,18 @@ class RecipeFieldServiceTest {
     }
 
     @Test
+    @DisplayName("아이디로 레시피 필드 조회")
     void findOneById() {
+        // given
+        Member member = memberRepository.findByLoginId("test1").get();
+        fieldSave(member);
+        List<RecipeField> recipeFields = recipeRepository.findById(recipeId).get().getRecipeFields();
+
+        // when
+        RecipeField recipeField = recipeFieldService.findOneById(recipeFields.get(0).getId());
+
+        // then
+        assertThat(recipeField.getId()).isEqualTo(recipeFields.get(0).getId());
     }
 
     @Test
