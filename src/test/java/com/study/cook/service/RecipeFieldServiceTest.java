@@ -17,12 +17,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @Transactional
@@ -116,11 +120,47 @@ class RecipeFieldServiceTest {
     }
 
     @Test
+    @DisplayName("레시피 필드 수정")
     void update() {
+        // given
+        Member member = memberRepository.findByLoginId("test1").get();
+        fieldSave(member);
+        RecipeField recipeField = recipeRepository.findById(recipeId).get().getRecipeFields().get(0);
+        String content = recipeField.getContent();
+        String uploadFileName = recipeField.getPhoto().getUploadFileName();
+
+        // when
+        List<String> fieldForms = new ArrayList<>();
+        fieldForms.add("updateTest");
+        List<Integer> imgIndexes = new ArrayList<>();
+        imgIndexes.add(0);
+        List<MultipartFile> files = new ArrayList<>();
+        try {
+            files.add(getMockMultipartFile("pizza1.jpeg", filePath));
+        } catch (IOException e) {
+            throw new StoreFailException(e);
+        }
+
+        recipeFieldService.update(recipeId, fieldForms, Optional.of(files), Optional.of(imgIndexes), member);
+
+        // then
+        assertThat(recipeField.getContent()).isNotEqualTo(content);
+        assertThat(recipeField.getPhoto().getUploadFileName()).isNotEqualTo(uploadFileName);
     }
 
     @Test
+    @DisplayName("레시피 필드 삭제")
     void delete() {
+        // given
+        Member member = memberRepository.findByLoginId("test1").get();
+        fieldSave(member);
+        RecipeField recipeField = recipeRepository.findById(recipeId).get().getRecipeFields().get(0);
+
+        // when
+        recipeFieldService.delete(recipeField.getId());
+
+        // then
+        assertThat(recipeFieldRepository.findById(recipeField.getId())).isEmpty();
     }
 
     private RecipeForm setForm() {
