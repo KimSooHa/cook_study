@@ -1,10 +1,7 @@
 package com.study.cook.service;
 
 import com.study.cook.controller.RecipeForm;
-import com.study.cook.domain.Category;
-import com.study.cook.domain.Member;
-import com.study.cook.domain.Photo;
-import com.study.cook.domain.Recipe;
+import com.study.cook.domain.*;
 import com.study.cook.exception.StoreFailException;
 import com.study.cook.file.FileStore;
 import com.study.cook.repository.CategoryRepository;
@@ -12,6 +9,7 @@ import com.study.cook.repository.MemberRepository;
 import com.study.cook.repository.RecipeFieldRepository;
 import com.study.cook.repository.RecipeRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -61,6 +60,11 @@ class RecipeFieldServiceTest {
         recipeId = save(member, form, fileName, filePath);
     }
 
+    @AfterEach
+    public void testDelete() {
+        deleteFile(recipeId);
+    }
+
     @Test
     @DisplayName("레시피 필드 생성")
     void create() {
@@ -80,17 +84,20 @@ class RecipeFieldServiceTest {
         // then
         assertThat(recipeFieldRepository.findByRecipeId(recipeId).get().size()).isEqualTo(1);
         assertThat(recipeRepository.findById(recipeId).get().getRecipeFields().get(0).getPhoto().getUploadFileName()).isEqualTo(fileName);
-
-        // after test
-        deleteFile(recipeId);
     }
 
     @Test
-    void findList() {
-    }
-
-    @Test
+    @DisplayName("레시피로 조회")
     void findByRecipeId() {
+        // given
+        Member member = memberRepository.findByLoginId("test1").get();
+        fieldSave(member);
+
+        // when
+        List<RecipeField> recipeFields = recipeFieldService.findByRecipeId(recipeId).get();
+
+        // then
+        assertThat(recipeFields.size()).isEqualTo(1);
     }
 
     @Test
@@ -142,10 +149,32 @@ class RecipeFieldServiceTest {
         return recipe.getId();
     }
 
+    private void fieldSave(Member member) {
+        MockMultipartFile file;
+        Photo photo;
+        try {
+            file = getMockMultipartFile(fileName, filePath);
+            photo = fileStore.storeFile(file);
+        } catch (IOException e) {
+            throw new StoreFailException(e);
+        }
+
+        RecipeField recipeField = new RecipeField(photo, "test");
+        Recipe recipe = recipeRepository.findById(recipeId).orElseThrow();
+        RecipeField.createRecipeField(recipeField, member, recipe);
+        Photo.createPhoto(photo, recipeField);
+
+        recipeRepository.save(recipe);
+    }
+
     private void deleteFile(Long recipeId) {
         String storeFileName = recipeRepository.findById(recipeId).get().getPhoto().getStoreFileName();
         fileStore.deleteFile(storeFileName);
-        String storeFileFieldName = recipeRepository.findById(recipeId).get().getRecipeFields().get(0).getPhoto().getStoreFileName();
-        fileStore.deleteFile(storeFileFieldName);
+
+        List<RecipeField> recipeFields = recipeRepository.findById(recipeId).get().getRecipeFields();
+        if(!recipeFields.isEmpty()) {
+            String storeFileFieldName = recipeFields.get(0).getPhoto().getStoreFileName();
+            fileStore.deleteFile(storeFileFieldName);
+        }
     }
 }
