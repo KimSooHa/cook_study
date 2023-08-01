@@ -119,11 +119,34 @@ class CommentServiceTest {
     }
 
     @Test
+    @DisplayName("레시피 댓글 수정")
     void update() {
+        // given
+        Long commentId = save();
+        Comment comment = commentRepository.findById(commentId).get();
+        String content = comment.getContent();
+
+        // when
+        CommentForm form = new CommentForm();
+        form.setRecipeId(recipeId);
+        form.setContent("updateTest");
+        commentService.update(commentId, form);
+
+        // then
+        assertThat(comment.getContent()).isNotEqualTo(content);
     }
 
     @Test
+    @DisplayName("레시피 댓글 삭제")
     void delete() {
+        // given
+        Long commentId = save();
+
+        // when
+        commentService.delete(commentId);
+
+        // then
+        assertThat(commentRepository.findById(commentId)).isEmpty();
     }
 
     private MockHttpSession setSession() {
