@@ -5,7 +5,6 @@ import com.study.cook.controller.CommentForm;
 import com.study.cook.controller.RecipeForm;
 import com.study.cook.domain.*;
 import com.study.cook.dto.CommentDto;
-import com.study.cook.exception.FindRecipeException;
 import com.study.cook.exception.StoreFailException;
 import com.study.cook.file.FileStore;
 import com.study.cook.repository.CategoryRepository;
@@ -106,7 +105,17 @@ class CommentServiceTest {
     }
 
     @Test
+    @DisplayName("아이디로 레시피 댓글 조회")
     void findOneById() {
+        // given
+        Long commentId = save();
+
+        // when
+        Comment comment = commentService.findOneById(commentId);
+
+        // then
+        assertThat(comment.getId()).isEqualTo(commentId);
+        assertThat(comment.getRecipe().getId()).isEqualTo(recipeId);
     }
 
     @Test
