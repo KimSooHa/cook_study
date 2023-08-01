@@ -4,6 +4,8 @@ import com.study.cook.SessionConst;
 import com.study.cook.controller.CommentForm;
 import com.study.cook.controller.RecipeForm;
 import com.study.cook.domain.*;
+import com.study.cook.dto.CommentDto;
+import com.study.cook.exception.FindRecipeException;
 import com.study.cook.exception.StoreFailException;
 import com.study.cook.file.FileStore;
 import com.study.cook.repository.CategoryRepository;
@@ -17,11 +19,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpSession;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
@@ -60,7 +64,7 @@ class CommentServiceTest {
         Member member = new Member("testMember1", "test1", "testMember1234*", "testMember1@email.com", "010-1234-1231");
         memberRepository.save(member);
 
-        RecipeForm form = setForm();
+        RecipeForm form = setRecipeForm();
         recipeId = recipeSave(member, form, fileName, filePath);
     }
 
@@ -87,7 +91,18 @@ class CommentServiceTest {
     }
 
     @Test
+    @DisplayName("레시피 댓글 목록 조회")
     void findList() {
+        // given
+        Long commentId = save();
+        PageRequest pageRequest = PageRequest.of(0, 4, Sort.Direction.DESC, "regDate");
+
+        // when
+        Page<CommentDto> list = commentService.findList(recipeId, pageRequest);
+
+        // then
+        assertThat(list.get().count()).isEqualTo(1);
+        assertThat(list.toList().get(0).getCommentId()).isEqualTo(commentId);
     }
 
     @Test
@@ -109,7 +124,18 @@ class CommentServiceTest {
         return session;
     }
 
-    private RecipeForm setForm() {
+    private Long save() {
+        Comment comment = new Comment("test");
+        Recipe recipe = recipeRepository.findById(recipeId).get();
+
+        Member member = memberRepository.findByLoginId("test1").get();
+        Comment createdComment = Comment.createComment(comment, member, recipe);
+        commentRepository.save(createdComment);
+
+        return comment.getId();
+    }
+
+    private RecipeForm setRecipeForm() {
         RecipeForm form = new RecipeForm();
         form.setTitle("피자 만들기");
         form.setIntroduction("피자 만드는 레시피를 공유해요~");
