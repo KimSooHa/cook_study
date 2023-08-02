@@ -1,0 +1,19 @@
+---
+spring:
+  config:
+    activate:
+      on-profile: real
+  datasource:
+    url: jdbc:mariadb://springboot-webservice.c2fnuqugf4lp.ap-northeast-2.rds.amazonaws.com:3306/webservice
+    username: ${db_username}
+    password: ${db_passwd}
+    driver-class-name: org.mariadb.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+server:
+  port: 8081
+
+file:
+  dir: /home/ec2-user/app/files/
+---
