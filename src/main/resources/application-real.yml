@@ -3,6 +3,7 @@ spring:
   config:
     activate:
       on-profile: real
+      include: test
   datasource:
     url: jdbc:mariadb://springboot-webservice.c2fnuqugf4lp.ap-northeast-2.rds.amazonaws.com:3306/webservice
     username: ${db_username}
