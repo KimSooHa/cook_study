@@ -19,11 +19,11 @@ spring:
 #    url: jdbc:mariadb://localhost:3306/cook_study
 
 # --운영서버용--
-#  datasource:
-#    url: jdbc:mariadb://springboot-webservice.c2fnuqugf4lp.ap-northeast-2.rds.amazonaws.com:3306/webservice
-#    username: ${db_username}
-#    password: ${db_passwd}
-#    driver-class-name: org.mariadb.jdbc.Driver
+  datasource:
+    url: jdbc:mariadb://springboot-webservice.c2fnuqugf4lp.ap-northeast-2.rds.amazonaws.com:3306/webservice
+    username: ${db_username}
+    password: ${db_passwd}
+    driver-class-name: org.mariadb.jdbc.Driver
 
   messages:
     basename: messages,errors  # 에러메시지
