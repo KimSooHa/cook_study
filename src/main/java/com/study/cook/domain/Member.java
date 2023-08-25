@@ -31,7 +31,7 @@ public class Member {
     private String loginId;
 
     @NotNull
-    @Column(length = 16)
+    @Column(length = 256)
     private String pwd;
 
     @NotNull

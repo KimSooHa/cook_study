@@ -6,6 +6,7 @@ import com.study.cook.dto.MemberLoginIdSearchCondition;
 import com.study.cook.dto.MemberPwdSearchCondition;
 import com.study.cook.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,13 +18,14 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
 
     /**
      * 회원 가입
      */
     @Transactional  // 변경해야 하기 때문에 읽기, 쓰기가 가능해야 함
     public Long join(MemberForm form) {
-        Member member = new Member(form.getName(), form.getLoginId(), form.getPwd(), form.getEmail(), form.getPhoneNum());
+        Member member = new Member(form.getName(), form.getLoginId(), passwordEncoder.encode(form.getPwd()), form.getEmail(), form.getPhoneNum());
         validateDuplicateMember(member);    // 중복 회원 검증
         memberRepository.save(member);
         return member.getId();

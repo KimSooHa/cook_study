@@ -28,11 +28,16 @@ logging:
 #    org.hibernate.type: trace #띄어쓰기 2칸
 
 
-server:
-  servlet:
-    session:
-      timeout: 1800  # 세션 타임아웃 설정(분 단위 기준) 60(1분)
-      tracking-modes: cookie # url 전달 방식 끄고 항상 쿠키를 통해서만 세션 유지
+#server:
+#  servlet:
+#    session:
+#      timeout: 1800  # 세션 타임아웃 설정(분 단위 기준) 60(1분)
+#      tracking-modes: cookie # url 전달 방식 끄고 항상 쿠키를 통해서만 세션 유지
+
+# key? 32byte (256bit)
+jwt:
+  secretKey: 12345678901234567890123456789012
+  refreshKey: 12345678901234567890123456789012
 
 ---
 spring:

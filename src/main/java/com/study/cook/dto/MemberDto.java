@@ -13,8 +13,6 @@ public class MemberDto {
     private String pwd;
     private String phoneNum;
 
-
-
     @QueryProjection
     public MemberDto(String name, String loginId, String pwd, String phoneNum) {
         this.name = name;

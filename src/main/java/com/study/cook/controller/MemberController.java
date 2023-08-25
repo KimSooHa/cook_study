@@ -3,6 +3,8 @@ package com.study.cook.controller;
 import com.study.cook.domain.Member;
 import com.study.cook.dto.MemberLoginIdSearchCondition;
 import com.study.cook.dto.MemberPwdSearchCondition;
+import com.study.cook.dto.MemberSignupResponseDto;
+import com.study.cook.dto.RefreshTokenDto;
 import com.study.cook.service.LoginService;
 import com.study.cook.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -39,8 +41,9 @@ public class MemberController {
             return "member/create-form";
         }
 
+        Long memberId;
         try {
-            memberService.join(form);
+            memberId = memberService.join(form);
         } catch (IllegalStateException e) {
 
             model.addAttribute("msg", e.getMessage());
@@ -48,6 +51,15 @@ public class MemberController {
             return "member/create-form";
         }
 
+        Member member = memberService.findOneById(memberId);
+
+        MemberSignupResponseDto memberSignupResponse = new MemberSignupResponseDto();
+        memberSignupResponse.setMemberId(memberId);
+        memberSignupResponse.setName(member.getName());
+        memberSignupResponse.setEmail(member.getEmail());
+        memberSignupResponse.setRegdate(member.getRegDate());
+        log.info("회원가입 성공!");
+        model.addAttribute("signupResponse", memberSignupResponse);
         model.addAttribute("msg", "회원가입되었습니다!");
         model.addAttribute("url", "/");
         return "member/create-form";
@@ -89,9 +101,10 @@ public class MemberController {
 
     // 탈퇴
     @DeleteMapping("/{memberId}")
-    public String delete(@PathVariable Long memberId, HttpSession session, Model model) {
+    public String delete(@PathVariable Long memberId, HttpSession session, @RequestBody RefreshTokenDto refreshTokenDto, Model model) {
         memberService.delete(memberId);
-        loginService.logout(session);
+//        loginService.logout(session);
+        loginService.logout(refreshTokenDto.getRefreshToken());
         model.addAttribute("msg", "탈퇴되었습니다.");
         model.addAttribute("url", "/");
         return "mypage/index";
