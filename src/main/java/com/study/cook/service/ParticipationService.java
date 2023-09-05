@@ -52,16 +52,16 @@ public class ParticipationService {
     /**
      * 전체 조회
      */
-    public List<Participation> findList() {
-        return participationRepository.findAll();
-    }
-
-    /**
-     * 단건 조회
-     */
-    public Participation findOneById(Long participationId) {
-        return participationRepository.findById(participationId).orElse(null);
-    }
+//    public List<Participation> findList() {
+//        return participationRepository.findAll();
+//    }
+//
+//    /**
+//     * 단건 조회
+//     */
+//    public Participation findOneById(Long participationId) {
+//        return participationRepository.findById(participationId).orElse(null);
+//    }
 
     public Long countByClub(Club club) {
         return participationRepository.countByClubId(club.getId());
@@ -76,14 +76,14 @@ public class ParticipationService {
     }
 
 
-    @Transactional
-    public void update(Long id, LocalDateTime startDateTime, LocalDateTime endDateTime, int cookingRoomNum) {
-        Reservation reservation = reservationRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("no such data"));
-        reservation.setStartDateTime(startDateTime);
-        reservation.setEndDateTime(endDateTime);
-        CookingRoom cookingRoom = cookingRoomRepository.findByRoomNum(cookingRoomNum).orElseThrow(() -> new IllegalArgumentException("no such data"));
-        reservation.setCookingRoom(cookingRoom);
-    }
+//    @Transactional
+//    public void update(Long id, LocalDateTime startDateTime, LocalDateTime endDateTime, int cookingRoomNum) {
+//        Reservation reservation = reservationRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("no such data"));
+//        reservation.setStartDateTime(startDateTime);
+//        reservation.setEndDateTime(endDateTime);
+//        CookingRoom cookingRoom = cookingRoomRepository.findByRoomNum(cookingRoomNum).orElseThrow(() -> new IllegalArgumentException("no such data"));
+//        reservation.setCookingRoom(cookingRoom);
+//    }
 
     @Transactional
     public void delete(Participation participation) {
