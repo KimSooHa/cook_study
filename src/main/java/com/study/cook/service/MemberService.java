@@ -4,6 +4,7 @@ import com.study.cook.controller.MemberForm;
 import com.study.cook.domain.Member;
 import com.study.cook.dto.MemberLoginIdSearchCondition;
 import com.study.cook.dto.MemberPwdSearchCondition;
+import com.study.cook.exception.FindMemberException;
 import com.study.cook.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -57,11 +58,11 @@ public class MemberService {
 
     // 회원 조회
     public Member findOneById(Long memberId) {
-        return memberRepository.findById(memberId).orElseThrow(() -> new IllegalArgumentException("no such data"));
+        return memberRepository.findById(memberId).orElseThrow(() -> new FindMemberException("no such data"));
     }
 
     public Member findOneByEmail(String email) {
-        return memberRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("no such data"));
+        return memberRepository.findByEmail(email).orElseThrow(() -> new FindMemberException("no such data"));
     }
 
 
@@ -75,7 +76,7 @@ public class MemberService {
 
     @Transactional
     public void update(Long id, MemberForm form) {
-        Member member = memberRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("no such data"));
+        Member member = memberRepository.findById(id).orElseThrow(() -> new FindMemberException("no such data"));
         member.setName(form.getName());
         member.setLoginId(form.getLoginId());
         member.setPwd(form.getPwd());
