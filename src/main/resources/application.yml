@@ -1,8 +1,8 @@
 spring:
   #  profiles:
   #    active: local
-  messages:
-    basename: messages,errors  # 에러메시지
+#  messages:
+#    basename: messages,errors  # 에러메시지
 
   data:
     web:
@@ -28,16 +28,19 @@ logging:
 #    org.hibernate.type: trace #띄어쓰기 2칸
 
 
-#server:
-#  servlet:
-#    session:
-#      timeout: 1800  # 세션 타임아웃 설정(분 단위 기준) 60(1분)
+server:
+  servlet:
+    session:
+      timeout: 30m  # 세션 타임아웃 설정(분 단위 기준) 60(1분)
 #      tracking-modes: cookie # url 전달 방식 끄고 항상 쿠키를 통해서만 세션 유지
 
-# key? 32byte (256bit)
-jwt:
-  secretKey: 12345678901234567890123456789012
-  refreshKey: 12345678901234567890123456789012
+
+  security:
+    sessions:
+      #      maximum-sessions: 1 # 동시 로그인 세션 수 제한 (1로 설정하면 하나의 사용자만 로그인 가능)
+      max-sessions-prevents-login: false # 동시 로그인 시 로그인 거부 여부 설정 (false로 설정하면 동시 로그인이 불가능)
+      session-fixation: migrateSession # 세션 고정 방지 설정
+##      invalid-session-url: /login?timeout # 세션 만료 시 리다이렉트할 URL 설정
 
 ---
 spring:

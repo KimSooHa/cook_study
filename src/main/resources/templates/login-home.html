@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <meta charset="UTF-8">
@@ -95,21 +95,15 @@
 
         let message = [[${ msg }]];
         let url = [[${ url }]];
-
-        if (message == null)
-            return;
-        else
+        
+        if (message != null)
             alert(message);
 
-        if(url == null)
-            return;
-        else
+        if(url != null)
             location.href = url;
     }
     /* ]]> */
 
 </script>
 <div th:replace="inc/footer :: footer"></div>
-
-
 </html>

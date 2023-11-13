@@ -1,9 +1,6 @@
 package com.study.cook.controller;
 
 import com.study.cook.domain.Member;
-import com.study.cook.dto.MemberLoginIdSearchCondition;
-import com.study.cook.dto.MemberPwdSearchCondition;
-import com.study.cook.dto.MemberSignupResponseDto;
 import com.study.cook.dto.RefreshTokenDto;
 import com.study.cook.service.LoginService;
 import com.study.cook.service.MemberService;
@@ -15,7 +12,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
@@ -35,15 +31,14 @@ public class MemberController {
     }
 
     @PostMapping
-    public String create(Model model, @Valid MemberForm form, BindingResult result, HttpServletResponse response) {
+    public String create(Model model, @Valid MemberForm form, BindingResult result) {
         if (result.hasErrors()) {
             log.info("errors={}", result);
             return "member/create-form";
         }
 
-        Long memberId;
         try {
-            memberId = memberService.join(form);
+            memberService.join(form);
         } catch (IllegalStateException e) {
 
             model.addAttribute("msg", e.getMessage());
@@ -51,15 +46,7 @@ public class MemberController {
             return "member/create-form";
         }
 
-        Member member = memberService.findOneById(memberId);
-
-        MemberSignupResponseDto memberSignupResponse = new MemberSignupResponseDto();
-        memberSignupResponse.setMemberId(memberId);
-        memberSignupResponse.setName(member.getName());
-        memberSignupResponse.setEmail(member.getEmail());
-        memberSignupResponse.setRegdate(member.getRegDate());
         log.info("회원가입 성공!");
-        model.addAttribute("signupResponse", memberSignupResponse);
         model.addAttribute("msg", "회원가입되었습니다!");
         model.addAttribute("url", "/");
         return "member/create-form";

@@ -4,7 +4,9 @@ import com.study.cook.controller.MemberForm;
 import com.study.cook.domain.Member;
 import com.study.cook.dto.MemberLoginIdSearchCondition;
 import com.study.cook.dto.MemberPwdSearchCondition;
+import com.study.cook.dto.MemberSearchCondition;
 import com.study.cook.exception.FindMemberException;
+import com.study.cook.exception.LoginFailException;
 import com.study.cook.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -59,6 +61,12 @@ public class MemberService {
     // 회원 조회
     public Member findOneById(Long memberId) {
         return memberRepository.findById(memberId).orElseThrow(() -> new FindMemberException("no such data"));
+    }
+
+    public Member findOneByLoginIdAndPwd(MemberSearchCondition condition) {
+        return memberRepository.findByLoginId(condition.getLoginId())
+                .stream().filter(m -> condition.getPwd().equals(m.getPwd()))
+                .findAny().orElseThrow(() -> new LoginFailException("아이디 또는 비밀번호가 맞지 않습니다."));
     }
 
     public Member findOneByEmail(String email) {

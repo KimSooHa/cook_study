@@ -13,6 +13,9 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+/**
+ * ArgumentResolver for Session
+*/
 @Slf4j
 public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolver {
 
@@ -34,7 +37,9 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
             throws Exception {
 
         log.info("resolveArgument 실행");
-
+        /**
+         * session
+         */
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
         HttpSession session = request.getSession(false);    // 세션 가져오기
 
@@ -44,6 +49,5 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
 
         // 세션이 있으면 loginMember로 된 객체 반환
         return session.getAttribute(SessionConst.LOGIN_MEMBER);
-
     }
 }

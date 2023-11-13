@@ -29,7 +29,7 @@
                 <a href="/cooking-rooms/reservation">요리실 대여</a>
             </div>
             <div class="btn btn-default-color">
-                <a href="/login">로그인</a>
+                <a href="/loginForm">로그인</a>
             </div>
 
             <div class="btn btn-default-color">
@@ -88,6 +88,10 @@
 
     </section>
 </main>
+<script th:src="@{/script/token-handling.js}"></script>
+<script th:inline="javascript" layout:fragment="script">
+     /* <![CDATA[ */
+    /* ]]> */
+</script>
 <div th:replace="inc/footer :: footer"></div>
-
 </html>

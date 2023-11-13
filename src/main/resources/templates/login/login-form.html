@@ -49,11 +49,11 @@
 
     <section class="input-container">
         <h1 class="detail-title">로그인</h1>
-        <form role="form" action="/login" th:object="${loginForm}" method="post">
+        <form role="form" th:action="@{/login}" th:object="${loginForm}" method="post">
             <div class="form-group">
                 <div class="input-box">
                     <label th:for="loginId">아이디</label>
-                    <input type="text" th:field="*{loginId}" class="form-control" placeholder="아이디를 입력하세요"
+                    <input type="text" th:field="*{loginId}" id="loginId" class="form-control" placeholder="아이디를 입력하세요"
                         th:class="${#fields.hasErrors('loginId')}? 'form-control fieldError' : 'form-control'"
                         autocomplete="off">
                 </div>
@@ -74,18 +74,21 @@
     </section> <!-- /container -->
 </main>
 <div th:replace="inc/footer :: footer"></div>
+<script th:src="@{/script/alert.js}"></script>
 <script th:inline="javascript" layout:fragment="script">
 
     /* <![CDATA[ */
     window.onload = () => {
 
         let message = [[${ msg }]];
-        if (message == null)
-            return;
+        let url = [[${ url }]];
 
-        alert(message);
+        if (message != null)
+            alert(message);
+
+        if(url != null)
+            location.href = url;
     }
-
     /* ]]> */
 </script>
 
