@@ -346,6 +346,11 @@
 }
 
 
+.invalid {
+    color: var(--color-text-emphasis);
+    margin-top: 15px;
+}
+
 /* -----------------------modal ----------------------------*/
 .modal{
     display: flex;

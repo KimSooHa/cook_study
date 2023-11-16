@@ -66,6 +66,9 @@
                         autocomplete="off">
                 </div>
             </div>
+            <div class="invalid-box">
+                <p th:if="${param.error}" class="invalid">아이디 혹은 비밀번호가 올바르지 않습니다.</p>
+            </div>
             <div class="edit-box">
                 <button type="submit" class="btn btn-strong btn-default">로그인</button>
             </div>
