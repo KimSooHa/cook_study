@@ -66,7 +66,7 @@ public class HomeController {
             Member loginMember = memberService.findOneByLoginIdAndPwd(condition);
             if (loginMember != null) {
                 model.addAttribute("member", loginMember);
-                return "login-home";
+//                return "login-home";
             }
         }
 

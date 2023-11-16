@@ -1,6 +1,5 @@
 package com.study.cook.config;
 
-import com.study.cook.argumentresolver.LoginMemberArgumentResolver;
 import com.study.cook.argumentresolver.SecurityLoginMemberArgumentResolver;
 import com.study.cook.interceptor.SecurityLoginCheckInterceptor;
 import lombok.RequiredArgsConstructor;

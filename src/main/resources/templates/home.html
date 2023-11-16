@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,8 +16,11 @@
         <div class="d-flex align-items-center">
             <a class="header-title main-title" href="/">요리모여</a>
         </div>
-
+        
+        <div class="login-member" sec:authorize="isAuthenticated()" th:text="|${member.name}님|">로그인 회원 이름</div>
+        
         <nav class="nav-login">
+
             <div class="btn btn-strong">
                 <a href="/recipes">레시피 등록</a>
             </div>
@@ -28,13 +30,19 @@
             <div class="btn btn-strong">
                 <a href="/cooking-rooms/reservation">요리실 대여</a>
             </div>
-            <div class="btn btn-default-color">
+            <div class="btn btn-default-color" sec:authorize="isAnonymous()">
                 <a href="/loginForm">로그인</a>
             </div>
 
-            <div class="btn btn-default-color">
+            <div class="btn btn-default-color" sec:authorize="isAnonymous()">
                 <a href="/members">회원가입</a>
             </div>
+
+            <form th:action="@{/logout}" method="post" sec:authorize="isAuthenticated()">
+                <div class="btn btn-default-color">
+                    <input class="btn-submit color-emphasis" type="submit" value="로그아웃">
+                </div>
+            </form>
         </nav>
     </div>
 
@@ -88,9 +96,19 @@
 
     </section>
 </main>
-<script th:src="@{/script/token-handling.js}"></script>
 <script th:inline="javascript" layout:fragment="script">
      /* <![CDATA[ */
+     window.onload = () => {
+
+        let message = [[${ msg }]];
+        let url = [[${ url }]];
+
+        if (message != null)
+            alert(message);
+
+        if(url != null)
+            location.href = url;
+    }
     /* ]]> */
 </script>
 <div th:replace="inc/footer :: footer"></div>
