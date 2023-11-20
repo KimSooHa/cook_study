@@ -11,14 +11,11 @@ import com.study.cook.service.RecipeService;
 import com.study.cook.util.MemberFinder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Controller
@@ -74,24 +71,9 @@ public class HomeController {
     }
 
     @GetMapping("/mypage")
-    public String myPage(Model model, HttpSession session) {
-//        Member member = memberFinder.getMember(session);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
-            CustomUserDetails memberDetails = (CustomUserDetails) authentication.getPrincipal();
-            // UserDetails에서 사용자 정보 확인
-            String loginId = memberDetails.getUsername();
-            String pwd = memberDetails.getPassword();
-            MemberSearchCondition condition = new MemberSearchCondition();
-            condition.setLoginId(loginId);
-            condition.setPwd(pwd);
-            Member member = memberService.findOneByLoginIdAndPwd(condition);
-            // 추가적인 사용자 정보 가져오기 (사용자가 구현한 UserDetails 클래스에 따라 다를 수 있음)
-            // 예: userDetails.getAuthorities(), userDetails.getPassword(), 등
-
-            model.addAttribute("memberId", member.getId());
-        }
+    public String myPage(Model model) {
+        Member member = memberFinder.getMember();
+        model.addAttribute("memberId", member.getId());
         return "mypage/index";
     }
 }

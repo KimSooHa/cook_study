@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -44,9 +43,9 @@ public class ReservationController {
     private final MemberFinder memberFinder;
 
     @GetMapping("/reservations")
-    public String list(HttpSession session, Model model, RedirectAttributes redirectAttributes,
+    public String list(Model model, RedirectAttributes redirectAttributes,
                        @PageableDefault(size = 10, sort = "startDateTime", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<Reservation> list = reservationService.findByMember(memberFinder.getMember(session), pageable).orElseThrow();
+        Page<Reservation> list = reservationService.findByMember(memberFinder.getMember(), pageable).orElseThrow();
 
         if (list.isEmpty()) {
             redirectAttributes.addFlashAttribute("msg", "예약한 요리실이 없습니다.");
@@ -74,7 +73,7 @@ public class ReservationController {
      * 요리실 예약
      */
     @GetMapping("/reservation")
-    public String reserveForm(Model model, HttpSession session) {
+    public String reserveForm(Model model) {
 
         List<CookingRoom> cookingRooms = cookingRoomService.findList();
         List<Schedule> scheduleList = scheduleService.findListByCookingRoom(cookingRooms.get(0));
@@ -99,7 +98,7 @@ public class ReservationController {
         model.addAttribute("schedules", schedules);
 
         // 예약 갯수 10개 이상이면 못함
-        Optional<List<Reservation>> recentReservations = reservationService.findByMemberAndDateGt(memberFinder.getMember(session), LocalDateTime.now());
+        Optional<List<Reservation>> recentReservations = reservationService.findByMemberAndDateGt(memberFinder.getMember(), LocalDateTime.now());
         if (recentReservations.isPresent()) {
             if (recentReservations.get().size() >= 10) {
                 model.addAttribute("msg", "예약은 최대 10개까지만 가능합니다.");

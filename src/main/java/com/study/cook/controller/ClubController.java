@@ -76,7 +76,8 @@ public class ClubController {
         if (categoryName != null || categoryName != "")
             condition.setCategoryName(categoryName);
 
-        Member member = memberFinder.getMember(session);
+//        Member member = memberFinder.getMember(session);
+        Member member = memberFinder.getMember();
         List<Category> categories = categoryService.findList();
         Page<ClubListDto> list = clubService.findByMember(member.getId(), condition, pageable);
 
@@ -101,7 +102,8 @@ public class ClubController {
         if (categoryName != null || categoryName != "")
             condition.setCategoryName(categoryName);
 
-        Member member = memberFinder.getMember(session);
+//        Member member = memberFinder.getMember(session);
+        Member member = memberFinder.getMember();
         List<Category> categories = categoryService.findList();
         Page<ClubListDto> list = clubService.findByParticipant(member.getId(), condition, pageable);
         model.addAttribute("maxPage", 4);
@@ -144,7 +146,8 @@ public class ClubController {
         }
 
         ClubDto clubDto = new ClubDto(club.getName(), club.getIntroduction(), club.getStatus(), club.getMaxCount(), restCount, club.getPrice(), club.getIngredients());
-        Member loginMember = memberFinder.getMember(session);
+//        Member loginMember = memberFinder.getMember(session);
+        Member loginMember = memberFinder.getMember();
         Participation participated;
         try {
             participated = participationService.findByClubAndMember(club, loginMember);
@@ -167,7 +170,7 @@ public class ClubController {
 
     @GetMapping
     public String createForm(Model model, HttpSession session) {
-        Optional<List<Reservation>> reservations = reservationService.findByMemberAndDateGt(memberFinder.getMember(session), LocalDateTime.now());
+        Optional<List<Reservation>> reservations = reservationService.findByMemberAndDateGt(memberFinder.getMember(), LocalDateTime.now());
         List<Category> categories = categoryService.findList();
         log.info("reservations={}", reservations.get().size());
         if (reservations.isPresent()) {

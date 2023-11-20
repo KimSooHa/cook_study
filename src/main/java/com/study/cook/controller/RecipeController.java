@@ -22,7 +22,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Optional;
 
@@ -66,7 +65,7 @@ public class RecipeController {
      * 등록한 리스트
      */
     @GetMapping("/list/created")
-    public String createdList(String categoryName, @RequestParam(defaultValue = "") String title, HttpSession session, Model model, @PageableDefault(size = 8, sort = "regDate", direction = DESC) Pageable pageable) {
+    public String createdList(String categoryName, @RequestParam(defaultValue = "") String title, Model model, @PageableDefault(size = 8, sort = "regDate", direction = DESC) Pageable pageable) {
 
         SearchCondition condition = new SearchCondition();
         if (title != null || title != "")
@@ -74,7 +73,7 @@ public class RecipeController {
         if (categoryName != null || categoryName != "")
             condition.setCategoryName(categoryName);
 
-        Member member = memberFinder.getMember(session);
+        Member member = memberFinder.getMember();
         Page<RecipeListDto> list = recipeService.findByMember(member.getId(), condition, pageable);
         List<Category> categories = categoryService.findList();
 
@@ -100,7 +99,7 @@ public class RecipeController {
 
 
     @GetMapping("/{recipeId}")
-    public String detail(@PathVariable Long recipeId, Model model, HttpSession session) {
+    public String detail(@PathVariable Long recipeId, Model model) {
         Recipe recipe = recipeService.findOneById(recipeId);
 
         RecipeDto recipeDto = new RecipeDto(recipe.getTitle(), recipe.getIntroduction(), recipe.getPhoto(), recipe.getIngredients(), recipe.getCookingTime(), recipe.getServings(), recipe.getCategory().getName());
@@ -119,7 +118,7 @@ public class RecipeController {
         model.addAttribute("recipeDto", recipeDto);
         model.addAttribute("recipeId", recipeId);
 
-        Member loginMember = memberFinder.getMember(session);
+        Member loginMember = memberFinder.getMember();
         model.addAttribute("member", member);
         model.addAttribute("loginMember", loginMember);
 

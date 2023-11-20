@@ -2,10 +2,6 @@ package com.study.cook.api;
 
 import com.study.cook.controller.ReservationForm;
 import com.study.cook.domain.Member;
-import com.study.cook.exception.FindCookingRoomException;
-import com.study.cook.exception.FindReservationException;
-import com.study.cook.exception.FindScheduleException;
-import com.study.cook.exception.ReserveFailException;
 import com.study.cook.service.ReservationService;
 import com.study.cook.util.MemberFinder;
 import com.study.cook.util.ResultVO;
@@ -13,9 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.util.NoSuchElementException;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,9 +24,9 @@ public class ReservationApiController {
      * 요리실 예약
      */
     @PostMapping("/reservation")
-    public ResultVO reserve(@RequestBody @Valid ReservationForm reservationForm, HttpSession session) {
+    public ResultVO reserve(@RequestBody @Valid ReservationForm reservationForm) {
 
-        Member member = memberFinder.getMember(session);
+        Member member = memberFinder.getMember();
         reservationService.create(reservationForm, member);
 
         return new ResultVO("등록에 성공했습니다.", "/cooking-rooms/reservations", true);

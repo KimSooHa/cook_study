@@ -1,7 +1,6 @@
 package com.study.cook.controller;
 
 import com.study.cook.domain.Club;
-import com.study.cook.domain.ClubStatus;
 import com.study.cook.domain.Member;
 import com.study.cook.domain.Participation;
 import com.study.cook.exception.FindClubException;
@@ -17,8 +16,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.servlet.http.HttpSession;
 
 @Controller
 @RequiredArgsConstructor
@@ -36,9 +33,8 @@ public class ParticipationController {
      */
 
     @PostMapping("/{clubId}/participations")
-    public String reserve(@PathVariable Long clubId, HttpSession session, RedirectAttributes redirectAttributes) {
-
-        Member member = memberFinder.getMember(session);
+    public String reserve(@PathVariable Long clubId, RedirectAttributes redirectAttributes) {
+        Member member = memberFinder.getMember();
         redirectAttributes.addAttribute("clubId", clubId);
 
         try {
@@ -63,8 +59,8 @@ public class ParticipationController {
      * 쿡스터디 탈퇴
      */
     @DeleteMapping("/{clubId}/participations")
-    public String delete(@PathVariable Long clubId, RedirectAttributes redirectAttributes, HttpSession session) {
-        Member member = memberFinder.getMember(session);
+    public String delete(@PathVariable Long clubId, RedirectAttributes redirectAttributes) {
+        Member member = memberFinder.getMember();
         Club club = clubService.findOneById(clubId);
         Participation participation = participationService.findByClubAndMember(club, member);
         participationService.delete(participation);

@@ -14,7 +14,6 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.net.MalformedURLException;
 import java.util.List;
@@ -33,13 +32,14 @@ public class RecipeApiController {
 
     @PostMapping
     public ResultVO create(@Valid @RequestPart RecipeForm recipeForm, @RequestPart MultipartFile imageFile,
-                           @Valid @RequestPart List<String> fieldForms, @RequestPart List<MultipartFile> multipartFiles,  // @RequestPart를 사용하면 Json 파일로 넘어온 데이터를 바인딩
-                           HttpSession session) {
+                           @Valid @RequestPart List<String> fieldForms, @RequestPart List<MultipartFile> multipartFiles) {  // @RequestPart를 사용하면 Json 파일로 넘어온 데이터를 바인딩
+
 
         if (fieldForms.size() != multipartFiles.size()) {
             return new ResultVO("등록에 실패하였습니다! 선택을 안하거나 빈칸이 있는지 확인해주세요.", "/recipes", false);
         }
-        Member member = memberFinder.getMember(session);
+
+        Member member = memberFinder.getMember();
         Long id = recipeService.create(recipeForm, imageFile, member);
         int cnt = 0;
             for (String fieldForm : fieldForms) {
@@ -62,14 +62,14 @@ public class RecipeApiController {
     public ResultVO update(@PathVariable Long recipeId,
                            @Valid @RequestPart RecipeForm recipeForm, @RequestPart(required = false) Optional<MultipartFile> imageFile,
                            @Valid @RequestPart List<String> fieldForms, @RequestPart(required = false) Optional<List<MultipartFile>> multipartFiles,
-                           @RequestPart(required = false) Optional<List<Integer>> imgIndexes, HttpSession session) {
+                           @RequestPart(required = false) Optional<List<Integer>> imgIndexes) {
 
         if ((multipartFiles.isPresent() && imgIndexes.isPresent())) {
             if (multipartFiles.get().size() != imgIndexes.get().size())
                 return new ResultVO("저장에 실패하였습니다! 선택을 안하거나 입력칸에 빈칸이 있는지 확인해주세요.", "/recipes/" + recipeId + "/edit", false);
         }
 
-        Member member = memberFinder.getMember(session);
+        Member member = memberFinder.getMember();
         recipeService.update(recipeId, recipeForm, imageFile);
         recipeFieldService.update(recipeId, fieldForms, multipartFiles, imgIndexes, member);
 
