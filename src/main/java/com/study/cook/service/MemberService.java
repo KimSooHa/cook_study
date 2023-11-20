@@ -1,10 +1,13 @@
 package com.study.cook.service;
 
 import com.study.cook.controller.MemberForm;
+import com.study.cook.controller.MemberUpdateForm;
 import com.study.cook.domain.Member;
 import com.study.cook.dto.MemberLoginIdSearchCondition;
 import com.study.cook.dto.MemberPwdSearchCondition;
 import com.study.cook.dto.MemberSearchCondition;
+import com.study.cook.exception.CheckMatchPwdException;
+import com.study.cook.exception.CheckNewPwdException;
 import com.study.cook.exception.FindMemberException;
 import com.study.cook.exception.LoginFailException;
 import com.study.cook.repository.MemberRepository;
@@ -83,11 +86,21 @@ public class MemberService {
     }
 
     @Transactional
-    public void update(Long id, MemberForm form) {
-        Member member = memberRepository.findById(id).orElseThrow(() -> new FindMemberException("no such data"));
+    public void update(Long id, MemberUpdateForm form) {
+        Member member = memberRepository.findById(id).orElseThrow(() -> new FindMemberException("수정 실패: 해당 회원을 찾을 수 없습니다."));
         member.setName(form.getName());
         member.setLoginId(form.getLoginId());
-        member.setPwd(form.getPwd());
+
+        if(form.getCurrentPwd() != null) {
+            if(!passwordEncoder.matches(form.getCurrentPwd(), member.getPwd()))
+                throw new CheckMatchPwdException("기존 비밀번호와 일치하지 않습니다");
+
+            if(!form.getNewPwd().equals(form.getNewPwdConfirm()))
+            throw new CheckNewPwdException("비밀번호와 비밀번호 확인이 일치하지 않습니다.");
+
+            member.setPwd(passwordEncoder.encode(form.getNewPwd()));
+        }
+
         member.setEmail(form.getEmail());
         member.setPhoneNum(form.getPhoneNum());
     }

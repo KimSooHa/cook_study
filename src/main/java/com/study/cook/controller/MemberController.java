@@ -1,11 +1,18 @@
 package com.study.cook.controller;
 
+import com.study.cook.auth.CustomUserDetails;
 import com.study.cook.domain.Member;
 import com.study.cook.dto.RefreshTokenDto;
+import com.study.cook.exception.CheckMatchPwdException;
+import com.study.cook.exception.CheckNewPwdException;
+import com.study.cook.exception.FindMemberException;
 import com.study.cook.service.LoginService;
 import com.study.cook.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -57,11 +64,12 @@ public class MemberController {
 
         Member member = memberService.findOneById(memberId);
 
-        MemberForm form = new MemberForm();
+        MemberUpdateForm form = new MemberUpdateForm();
         form.setName(member.getName());
         form.setLoginId(member.getLoginId());
         form.setEmail(member.getEmail());
-        form.setPwd(member.getPwd());
+        // 현재 비밀번호와 변경할 비밀번호 비교때문에 세팅x
+//        form.setPwd(member.getPwd());
         form.setPhoneNum(member.getPhoneNum());
 
         model.addAttribute("memberForm", form);
@@ -70,28 +78,53 @@ public class MemberController {
     }
 
     @PutMapping("/{memberId}")
-    public String update(@PathVariable Long memberId, @Valid MemberForm form, BindingResult result, RedirectAttributes redirectAttributes) {
+    public String update(@PathVariable Long memberId, @Valid MemberUpdateForm form, BindingResult result, RedirectAttributes redirectAttributes, Model model) {
 
         if (result.hasErrors()) {
             log.info("errors={}", result);
-            return "member/update-form";
+            return resetPwd(form, model);
         }
         try {
             memberService.update(memberId, form);
-        } catch (IllegalArgumentException e) {
-            redirectAttributes.addFlashAttribute("msg", "수정 실패: 해당 회원을 찾을 수 없습니다.");
-            return "member/update-form";
+        } catch (FindMemberException e) {
+            return resetPwdAndAddMsg(form, model, e.getMessage(), "msg");
+        } catch (CheckMatchPwdException e) {
+            return resetPwdAndAddMsg(form, model, e.getMessage(), "currentPwdError");
+        } catch (CheckNewPwdException e) {
+            return resetPwdAndAddMsg(form, model, e.getMessage(), "newPwdError");
         }
+
+        // 세션 정보 갱신
+        Member updatedMember = memberService.findOneById(memberId);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails newPrincipal = new CustomUserDetails(updatedMember);
+        Authentication newAuthentication = new UsernamePasswordAuthenticationToken(newPrincipal, authentication.getCredentials(), authentication.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(newAuthentication);
+
         redirectAttributes.addFlashAttribute("msg", "수정하였습니다.");
         return "redirect:/mypage";
     }
+
+    private static String resetPwdAndAddMsg(MemberUpdateForm form, Model model, String e, String msg) {
+        model.addAttribute(msg, e);
+        return resetPwd(form, model);
+    }
+
+    private static String resetPwd(MemberUpdateForm form, Model model) {
+        form.setCurrentPwd("");
+        form.setNewPwd("");
+        form.setNewPwdConfirm("");
+        model.addAttribute("memberForm", form);
+        return "member/update-form";
+    }
+
 
     // 탈퇴
     @DeleteMapping("/{memberId}")
     public String delete(@PathVariable Long memberId, HttpSession session, @RequestBody RefreshTokenDto refreshTokenDto, Model model) {
         memberService.delete(memberId);
 //        loginService.logout(session);
-        loginService.logout(refreshTokenDto.getRefreshToken());
+//        loginService.logout(refreshTokenDto.getRefreshToken());
         model.addAttribute("msg", "탈퇴되었습니다.");
         model.addAttribute("url", "/");
         return "mypage/index";

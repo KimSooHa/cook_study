@@ -348,7 +348,12 @@
 
 .invalid {
     color: var(--color-text-emphasis);
-    margin-top: 15px;
+    margin-top: 12px;
+}
+
+.valid {
+    color: var(--color-text-valid);
+    margin-top: 12px;
 }
 
 /* -----------------------modal ----------------------------*/

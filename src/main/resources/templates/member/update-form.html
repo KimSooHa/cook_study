@@ -17,30 +17,45 @@
                             th:class="${#fields.hasErrors('name')}? 'form-control fieldError' : 'form-control'"
                             required>
                     </div>
-                    <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Incorrect date</p>
-                    <p class="name-invalid d-none">이름이 형식에 맞지 않습니다.</p>
+                    <p th:if="${#fields.hasErrors('name')}" class="invalid" th:errors="*{name}">Incorrect date</p>
+                    <p class="name-invalid d-none invalid">이름이 형식에 맞지 않습니다.</p>
                 </div>
                 <div class="form-group">
                     <div class="input-box">
                         <label th:for="loginId">아이디</label>
                         <input type="text" th:field="*{loginId}" class="form-control" placeholder="아이디를 입력하세요"
-                            th:class="${#fields.hasErrors('loginId')}? 'form-control fieldError' : 'form-control'"
-                            required>
+                            th:class="${#fields.hasErrors('loginId')}? 'form-control fieldError' : 'form-control'" required>
                     </div>
-                    <p th:if="${#fields.hasErrors('loginId')}" th:errors="*{loginId}">존재하는 아이디입니다.</p>
-                    <p class="id-valid d-none">사용 가능한 아이디입니다.</p>
-                    <p class="id-invalid d-none">아이디가 형식에 맞지 않습니다.</p>
-                    <p class="id-exist d-none">이미 사용중인 아이디입니다.</p>
-                    <p class="id-origin d-none">기존 아이디입니다.</p>
+                    <p th:if="${#fields.hasErrors('loginId')}" th:errors="*{loginId}" class="invalid">존재하는 아이디입니다.</p>
+                    <p class="id-valid d-none valid">사용 가능한 아이디입니다.</p>
+                    <p class="id-invalid d-none invalid">아이디가 형식에 맞지 않습니다.</p>
+                    <p class="id-exist d-none invalid">이미 사용중인 아이디입니다.</p>
+                    <p class="id-origin d-none invalid">기존 아이디입니다.</p>
                 </div>
                 <div class="form-group">
                     <div class="input-box">
-                        <label th:for="pwd">비밀번호</label>
-                        <input type="text" th:field="*{pwd}" class="form-control" placeholder="비밀번호를 입력하세요"
-                            th:class="${#fields.hasErrors('pwd')}? 'form-control fieldError' : 'form-control'">
+                        <label th:for="currentPwd">현재 비밀번호</label>
+                        <input type="password" th:field="*{currentPwd}" class="form-control" placeholder="현재 비밀번호를 입력하세요"
+                            th:class="${#fields.hasErrors('currentPwd')}? 'form-control fieldError' : 'form-control'">
                     </div>
-                    <p th:if="${#fields.hasErrors('pwd')}" th:errors="*{pwd}">비밀번호가 형식에 맞지 않습니다.</p>
-                    <p class="pwd-invalid d-none">비밀번호가 형식에 맞지 않습니다.</p>
+                    <p th:if="${#fields.hasErrors('currentPwd')}" class="invalid" th:errors="*{currentPwd}">현재 사용중인 비밀번호가 아닙니다.</p>
+                    <p th:if="${currentPwdError}" th:text="${currentPwdError}" class="invalid"></p>
+                    <p class="pwd-invalid d-none invalid">기존 비밀번호를 입력해주세요.</p>
+                    <div class="input-box">
+                        <label th:for="newPwd">새 비밀번호</label>
+                        <input type="password" th:field="*{newPwd}" class="form-control" placeholder="새 비밀번호를 입력하세요"
+                            th:class="${#fields.hasErrors('newPwd')}? 'form-control fieldError' : 'form-control'">
+                    </div>
+                    <p th:if="${#fields.hasErrors('newPwd')}" class="invalid" th:errors="*{newPwd}">비밀번호가 형식에 맞지 않습니다.</p>
+                    <p class="newPwd-invalid d-none invalid">새 비밀번호가 형식에 맞지 않습니다.</p>
+                    <div class="input-box">
+                        <label th:for="newPwdConfirm">새 비밀번호 확인</label>
+                        <input type="password" th:field="*{newPwdConfirm}" class="form-control" placeholder="새 비밀번호를 입력하세요"
+                            th:class="${#fields.hasErrors('newPwdConfirm')}? 'form-control fieldError' : 'form-control'">
+                    </div>
+                    <p th:if="${#fields.hasErrors('newPwdConfirm')}" class="invalid" th:errors="*{newPwdConfirm}">비밀번호가 일치하지 않습니다.</p>
+                    <p th:if="${newPwdError}" th:text="${newPwdError}" class="invalid"></p>
+                    <p class="newPwdConfirm-invalid d-none invalid">새 비밀번호와 일치하지 않습니다.</p>
                 </div>
                 <div class="form-group">
                     <div class="input-box">
@@ -49,11 +64,11 @@
                             th:class="${#fields.hasErrors('email')}? 'form-control fieldError' : 'form-control'"
                             required>
                     </div>
-                    <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}">이메일 형식에 맞지 않습니다.</p>
-                    <p class="email-valid d-none">사용 가능한 이메일입니다.</p>
-                    <p class="email-invalid d-none">이메일 형식에 맞지 않습니다.</p>
-                    <p class="email-exist d-none">이미 사용중인 이메일입니다.</p>
-                    <p class="email-origin d-none">기존 이메일입니다.</p>
+                    <p th:if="${#fields.hasErrors('email')}" class="invalid" th:errors="*{email}">이메일 형식에 맞지 않습니다.</p>
+                    <p class="email-valid d-none valid">사용 가능한 이메일입니다.</p>
+                    <p class="email-invalid d-none invalid">이메일 형식에 맞지 않습니다.</p>
+                    <p class="email-exist d-none invalid">이미 사용중인 이메일입니다.</p>
+                    <p class="email-origin d-none invalid">기존 이메일입니다.</p>
                 </div>
                 <div class="form-group">
                     <div class="input-box">
@@ -63,10 +78,10 @@
                             required>
                     </div>
                     <p th:if="${#fields.hasErrors('phoneNum')}" th:errors="*{phoneNum}">휴대폰 번호 형식에 맞지 않습니다.</p>
-                    <p class="phone-valid d-none">사용 가능한 휴대폰 번호입니다.</p>
-                    <p class="phone-invalid d-none">휴대폰 번호 형식에 맞지 않습니다.</p>
-                    <p class="phone-exist d-none">이미 사용중인 휴대폰 번호입니다.</p>
-                    <p class="phone-origin d-none">기존 휴대폰 번호입니다.</p>
+                    <p class="phone-valid d-none valid">사용 가능한 휴대폰 번호입니다.</p>
+                    <p class="phone-invalid d-none invalid">휴대폰 번호 형식에 맞지 않습니다.</p>
+                    <p class="phone-exist d-none invalid">이미 사용중인 휴대폰 번호입니다.</p>
+                    <p class="phone-origin d-none invalid">기존 휴대폰 번호입니다.</p>
                 </div>
                 <div class="edit-box">
                     <button type="submit" class="btn btn-strong btn-default">수정하기</button>
@@ -78,7 +93,7 @@
     <script th:inline="javascript" layout:fragment="script" th:src="@{/script/valid-check.js}"></script>
     <script th:inline="javascript" th:src="@{/script/set-data.js}"></script>
     <script th:inline="javascript" th:src="@{/script/input_check-display.js}"></script>
-    <script th:inline="javascript" layout:fragment="script">
+    <script th:inline="javascript" >
 
         /* <![CDATA[ */
         window.onload = () => {
@@ -95,14 +110,20 @@
             location.href = url;
         }
 
-        const editBox = document.querySelector(".edit-box");
-        const submitBtn = editBox.querySelector("button");
         const nameInput = document.querySelector("#name")
         const loginIdInput = document.querySelector("#loginId");
-        const pwdInput = document.querySelector("#pwd");
+        
+        // 비밀번호(현재, 바꿀 비밀번호, 바꿀 비밀번호 확인) 인풋
+        const currentPwd = document.querySelector("#currentPwd");
+        const newPwd = document.querySelector("#newPwd");
+        const newPwdConfirm = document.querySelector("#newPwdConfirm");
+        
         const emailInput = document.querySelector("#email");
         const phoneNumInput = document.querySelector("#phoneNum");
-
+        
+        const editBox = document.querySelector(".edit-box");
+        const submitBtn = editBox.querySelector("button");
+        
         submitBtn.onclick = (e) => {
             const invalidName = document.querySelector(".name-invalid");
             const invalidId = document.querySelector(".id-invalid");
@@ -113,13 +134,35 @@
             const invalidPhone = document.querySelector(".phone-invalid");
             const existPhone = document.querySelector(".phone-exist");
 
-            if (!invalidName.classList.contains("d-none") || !invalidId.classList.contains("d-none") || !existId.classList.contains("d-none") || !invalidEmail.classList.contains("d-none") || !existEmail.classList.contains("d-none")
-                || !invalidPhone.classList.contains("d-none") || !existPhone.classList.contains("d-none") || !invalidPwd.classList.contains("d-none")) {
-                alert("입력칸을 다시 확인해주세요.");
+            if (
+                !invalidName.classList.contains("d-none") ||
+                !invalidId.classList.contains("d-none") ||
+                !existId.classList.contains("d-none") ||
+                !invalidEmail.classList.contains("d-none") ||
+                !existEmail.classList.contains("d-none") ||
+                !invalidPhone.classList.contains("d-none") ||
+                !existPhone.classList.contains("d-none")
+            ) {
                 e.preventDefault();
+                alert("입력칸을 다시 확인해주세요.");
+                return;
+            } 
+            if(currentPwd.value && (newPwd.value == "" || newPwdConfirm.value == "")) {
+                e.preventDefault();
+                alert("비밀번호를 변경하기 위해서는 현재 비밀번호와 바꿀 비밀번호를 입력하셔야 합니다.");
                 return;
             }
-        }
+            if(!currentPwd.value && (newPwd.value || newPwdConfirm.value)) {
+                e.preventDefault();
+                alert("비밀번호를 변경하기 위해서는 현재 사용중인 비밀번호를 입력하셔야 합니다.");
+                return;
+            } 
+            if(newPwd.value != newPwdConfirm.value) {
+                e.preventDefault();
+                alert("새 비밀번호와 새 비밀번호 확인이 일치하지 않습니다.");
+                return;
+            } 
+        };
 
         nameInput.oninput = () => {
             checkName();
@@ -129,9 +172,13 @@
             checkLoginId();
         };
 
-        pwdInput.oninput = () => {
-            checkPwd();
-        };
+        newPwd.oninput = () => {
+            checkPwd(newPwd, "newPwd");
+        }
+
+        newPwdConfirm.oninput = () => {
+            checkPwd(newPwdConfirm, "newPwdConfirm");
+        }
 
         emailInput.oninput = () => {
             checkEmail();
@@ -151,11 +198,11 @@
                 invalid.classList.add("d-none");
         }
 
-        function checkPwd() {
-            let pwd = document.querySelector("#pwd").value;
-            const invalid = document.querySelector(".pwd-invalid");
+        function checkPwd(pwd, pwdInvalid) {
+            let password = pwd.value;
+            let invalid = document.querySelector(`.${pwdInvalid}-invalid`);
 
-            if (!validPawwsordCheck(pwd))
+            if (!validPawwsordCheck(password) && password)
                 invalid.classList.remove("d-none");
             else
                 invalid.classList.add("d-none");
@@ -260,6 +307,4 @@
         }
 /* ]]> */
     </script>
-</div>
-
 </html>
