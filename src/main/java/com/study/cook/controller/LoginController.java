@@ -1,28 +1,27 @@
 package com.study.cook.controller;
 
-import com.study.cook.dto.RefreshTokenDto;
-import com.study.cook.service.LoginService;
-import com.study.cook.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
 @RequiredArgsConstructor
 @Slf4j
 public class LoginController {
 
-    private final LoginService loginService;
-    private final MemberService memberService;
+//    private final LoginService loginService;
+//    private final MemberService memberService;
 
     @GetMapping("/loginForm")
     public String loginForm(@ModelAttribute("loginForm") LoginForm form) {
         return "login/login-form";
     }
 
+    /**
+     * login, logout - spring security의 form login을 통해 처리로 구현 변경
+     */
 //    @PostMapping("/login")
 //    public String login(Model model, @Valid @ModelAttribute LoginForm form, BindingResult result,
 //                        @RequestParam(defaultValue = "/") String redirectURL) {
@@ -43,10 +42,10 @@ public class LoginController {
 //    }
 
 //    @PostMapping("/logout")
-    public String logout(@RequestBody RefreshTokenDto refreshTokenDto) {
-
-        loginService.logout(refreshTokenDto.getRefreshToken());
-
-        return "redirect:/";
-    }
+//    public String logout(Session session) {
+//
+//        loginService.logout(session);
+//
+//        return "redirect:/";
+//    }
 }
