@@ -2,11 +2,9 @@ package com.study.cook.controller;
 
 import com.study.cook.auth.CustomUserDetails;
 import com.study.cook.domain.Member;
-import com.study.cook.dto.RefreshTokenDto;
 import com.study.cook.exception.CheckMatchPwdException;
 import com.study.cook.exception.CheckNewPwdException;
 import com.study.cook.exception.FindMemberException;
-import com.study.cook.service.LoginService;
 import com.study.cook.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +17,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 @Controller
@@ -29,7 +26,6 @@ import javax.validation.Valid;
 public class MemberController {
 
     private final MemberService memberService;
-    private final LoginService loginService;
 
     @GetMapping
     public String createForm(Model model) {
@@ -121,12 +117,10 @@ public class MemberController {
 
     // 탈퇴
     @DeleteMapping("/{memberId}")
-    public String delete(@PathVariable Long memberId, HttpSession session, @RequestBody RefreshTokenDto refreshTokenDto, Model model) {
+    public String delete(@PathVariable Long memberId, Model model) {
         memberService.delete(memberId);
-//        loginService.logout(session);
-//        loginService.logout(refreshTokenDto.getRefreshToken());
         model.addAttribute("msg", "탈퇴되었습니다.");
-        model.addAttribute("url", "/");
+        model.addAttribute("url", "/logout"); // 회원 탈퇴 후 로그아웃 처리
         return "mypage/index";
     }
 }
