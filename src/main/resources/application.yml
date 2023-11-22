@@ -22,6 +22,14 @@ spring:
         format_sql: true
         use_sql_comments: true
 
+# application 저장 후 자동 재시작 설정
+#  devtools:
+#    restart:
+#      enabled: false
+
+  thymeleaf:
+    cache: false
+
 logging:
   level:
     org.hibernate.SQL: debug

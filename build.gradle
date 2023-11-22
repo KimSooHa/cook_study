@@ -57,6 +57,11 @@ dependencies {
 	implementation 'com.querydsl:querydsl-apt'
 }
 
+// application auto-restart
+dependencies {
+	compile("org.springframework.boot:spring-boot-devtools")
+}
+
 // plain.jar 파일 생성 막기
 jar {
 	enabled = false
