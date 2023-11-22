@@ -12,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,9 +45,9 @@ public class CommentApiController {
     }
 
     @PostMapping
-    public CommentDto create(@Valid @RequestBody CommentForm form, HttpSession session) {
+    public CommentDto create(@Valid @RequestBody CommentForm form) {
 
-        Long commentId = commentService.create(form, session);
+        Long commentId = commentService.create(form);
         Comment comment = commentService.findOneById(commentId);
         CommentDto commentDto = new CommentDto(commentId, comment.getContent(), comment.getRegDate(), comment.getMember().getId(), comment.getMember().getLoginId());
 

@@ -32,12 +32,12 @@ public class CommentService {
      * 댓글 등록
      */
     @Transactional  // 변경해야 하기 때문에 읽기, 쓰기가 가능해야 함
-    public Long create(CommentForm form, HttpSession session) {
+    public Long create(CommentForm form) {
 
         Comment comment = new Comment(form.getContent());
         Recipe recipe = recipeRepository.findById(form.getRecipeId()).orElseThrow(() -> new FindRecipeException("댓글 쓰기 실패: 해당 레시피 글이 존재하지 않습니다."));
 
-        Member member = memberFinder.getMember(session);
+        Member member = memberFinder.getMember();
         Comment createdComment = Comment.createComment(comment, member, recipe);
         commentRepository.save(createdComment);
 

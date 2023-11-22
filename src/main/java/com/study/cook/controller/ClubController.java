@@ -19,7 +19,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,7 +67,7 @@ public class ClubController {
      * 등록한 리스트
      */
     @GetMapping("/list/created")
-    public String createdList(String categoryName, @RequestParam(defaultValue = "") String title, HttpSession session, Model model, @PageableDefault(size = 8, sort = "regDate", direction = Sort.Direction.ASC) Pageable pageable) {
+    public String createdList(String categoryName, @RequestParam(defaultValue = "") String title, Model model, @PageableDefault(size = 8, sort = "regDate", direction = Sort.Direction.ASC) Pageable pageable) {
 
         SearchCondition condition = new SearchCondition();
         if (title != null || title != "")
@@ -76,7 +75,6 @@ public class ClubController {
         if (categoryName != null || categoryName != "")
             condition.setCategoryName(categoryName);
 
-//        Member member = memberFinder.getMember(session);
         Member member = memberFinder.getMember();
         List<Category> categories = categoryService.findList();
         Page<ClubListDto> list = clubService.findByMember(member.getId(), condition, pageable);
@@ -94,7 +92,7 @@ public class ClubController {
      * 참여하는 리스트
      */
     @GetMapping("/list/joined")
-    public String joinedList(String categoryName, @RequestParam(defaultValue = "") String title, HttpSession session, Model model, @PageableDefault(size = 8, sort = "regDate", direction = DESC) Pageable pageable) {
+    public String joinedList(String categoryName, @RequestParam(defaultValue = "") String title, Model model, @PageableDefault(size = 8, sort = "regDate", direction = DESC) Pageable pageable) {
 
         SearchCondition condition = new SearchCondition();
         if (title != null || title != "")
@@ -102,7 +100,6 @@ public class ClubController {
         if (categoryName != null || categoryName != "")
             condition.setCategoryName(categoryName);
 
-//        Member member = memberFinder.getMember(session);
         Member member = memberFinder.getMember();
         List<Category> categories = categoryService.findList();
         Page<ClubListDto> list = clubService.findByParticipant(member.getId(), condition, pageable);
@@ -117,7 +114,7 @@ public class ClubController {
 
 
     @GetMapping("/{clubId}/detail")
-    public String detail(@PathVariable Long clubId, @RequestParam(defaultValue = "/clubs/list") String redirectURL, Model model, HttpSession session) {
+    public String detail(@PathVariable Long clubId, @RequestParam(defaultValue = "/clubs/list") String redirectURL, Model model) {
         Club club = clubService.findOneById(clubId);
 
         int restCount = club.getMaxCount();
@@ -146,7 +143,6 @@ public class ClubController {
         }
 
         ClubDto clubDto = new ClubDto(club.getName(), club.getIntroduction(), club.getStatus(), club.getMaxCount(), restCount, club.getPrice(), club.getIngredients());
-//        Member loginMember = memberFinder.getMember(session);
         Member loginMember = memberFinder.getMember();
         Participation participated;
         try {
@@ -169,7 +165,7 @@ public class ClubController {
     }
 
     @GetMapping
-    public String createForm(Model model, HttpSession session) {
+    public String createForm(Model model) {
         Optional<List<Reservation>> reservations = reservationService.findByMemberAndDateGt(memberFinder.getMember(), LocalDateTime.now());
         List<Category> categories = categoryService.findList();
         log.info("reservations={}", reservations.get().size());

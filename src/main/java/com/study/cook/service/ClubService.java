@@ -16,7 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,11 +37,11 @@ public class ClubService {
      * 클럽 등록
      */
     @Transactional  // 변경해야 하기 때문에 읽기, 쓰기가 가능해야 함
-    public Long create(ClubForm form, HttpSession session) {
+    public Long create(ClubForm form) {
 
         Club club = new Club(form.getName(), form.getIntroduction(), form.getMaxCount(), form.getIngredients());
 
-        Member member = memberFinder.getMember(session);
+        Member member = memberFinder.getMember();
         Category category = categoryService.findOneById(form.getCategoryId());
 
         List<Reservation> reservations = form.getReservationIds().stream().map(id -> {

@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 @RestController
@@ -20,8 +19,8 @@ public class ClubApiController {
 
 
     @PostMapping
-    public ResultVO create(@Valid @RequestBody ClubForm form, HttpSession session) {
-        Long clubId = clubService.create(form, session);
+    public ResultVO create(@Valid @RequestBody ClubForm form) {
+        Long clubId = clubService.create(form);
         return new ResultVO("등록하였습니다.", "/clubs/" + clubId + "/detail", true);
     }
 
