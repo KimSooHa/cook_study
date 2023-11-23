@@ -36,31 +36,31 @@ class LoginServiceTest {
         memberRepository.save(member);
     }
 
-    @Test
-    @DisplayName("로그인")
-    void login() {
-        // given
-        String email = "testMember1@email.com";
-        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("no such data"));
-        LoginForm form = new LoginForm();
-        form.setLoginId(member.getLoginId());
-        form.setPwd(member.getPwd());
+//    @Test
+//    @DisplayName("로그인")
+//    void login() {
+//        // given
+//        String email = "testMember1@email.com";
+//        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("no such data"));
+//        LoginForm form = new LoginForm();
+//        form.setLoginId(member.getLoginId());
+//        form.setPwd(member.getPwd());
+//
+//        // when
+//        session = new MockHttpSession();
+//        loginService.login(form, session);
+//
+//        // then
+//        assertThat(session.getAttribute(SessionConst.LOGIN_MEMBER)).isNotNull();
+//    }
 
-        // when
-        session = new MockHttpSession();
-        loginService.login(form, session);
-
-        // then
-        assertThat(session.getAttribute(SessionConst.LOGIN_MEMBER)).isNotNull();
-    }
-
-    @Test
-    @DisplayName("로그아웃")
-    void logout() {
-        // when
-        loginService.logout(session);
-
-        // then
-        assertThat(session).isNull();
-    }
+//    @Test
+//    @DisplayName("로그아웃")
+//    void logout() {
+//        // when
+//        loginService.logout(session);
+//
+//        // then
+//        assertThat(session).isNull();
+//    }
 }

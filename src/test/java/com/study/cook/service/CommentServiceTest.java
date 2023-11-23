@@ -1,10 +1,10 @@
 package com.study.cook.service;
 
-import com.study.cook.SessionConst;
 import com.study.cook.controller.CommentForm;
 import com.study.cook.controller.RecipeForm;
 import com.study.cook.domain.*;
 import com.study.cook.dto.CommentDto;
+import com.study.cook.exception.FindMemberException;
 import com.study.cook.exception.StoreFailException;
 import com.study.cook.file.FileStore;
 import com.study.cook.repository.CategoryRepository;
@@ -21,8 +21,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.FileInputStream;
@@ -54,13 +54,16 @@ class CommentServiceTest {
     @Autowired
     FileStore fileStore;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     private String filePath = "/Users/sooha/Desktop/image/food/";
     private String fileName = "pizza_img.jpeg";
     private Long recipeId;
 
     @BeforeEach
     public void testSave() {
-        Member member = new Member("testMember1", "test1", "testMember1234*", "testMember1@email.com", "010-1234-1231");
+        Member member = new Member("testMember1", "test1", passwordEncoder.encode("testMember1234*"), "testMember1@email.com", "010-1234-1231");
         memberRepository.save(member);
 
         RecipeForm form = setRecipeForm();
@@ -76,13 +79,12 @@ class CommentServiceTest {
     @DisplayName("레시피 댓글 생성")
     void create() {
         // given
-        MockHttpSession session = setSession();
         CommentForm form = new CommentForm();
         form.setContent("test");
         form.setRecipeId(recipeId);
 
         // when
-        Long commentId = commentService.create(form, session);
+        Long commentId = commentService.create(form, memberRepository.findByLoginId("test1").orElseThrow(() -> new FindMemberException("해당하는 회원을 찾을 수 없습니다.")));
 
         // then
         assertThat(commentRepository.findById(commentId)).isPresent();
@@ -147,13 +149,6 @@ class CommentServiceTest {
 
         // then
         assertThat(commentRepository.findById(commentId)).isEmpty();
-    }
-
-    private MockHttpSession setSession() {
-        MockHttpSession session = new MockHttpSession();
-        Member member = memberRepository.findByLoginId("test1").get();
-        session.setAttribute(SessionConst.LOGIN_MEMBER, member);
-        return session;
     }
 
     private Long save() {

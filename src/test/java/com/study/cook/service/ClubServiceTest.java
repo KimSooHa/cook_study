@@ -1,10 +1,10 @@
 package com.study.cook.service;
 
-import com.study.cook.SessionConst;
 import com.study.cook.controller.ClubForm;
 import com.study.cook.domain.*;
 import com.study.cook.dto.ClubListDto;
 import com.study.cook.dto.SearchCondition;
+import com.study.cook.exception.FindMemberException;
 import com.study.cook.repository.CategoryRepository;
 import com.study.cook.repository.ClubRepository;
 import com.study.cook.repository.MemberRepository;
@@ -18,10 +18,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.mock.web.MockHttpSession;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,8 +45,6 @@ class ClubServiceTest {
     @Autowired
     MemberRepository memberRepository;
 
-    private HttpSession session;
-
     @BeforeEach
     public void testSave() {
         Member member = new Member("testMember1", "test1", "testMember1234*", "testMember1@email.com", "010-1234-1231");
@@ -60,10 +56,10 @@ class ClubServiceTest {
     void create() {
         // given
         ClubForm form = setForm();
-        HttpSession session = setSession();
 
         // when
-        Long clubId = clubService.create(form, this.session);
+        Member member = getMember();
+        Long clubId = clubService.create(form, member);
 
         // then
         assertThat(clubRepository.findById(clubId).get().getName()).isEqualTo(form.getName());
@@ -181,11 +177,8 @@ class ClubServiceTest {
         assertThat(clubRepository.findById(club.getId())).isEmpty();
     }
 
-    private HttpSession setSession() {
-        session = new MockHttpSession();
-        Member member = memberRepository.findByLoginId("test1").get();
-        session.setAttribute(SessionConst.LOGIN_MEMBER, member);
-        return session;
+    private Member getMember() {
+        return memberRepository.findByLoginId("test1").orElseThrow(() -> new FindMemberException("해당하는 회원을 찾을 수 없습니다."));
     }
 
     private ClubForm setForm() {

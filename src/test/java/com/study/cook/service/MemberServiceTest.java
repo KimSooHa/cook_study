@@ -1,6 +1,7 @@
 package com.study.cook.service;
 
 import com.study.cook.controller.MemberForm;
+import com.study.cook.controller.MemberUpdateForm;
 import com.study.cook.domain.Member;
 import com.study.cook.dto.MemberLoginIdSearchCondition;
 import com.study.cook.repository.MemberRepository;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,10 +27,13 @@ class MemberServiceTest {
     @Autowired
     MemberRepository memberRepository;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     @BeforeEach
     void testSave() {
         for (int i = 0; i < 10; i++) {
-            Member member = new Member("testMember" + i, "test" + i, "testMember1234*", "testMember" + i + "@email.com", "010-1234-123"+i);
+            Member member = new Member("testMember" + i, "test" + i, passwordEncoder.encode("testMember1234*"), "testMember" + i + "@email.com", "010-1234-123"+i);
             memberRepository.save(member);
         }
     }
@@ -156,11 +161,14 @@ class MemberServiceTest {
         // given
         String email = "testMember1@email.com";
         Member member = memberRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("해당하는 회원이 없습니다."));
-
-        MemberForm form = new MemberForm();
+        String currentPwd = "testMember1234*";
+        String newPwd = "testMember123*";
+        MemberUpdateForm form = new MemberUpdateForm();
         form.setLoginId(member.getLoginId());
         form.setName(member.getName());
-        form.setPwd(member.getPwd());
+        form.setCurrentPwd(currentPwd);
+        form.setNewPwd(newPwd);
+        form.setNewPwdConfirm(newPwd);
         form.setPhoneNum("010-1234-5678");
 
         // when
@@ -168,6 +176,7 @@ class MemberServiceTest {
 
         // then
         assertThat(member.getPhoneNum()).isEqualTo(form.getPhoneNum());
+        assertThat(passwordEncoder.matches(newPwd, member.getPwd()));
     }
 
     @Test

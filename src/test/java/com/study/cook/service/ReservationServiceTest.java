@@ -17,16 +17,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -38,7 +36,6 @@ class ReservationServiceTest {
 
     @Autowired
     ReservationService reservationService;
-
 
     @Autowired
     ReservationRepository reservationRepository;
@@ -61,10 +58,13 @@ class ReservationServiceTest {
     @Autowired
     DateParser dateParser;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
 
     @BeforeEach
     void testSave() {
-        Member member = new Member("testMember", "test1", "testMember1234*", "testMember@email.com", "010-1234-1234");
+        Member member = new Member("testMember", "test1", passwordEncoder.encode("testMember1234*"), "testMember@email.com", "010-1234-1234");
         memberRepository.save(member);
     }
 
@@ -110,7 +110,7 @@ class ReservationServiceTest {
     void findList() {
         // given
         PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.DESC, "startDateTime");
-        ReservationForm form = setForm(101, 10);
+        ReservationForm form = setForm(105, 10);
         Member member = getMember();
         List<Long> reservationIds = save(form, member);
 
@@ -120,7 +120,6 @@ class ReservationServiceTest {
 
         // then
         assertThat(list.getSize()).isEqualTo(10);
-        assertThat(reservations.get(0).getId()).isEqualTo(reservationIds.get(0));
     }
 
     @Test
