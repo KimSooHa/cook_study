@@ -5,6 +5,7 @@ import com.study.cook.domain.Comment;
 import com.study.cook.dto.CommentDto;
 import com.study.cook.service.CommentService;
 import com.study.cook.util.DateParser;
+import com.study.cook.util.MemberFinder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -26,6 +27,7 @@ public class CommentApiController {
 
     private final CommentService commentService;
     private final DateParser dateParser;
+    private final MemberFinder memberFinder;
 
     @GetMapping("/list")
     public Map<String, Object> list(@RequestParam Long recipeId, @PageableDefault(size = 4, sort = "regDate", direction = DESC) Pageable pageable) {
@@ -46,8 +48,8 @@ public class CommentApiController {
 
     @PostMapping
     public CommentDto create(@Valid @RequestBody CommentForm form) {
-
-        Long commentId = commentService.create(form);
+        
+        Long commentId = commentService.create(form, memberFinder.getMember());
         Comment comment = commentService.findOneById(commentId);
         CommentDto commentDto = new CommentDto(commentId, comment.getContent(), comment.getRegDate(), comment.getMember().getId(), comment.getMember().getLoginId());
 

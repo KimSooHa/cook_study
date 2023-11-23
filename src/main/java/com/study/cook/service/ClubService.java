@@ -9,7 +9,6 @@ import com.study.cook.dto.ClubListDto;
 import com.study.cook.dto.SearchCondition;
 import com.study.cook.exception.FindClubException;
 import com.study.cook.repository.ClubRepository;
-import com.study.cook.util.MemberFinder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,18 +29,15 @@ public class ClubService {
     private final CategoryService categoryService;
     private final ReservationService reservationService;
     private final ParticipationService participationService;
-    private final MemberFinder memberFinder;
 
 
     /**
      * 클럽 등록
      */
     @Transactional  // 변경해야 하기 때문에 읽기, 쓰기가 가능해야 함
-    public Long create(ClubForm form) {
+    public Long create(ClubForm form, Member member) {
 
         Club club = new Club(form.getName(), form.getIntroduction(), form.getMaxCount(), form.getIngredients());
-
-        Member member = memberFinder.getMember();
         Category category = categoryService.findOneById(form.getCategoryId());
 
         List<Reservation> reservations = form.getReservationIds().stream().map(id -> {
