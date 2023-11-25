@@ -85,6 +85,14 @@
             location.href = url;
         }
 
+        // 예약된 요리실 체크 영역 확장
+        let checkboxContainer = document.querySelectorAll(".checkbox-container");
+        for(let i=0; i<checkboxContainer.length; i++) {
+                checkboxContainer[i].onclick = (e) => {
+                const checkbox = checkboxContainer[i].querySelector("input[type=checkbox]");
+                checkbox.checked = !checkbox.checked;
+            }
+        }
 
         const submitBtn = document.querySelector(".create");
 
