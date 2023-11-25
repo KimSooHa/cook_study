@@ -8,7 +8,7 @@
   - 요리 레시피를 공유하고 함께 요리하는 공간을 제공해 스터디를 모집하는 커뮤니티 사이트 제작
   - Spring Boot Framework와 JPA를 잘 이해하고 적용하여 REST API 방식으로 구현
   - AWS를 통해 운영서버에 배포 및 도메인 연결
-- 개발 환경: IntelliJ IDE 2022.2.4(Community Edition), SpringBoot 2.7.7, JDK 11, Mariadb 3.0.9, Gradle, Lombok 1.18.24, Spring Data JPA 2.7.7, Querydsl 5.0.0, HTML, CSS, Javascript, Thymeleaf, AWS(EC2, RDS)
+- 개발 환경: IntelliJ IDE 2022.2.4(Community Edition), SpringBoot 2.7.7, Spring Security 5.7.6, JDK 11, Mariadb 3.0.9, Gradle, Lombok 1.18.24, Spring Data JPA 2.7.7, Querydsl 5.0.0, Junit5, HTML, CSS, Javascript, Thymeleaf, AWS(EC2, RDS)
 
 ## 아키텍처
   ![architecture](https://github.com/KimSooHa/cook_study/assets/81688625/087df5ed-1c2e-4b3e-9554-b9a3fde26fc7)
@@ -95,6 +95,7 @@
 - 구현 기능 설명
     - 프론트와 서버단에서 각각 유효성 검사를 합니다.
     - 중복확인: ajax를 통해 비동기로 기존 회원의 아이디나 이메일과 일치하는지 비교합니다.
+    - 보안을 위해 Spring Security의 BCryptPasswordEncoder를 통해 비밀번호를 암호화하여 저장합니다.
 
 
 ### 로그인
@@ -103,6 +104,7 @@
 
 - 구현 기능 설명
     - 가입한 회원의 계정으로 로그인을 합니다.
+    - Spring Security의 form login 방식으로 인증처리합니다.
     - 로그인에 성공하면 메인 화면으로 이동하고 헤더에 회원의 이름이 나타납니다.
 
 
