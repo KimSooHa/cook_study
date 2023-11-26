@@ -56,8 +56,8 @@
                         th:class="${#fields.hasErrors('name')}? 'form-control fieldError' : 'form-control'" required
                         oninput="checkName()">
                 </div>
-                <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}">이름이 형식에 맞지 않습니다.</p>
-                <p class="name-invalid d-none">이름이 형식에 맞지 않습니다.</p>
+                <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="invalid">이름이 형식에 맞지 않습니다.</p>
+                <p class="name-invalid d-none invalid">이름이 형식에 맞지 않습니다.</p>
             </div>
             <div class="form-group">
                 <div class="input-box">
@@ -66,10 +66,10 @@
                         th:class="${#fields.hasErrors('loginId')}? 'form-control fieldError' : 'form-control'" required
                         oninput="checkLoginId()">
                 </div>
-                <p th:if="${#fields.hasErrors('loginId')}" th:errors="*{loginId}">존재하는 아이디입니다.</p>
-                <p class="id-valid d-none">사용 가능한 아이디입니다.</p>
-                <p class="id-invalid d-none">아이디가 형식에 맞지 않습니다.</p>
-                <p class="id-origin d-none">이미 사용중인 아이디입니다.</p>
+                <p th:if="${#fields.hasErrors('loginId')}" th:errors="*{loginId}" class="invalid">존재하는 아이디입니다.</p>
+                <p class="id-valid d-none valid">사용 가능한 아이디입니다.</p>
+                <p class="id-invalid d-none invalid">아이디가 형식에 맞지 않습니다.</p>
+                <p class="id-origin d-none invalid">이미 사용중인 아이디입니다.</p>
             </div>
             <div class="form-group">
                 <div class="input-box">
@@ -78,8 +78,8 @@
                         th:class="${#fields.hasErrors('pwd')}? 'form-control fieldError' : 'form-control'" required
                         oninput="checkPwd()">
                 </div>
-                <p th:if="${#fields.hasErrors('pwd')}" th:errors="*{pwd}">비밀번호가 형식에 맞지 않습니다.</p>
-                <p class="pwd-invalid d-none">비밀번호가 형식에 맞지 않습니다.</p>
+                <p th:if="${#fields.hasErrors('pwd')}" th:errors="*{pwd}" class="invalid">비밀번호가 형식에 맞지 않습니다.</p>
+                <p class="pwd-invalid d-none invalid">비밀번호가 형식에 맞지 않습니다.</p>
             </div>
             <div class="form-group">
                 <div class="input-box">
@@ -88,10 +88,10 @@
                         th:class="${#fields.hasErrors('email')}? 'form-control fieldError' : 'form-control'" required
                         oninput="checkEmail()">
                 </div>
-                <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}">이메일 형식에 맞지 않습니다.</p>
-                <p class="email-valid d-none">사용 가능한 이메일입니다.</p>
-                <p class="email-invalid d-none">이메일이 형식에 맞지 않습니다.</p>
-                <p class="email-origin d-none">이미 사용중인 이메일입니다.</p>
+                <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="invalid">이메일 형식에 맞지 않습니다.</p>
+                <p class="email-valid d-none valid">사용 가능한 이메일입니다.</p>
+                <p class="email-invalid d-none invalid">이메일이 형식에 맞지 않습니다.</p>
+                <p class="email-origin d-none invalid">이미 사용중인 이메일입니다.</p>
             </div>
             <div class="form-group">
                 <div class="input-box">
@@ -100,10 +100,10 @@
                         th:class="${#fields.hasErrors('phoneNum')}? 'form-control fieldError' : 'form-control'" required
                         oninput="checkPhoneNum()">
                 </div>
-                <p th:if="${#fields.hasErrors('phoneNum')}" th:errors="*{phoneNum}">휴대폰 번호가 형식에 맞지 않습니다.</p>
-                <p class="phone-valid d-none">사용 가능한 휴대폰 번호입니다.</p>
-                <p class="phone-invalid d-none">휴대폰 번호가 형식에 맞지 않습니다.</p>
-                <p class="phone-origin d-none">이미 사용중인 휴대폰 번호입니다.</p>
+                <p th:if="${#fields.hasErrors('phoneNum')}" th:errors="*{phoneNum}" class="invalid">휴대폰 번호가 형식에 맞지 않습니다.</p>
+                <p class="phone-valid d-none valid">사용 가능한 휴대폰 번호입니다.</p>
+                <p class="phone-invalid d-none invalid">휴대폰 번호가 형식에 맞지 않습니다.</p>
+                <p class="phone-origin d-none invalid">이미 사용중인 휴대폰 번호입니다.</p>
             </div>
             <div class="edit-box">
                 <button type="submit" class="btn btn-strong btn-default">회원가입</button>
