@@ -50,45 +50,47 @@
         </nav>
     </div>
 </header>
-<main>
-    <section class="recipe-best best-container">
-        <div class="recipe-best-header best-container-header">
-            <h1>Best 레시피</h1>
-            <div class="btn btn-strong">
-                <a href="/recipes/list">더보기</a>
+<div layout:fragment="content">
+    <main>
+        <section class="recipe-best best-container">
+            <div class="recipe-best-header best-container-header">
+                <h1>Best 레시피</h1>
+                <div class="btn btn-strong">
+                    <a href="/recipes/list">더보기</a>
+                </div>
             </div>
-        </div>
-        <section class="best-list">
-            <h1 class="d-none">best 레시피 목록</h1>
-            <div class="list-element" th:each="recipe : ${recipeList}">
-                <a class="element-link" th:href="@{recipes/{param1}(param1=${recipe.recipeId})}">
-                    <img class="food-list-img" th:src="|/recipes/images/${recipe.img.getStoreFileName()}|" alt="목록 이미지">
-                    <span class="title" th:text="${recipe.title}">레시피 제목</span>
-                </a>
-            </div>
+            <section class="best-list">
+                <h1 class="d-none">best 레시피 목록</h1>
+                <div class="list-element" th:each="recipe : ${recipeList}">
+                    <a class="element-link" th:href="@{recipes/{param1}(param1=${recipe.recipeId})}">
+                        <img class="food-list-img" th:src="|/recipes/images/${recipe.img.getStoreFileName()}|" alt="목록 이미지">
+                        <span class="title" th:text="${recipe.title}">레시피 제목</span>
+                    </a>
+                </div>
+            </section>
+    
         </section>
-
-    </section>
-
-    <section class="cook_study-best best-container">
-        <div class="cook_study-best-header best-container-header">
-            <h1>Best 쿡스터디</h1>
-            <div class="btn btn-strong">
-                <a href="/clubs/list">더보기</a>
+    
+        <section class="cook_study-best best-container">
+            <div class="cook_study-best-header best-container-header">
+                <h1>Best 쿡스터디</h1>
+                <div class="btn btn-strong">
+                    <a href="/clubs/list">더보기</a>
+                </div>
             </div>
-        </div>
-        <section class="best-list">
-            <h1 class="d-none">best 쿡스터디 목록</h1>
-            <div class="list-element" th:each="club : ${clubList}">
-                <a class="element-link" th:href="@{clubs/{param1}/detail(param1=${club.clubId})}">
-                    <span class="title" th:text="${club.name}">쿡스터디 제목</span>
-                    <span class="writer" th:text="${club.memberLoginId}">작성자</span> 
-                </a>
-            </div>
+            <section class="best-list">
+                <h1 class="d-none">best 쿡스터디 목록</h1>
+                <div class="list-element" th:each="club : ${clubList}">
+                    <a class="element-link" th:href="@{clubs/{param1}/detail(param1=${club.clubId})}">
+                        <span class="title" th:text="${club.name}">쿡스터디 제목</span>
+                        <span class="writer" th:text="${club.memberLoginId}">작성자</span> 
+                    </a>
+                </div>
+            </section>
+    
         </section>
-
-    </section>
-</main>
+    </main>
+</div>
 <script th:inline="javascript" layout:fragment="script">
 /* <![CDATA[ */
     window.onload = () => {
@@ -105,5 +107,5 @@
     /* ]]> */
 
 </script>
-<div th:replace="inc/footer :: footer"></div>
+<!-- <div th:replace="inc/footer :: footer"></div> -->
 </html>

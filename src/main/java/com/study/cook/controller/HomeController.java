@@ -73,7 +73,7 @@ public class HomeController {
     @GetMapping("/mypage")
     public String myPage(Model model) {
         Member member = memberFinder.getMember();
-        model.addAttribute("memberId", member.getId());
+        model.addAttribute("member", member);
         return "mypage/index";
     }
 }
