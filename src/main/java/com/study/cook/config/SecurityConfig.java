@@ -3,8 +3,6 @@ package com.study.cook.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -15,7 +13,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity // 기본적인 Web 보안 활성화
-//@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true) // securedEnabled : secured 어노테이션 활성화, prePostEnabled : preAuthorize, postAuthorize 어노테이션 활성화
 public class SecurityConfig  {
 
     @Bean
@@ -24,7 +21,6 @@ public class SecurityConfig  {
             .csrf().disable()
             .authorizeRequests(authorizeRequests ->
                     authorizeRequests
-//                            .mvcMatchers("/login").permitAll() // /login으로 시작하는 모든 요청을 허용
                             .antMatchers("/", "/script/**", "/loginForm", "/logout", "/valid-email", "/valid-loginId", "/valid-phoneNum", "/recipes/images/**",
                             "/reserved-time", "/cooking-rooms", "/css/**", "/members", "/members/searchId", "/members/searchPwd", "/*.ico", "/error", "/image/**").permitAll()
                             .anyRequest().authenticated()
@@ -46,7 +42,6 @@ public class SecurityConfig  {
                             .maximumSessions(1)
 //                            .maxSessionsPreventsLogin(false)
                             .expiredUrl("/login")
-//                            .and().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 세션을 STATELESS로 설정하여 JWT기반 인증을 사용
             );
 
         return http.build();
@@ -59,9 +54,4 @@ public class SecurityConfig  {
         return new BCryptPasswordEncoder(); // BCrypt: 비밀번호를 안전하게 저장하기 위한 해시 함수
     }
 
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
-    }
 }
