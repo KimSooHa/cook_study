@@ -95,7 +95,7 @@
 - 구현 기능 설명
     - 프론트와 서버단에서 각각 유효성 검사를 합니다.
     - 중복확인: ajax를 통해 비동기로 기존 회원의 아이디나 이메일과 일치하는지 비교합니다.
-    - 보안을 위해 Spring Security의 BCryptPasswordEncoder를 통해 비밀번호를 암호화하여 저장합니다.
+    - 보안을 위해 Spring Security의 `BCryptPasswordEncoder`를 통해 비밀번호를 암호화하여 저장합니다.
 
 
 ### 로그인
