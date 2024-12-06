@@ -8,10 +8,11 @@
   - 요리 레시피를 공유하고 함께 요리하는 공간을 제공해 스터디를 모집하는 커뮤니티 사이트 제작
   - Spring Boot Framework와 JPA를 잘 이해하고 적용하여 REST API 방식으로 구현
   - AWS를 통해 운영서버에 배포 및 도메인 연결
-- 개발 환경: IntelliJ IDE 2022.2.4(Community Edition), SpringBoot 2.7.7, Spring Security 5.7.6, JDK 11, Mariadb 3.0.9, Gradle, Lombok 1.18.24, Spring Data JPA 2.7.7, Querydsl 5.0.0, Junit5, HTML, CSS, Javascript, Thymeleaf, AWS(EC2, RDS)
+  - Docker를 이용해 애플리케이션의 컨테이너화 및 효율적인 배포 구현
+- 개발 환경: IntelliJ IDE 2022.2.4(Community Edition), SpringBoot 2.7.7, Spring Security 5.7.6, JDK 11, Mariadb 3.0.9, Gradle, Lombok 1.18.24, Spring Data JPA 2.7.7, Querydsl 5.0.0, Junit5, HTML, CSS, Javascript, Thymeleaf, AWS(EC2, RDS), Docker
 
 ## 아키텍처
-  ![architecture](https://github.com/KimSooHa/cook_study/assets/81688625/087df5ed-1c2e-4b3e-9554-b9a3fde26fc7)
+  ![architecture](https://github.com/user-attachments/assets/474a825b-d3b0-4cf8-85aa-41eb5b2b0232)
 
 
 ## 내용
