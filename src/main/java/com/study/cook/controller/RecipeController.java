@@ -4,8 +4,7 @@ import com.study.cook.domain.Category;
 import com.study.cook.domain.Member;
 import com.study.cook.domain.Recipe;
 import com.study.cook.domain.RecipeField;
-import com.study.cook.dto.RecipeDto;
-import com.study.cook.dto.RecipeFieldDto;
+import com.study.cook.dto.RecipeDetailDto;
 import com.study.cook.dto.RecipeListDto;
 import com.study.cook.dto.SearchCondition;
 import com.study.cook.service.CategoryService;
@@ -100,6 +99,7 @@ public class RecipeController {
 
     @GetMapping("/{recipeId}")
     public String detail(@PathVariable Long recipeId, Model model) {
+        /*
         Recipe recipe = recipeService.findOneById(recipeId);
 
         RecipeDto recipeDto = new RecipeDto(recipe.getTitle(), recipe.getIntroduction(), recipe.getPhoto(), recipe.getIngredients(), recipe.getCookingTime(), recipe.getServings(), recipe.getCategory().getName());
@@ -115,11 +115,24 @@ public class RecipeController {
             model.addAttribute("recipeFieldDtoList", recipeFieldDtoList);
         }
 
+
         model.addAttribute("recipeDto", recipeDto);
         model.addAttribute("recipeId", recipeId);
 
         Member loginMember = memberFinder.getMember();
         model.addAttribute("member", member);
+        model.addAttribute("loginMember", loginMember);
+        */
+
+        RecipeDetailDto recipeDetailDto = recipeService.findDetailOneById(recipeId);
+        if(!recipeDetailDto.getRecipeFields().isEmpty())
+            model.addAttribute("recipeFieldDtoList", recipeDetailDto.getRecipeFields());
+
+        model.addAttribute("recipeDto", recipeDetailDto.getRecipe());
+        model.addAttribute("recipeId", recipeId);
+
+        Member loginMember = memberFinder.getMember();
+        model.addAttribute("member", recipeDetailDto.getMember());
         model.addAttribute("loginMember", loginMember);
 
         return "recipe/detail";

@@ -2,12 +2,16 @@ package com.study.cook.service;
 
 import com.study.cook.controller.RecipeForm;
 import com.study.cook.domain.*;
-import com.study.cook.dto.RecipeListDto;
-import com.study.cook.dto.SearchCondition;
+import com.study.cook.dto.*;
+import com.study.cook.exception.FindRecipeException;
 import com.study.cook.exception.StoreFailException;
 import com.study.cook.file.FileStore;
+import com.study.cook.repository.RecipeFieldRepository;
 import com.study.cook.repository.RecipeRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -15,15 +19,20 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Slf4j
 public class RecipeService {
     private final CategoryService categoryService;
     private final RecipeRepository recipeRepository;
+    private final RecipeFieldRepository recipeFieldRepository;
     private final FileStore fileStore;
 
     /**
@@ -75,6 +84,23 @@ public class RecipeService {
      */
     public Recipe findOneById(Long recipeId) {
         return recipeRepository.findById(recipeId).orElse(null);
+    }
+    @Cacheable(value = "recipeCache", key = "#recipeId")
+    public RecipeDetailDto findDetailOneById(Long recipeId) {
+        log.info("📦 DB에서 레시피 조회: " + recipeId); // 로그 찍기
+        Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(() -> new FindRecipeException("해당하는 레시피가 없습니다."));
+        Optional<List<RecipeField>> recipeFields = recipeFieldRepository.findByRecipeId(recipeId);
+        List<RecipeFieldDto> recipeFieldDtoList = new ArrayList<>();
+        if (recipeFields.isPresent()) {
+            recipeFieldDtoList = recipeFields.get().stream().map(rf -> {
+                RecipeFieldDto recipeFieldDto = new RecipeFieldDto(rf.getPhoto(), rf.getContent());
+                return recipeFieldDto;
+            }).collect(toList());
+        }
+
+        RecipeDetailDto recipeDetailDto = new RecipeDetailDto(new RecipeDto(recipe.getTitle(), recipe.getIntroduction(), recipe.getPhoto(), recipe.getIngredients(), recipe.getCookingTime(), recipe.getServings(), recipe.getCategory().getName()),
+                recipeFieldDtoList, recipe.getMember());
+        return recipeDetailDto;
     }
 
 

@@ -17,6 +17,7 @@ apply plugin: "com.ewerk.gradle.plugins.querydsl"
 group = 'com.study'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
+targetCompatibility = '11'
 
 configurations {
 	compileOnly {
@@ -36,6 +37,10 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-devtools'
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5'
+
+	// cache
+	implementation 'org.springframework.boot:spring-boot-starter-cache'
+	implementation 'org.ehcache:ehcache:3.10.8'
 
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.security:spring-security-test'
