@@ -1,14 +1,17 @@
 package com.study.cook.service;
 
-import com.study.cook.domain.*;
+import com.study.cook.domain.Club;
+import com.study.cook.domain.Member;
+import com.study.cook.domain.Participation;
 import com.study.cook.exception.FindClubException;
 import com.study.cook.exception.ParticipateFailException;
-import com.study.cook.repository.*;
+import com.study.cook.repository.ClubRepository;
+import com.study.cook.repository.ParticipationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,8 +23,6 @@ import static com.study.cook.domain.ClubStatus.POS;
 @RequiredArgsConstructor
 public class ParticipationService {
 
-    private final CookingRoomRepository cookingRoomRepository;
-    private final ReservationRepository reservationRepository;
     private final ParticipationRepository participationRepository;
 
     private final ClubRepository clubRepository;
@@ -30,6 +31,7 @@ public class ParticipationService {
      * 참여자 등록
      */
     @Transactional
+    @CacheEvict(value = "popularClubListCache", allEntries = true)  // 인기 스터디 리스트 캐시 제거
     public Long tryToCreate(Long clubId, Member member) {
 
         Club club = clubRepository.findById(clubId).orElseThrow(() -> new FindClubException("해당 쿡스터디가 더이상 존재하지 않습니다."));
@@ -48,21 +50,6 @@ public class ParticipationService {
         return participation.getId();
     }
 
-
-    /**
-     * 전체 조회
-     */
-//    public List<Participation> findList() {
-//        return participationRepository.findAll();
-//    }
-//
-//    /**
-//     * 단건 조회
-//     */
-//    public Participation findOneById(Long participationId) {
-//        return participationRepository.findById(participationId).orElse(null);
-//    }
-
     public Long countByClub(Club club) {
         return participationRepository.countByClubId(club.getId());
     }
@@ -75,17 +62,8 @@ public class ParticipationService {
         return participationRepository.findByClubIdAndMemberId(club.getId(), member.getId()).orElseThrow(() -> new IllegalArgumentException("no such data"));
     }
 
-
-//    @Transactional
-//    public void update(Long id, LocalDateTime startDateTime, LocalDateTime endDateTime, int cookingRoomNum) {
-//        Reservation reservation = reservationRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("no such data"));
-//        reservation.setStartDateTime(startDateTime);
-//        reservation.setEndDateTime(endDateTime);
-//        CookingRoom cookingRoom = cookingRoomRepository.findByRoomNum(cookingRoomNum).orElseThrow(() -> new IllegalArgumentException("no such data"));
-//        reservation.setCookingRoom(cookingRoom);
-//    }
-
     @Transactional
+    @CacheEvict(value = "popularClubListCache", allEntries = true)  // 인기 스터디 리스트 캐시 제거
     public void delete(Participation participation) {
         participationRepository.delete(participation);
         Club club = participation.getClub();

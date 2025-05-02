@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,7 @@ public class RecipeService {
      * 레시피 등록
      */
     @Transactional
+    @CacheEvict(value = "popularRecipeListCache", allEntries = true)  // 인기 레시피 리스트 캐시 제거
     public Long create(RecipeForm form, MultipartFile file, Member member) {
 
         Photo photo = null;
@@ -74,6 +76,7 @@ public class RecipeService {
     /**
      * 정해진 갯수의 그룹 리스트 조회
      */
+    @Cacheable(value = "popularRecipeListCache")
     public List<RecipeListDto> findLimitList(int length) {
         return recipeRepository.findList(length);
     }
@@ -105,9 +108,13 @@ public class RecipeService {
 
 
     @Transactional
-    public void update(Long id, RecipeForm form, Optional<MultipartFile> file) {
+    @Caching(evict = {
+        @CacheEvict(value = "recipeCache", key = "#recipeId"),  // 상세 조회 캐시 제거
+        @CacheEvict(value = "popularRecipeListCache", allEntries = true)  // 인기 레시피 리스트 캐시 제거
+    })
+    public void update(Long recipeId, RecipeForm form, Optional<MultipartFile> file) {
 
-        Recipe recipe = recipeRepository.findById(id).orElseThrow();
+        Recipe recipe = recipeRepository.findById(recipeId).orElseThrow();
 
         Photo photo = null;
         try {
@@ -136,6 +143,10 @@ public class RecipeService {
     }
 
     @Transactional
+    @Caching(evict = {
+        @CacheEvict(value = "recipeCache", key = "#recipeId"),  // 상세 조회 캐시 제거
+        @CacheEvict(value = "popularRecipeListCache", allEntries = true)  // 인기 레시피 리스트 캐시 제거
+    })
     public void delete(Long recipeId) {
         Recipe recipe = findOneById(recipeId);
 

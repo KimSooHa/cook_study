@@ -10,6 +10,8 @@ import com.study.cook.dto.SearchCondition;
 import com.study.cook.exception.FindClubException;
 import com.study.cook.repository.ClubRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -35,6 +37,7 @@ public class ClubService {
      * 클럽 등록
      */
     @Transactional  // 변경해야 하기 때문에 읽기, 쓰기가 가능해야 함
+    @CacheEvict(value = "popularClubListCache", allEntries = true)  // 인기 스터디 리스트 캐시 제거
     public Long create(ClubForm form, Member member) {
 
         Club club = new Club(form.getName(), form.getIntroduction(), form.getMaxCount(), form.getIngredients());
@@ -65,6 +68,7 @@ public class ClubService {
     /**
      * 정해진 갯수의 그룹 리스트 조회(참여자 많은 순)
      */
+    @Cacheable(value = "popularClubListCache")
     public List<ClubListDto> findLimitList(int length) {
         return clubRepository.findList(length);
     }
@@ -91,6 +95,7 @@ public class ClubService {
     }
 
     @Transactional
+    @CacheEvict(value = "popularClubListCache", allEntries = true)  // 인기 스터디 리스트 캐시 제거
     public void update(Long clubId, ClubForm form) {
         Club club = clubRepository.findById(clubId).orElseThrow(() -> new FindClubException("수정 실패: 해당 쿡스터디가 존재하지 않습니다."));
         club.setName(form.getName());
@@ -113,6 +118,7 @@ public class ClubService {
     }
 
     @Transactional
+    @CacheEvict(value = "popularClubListCache", allEntries = true)  // 인기 스터디 리스트 캐시 제거
     public void delete(Long clubId) {
         Club club = findOneById(clubId);
         Optional<List<Reservation>> findReservations = reservationService.findByClub(club);
