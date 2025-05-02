@@ -10,6 +10,7 @@ import com.study.cook.exception.FindRecipeException;
 import com.study.cook.repository.CommentRepository;
 import com.study.cook.repository.RecipeRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ public class CommentService {
      * 댓글 등록
      */
     @Transactional  // 변경해야 하기 때문에 읽기, 쓰기가 가능해야 함
+    @CacheEvict(value = "popularRecipeListCache", allEntries = true)  // 인기 레시피 리스트 캐시 제거
     public Long create(CommentForm form, Member member) {
 
         Comment comment = new Comment(form.getContent());
@@ -63,6 +65,7 @@ public class CommentService {
     }
 
     @Transactional
+    @CacheEvict(value = "popularRecipeListCache", allEntries = true)  // 인기 레시피 리스트 캐시 제거
     public void delete(Long commentId) {
         Comment comment = findOneById(commentId);
         commentRepository.delete(comment);
