@@ -171,7 +171,6 @@ class RecipeServiceTest {
         // when
         List<RecipeListDto> limitList = recipeService.findLimitList(limit);
         assertThat(limitList).isNotEmpty();
-        recipeService.findLimitList(limit);
 
         // then
         assertThat(limitList.size()).isEqualTo(limit);
