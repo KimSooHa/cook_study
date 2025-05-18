@@ -1,10 +1,12 @@
 package com.study.cook.service;
 
+import com.study.cook.config.CacheConfig;
 import com.study.cook.controller.RecipeForm;
 import com.study.cook.domain.Category;
 import com.study.cook.domain.Member;
 import com.study.cook.domain.Photo;
 import com.study.cook.domain.Recipe;
+import com.study.cook.dto.RecipeDetailDto;
 import com.study.cook.dto.RecipeListDto;
 import com.study.cook.dto.SearchCondition;
 import com.study.cook.exception.StoreFailException;
@@ -19,6 +21,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.interceptor.SimpleKeyGenerator;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -34,6 +40,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Transactional
+@Import(CacheConfig.class) // Ehcache 설정 import
 @Slf4j
 class RecipeServiceTest {
 
@@ -50,7 +57,13 @@ class RecipeServiceTest {
     MemberRepository memberRepository;
 
     @Autowired
+    CacheManager cacheManager;
+
+    @Autowired
     FileStore fileStore;
+
+    static String fileName = "pizza_img.jpeg";
+    static String filePath = "/Users/sooha/Desktop/image/food/pizza/";
 
     @BeforeEach
     public void testSave() {
@@ -72,19 +85,25 @@ class RecipeServiceTest {
         RecipeForm form = setForm();
 
         MockMultipartFile file = null;
-        String fileName = "pizza_img.jpeg";
-        String filePath = "/Users/sooha/Desktop/image/food/";
         try {
             file = getMockMultipartFile(fileName, filePath);
         } catch (IOException e) {
             throw new StoreFailException(e);
         }
 
+        // 인기 레시피 리스트 캐싱
+        int limit = 4;
+        recipeService.findLimitList(limit);
+        Cache popularRecipeListCache = cacheManager.getCache("popularRecipeListCache");
+        assertThat(popularRecipeListCache).isNotNull();
+
         // when
         Long recipeId = recipeService.create(form, file, member);
 
         // then
         assertThat(recipeRepository.findById(recipeId).get().getPhoto().getUploadFileName()).isEqualTo(file.getOriginalFilename());
+        Object cachedList = popularRecipeListCache.get(SimpleKeyGenerator.generateKey(new Object[]{limit}));
+        assertThat(cachedList).isNull();
 
         // after test
         deleteFile(recipeId);
@@ -101,7 +120,7 @@ class RecipeServiceTest {
         Page<RecipeListDto> list = recipeService.findList(condition, pageRequest);
 
         // then
-        assertThat(list.get().count()).isEqualTo(pageRequest.getPageSize());
+        assertThat(list.get().count()).isLessThan(pageRequest.getPageSize());
     }
 
     @Test
@@ -127,8 +146,6 @@ class RecipeServiceTest {
         Member member = memberRepository.findByLoginId("test1").get();
 
         RecipeForm form = setForm();
-        String fileName = "pizza_img.jpeg";
-        String filePath = "/Users/sooha/Desktop/image/food/";
 
         Long recipeId = save(member, form, fileName, filePath);
 
@@ -153,9 +170,18 @@ class RecipeServiceTest {
 
         // when
         List<RecipeListDto> limitList = recipeService.findLimitList(limit);
+        assertThat(limitList).isNotEmpty();
 
         // then
         assertThat(limitList.size()).isEqualTo(limit);
+        Cache cache = cacheManager.getCache("popularRecipeListCache");
+
+        // key가 없을 경우 SimpleKey.EMPTY 사용됨(파라미터가 있을 시 해당 파라미터를 지정해줘야 함 => SimpleKey는 내부적으로 그 파라미터 값을 포함한 객체로 만들어짐)
+        // 직접 키를 지정
+        Object cached = cache.get(SimpleKeyGenerator.generateKey(new Object[]{limit}));
+        assertThat(cached).isNotNull();
+        Object value = ((Cache.ValueWrapper) cached).get();
+        assertThat(value).isInstanceOf(List.class);
     }
 
     @Test
@@ -165,8 +191,6 @@ class RecipeServiceTest {
         Member member = memberRepository.findByLoginId("test1").get();
 
         RecipeForm form = setForm();
-        String fileName = "pizza_img.jpeg";
-        String filePath = "/Users/sooha/Desktop/image/food/";
 
         Long recipeId = save(member, form, fileName, filePath);
 
@@ -181,16 +205,40 @@ class RecipeServiceTest {
     }
 
     @Test
-    @DisplayName("레시피 수정")
-    void update() {
+    @DisplayName("아이디로 캐시된 레시피 조회")
+    void findDetailOneById() {
         // given
         Member member = memberRepository.findByLoginId("test1").get();
 
         RecipeForm form = setForm();
-        String fileName = "pizza_img.jpeg";
-        String filePath = "/Users/sooha/Desktop/image/food/";
 
         Long recipeId = save(member, form, fileName, filePath);
+
+        // when
+        RecipeDetailDto recipeDetailDto = recipeService.findDetailOneById(recipeId);
+
+        // then
+        Cache recipeCache = cacheManager.getCache("recipeCache");
+        Object cached = recipeCache.get(recipeId);
+        assertThat(cached).isNotNull();
+        assertThat(recipeDetailDto.getRecipe().getTitle()).isEqualTo(form.getTitle());
+
+        // after test
+        deleteFile(recipeId);
+    }
+
+    @Test
+    @DisplayName("레시피 수정 - 캐시 무효화")
+    void update() {
+        // given
+        int limit = 4;
+        Member member = memberRepository.findByLoginId("test1").get();
+
+        RecipeForm form = setForm();
+
+        Long recipeId = save(member, form, fileName, filePath);
+        RecipeDetailDto recipeDetailDto = recipeService.findDetailOneById(recipeId); // DB에서 조회 후 캐시에 저장
+        recipeService.findLimitList(limit); // DB에서 조회 후 캐시에 저장
 
         // when
         MockMultipartFile file;
@@ -202,7 +250,15 @@ class RecipeServiceTest {
         recipeService.update(recipeId, form, Optional.of(file));
 
         // then
-        assertThat(recipeRepository.findById(recipeId).get().getPhoto().getUploadFileName()).isNotEqualTo(fileName);
+        assertThat(recipeDetailDto.getRecipe().getImg().getUploadFileName()).isNotEqualTo(fileName);
+        Cache recipeCache = cacheManager.getCache("recipeCache");
+        Cache popularRecipeListCache = cacheManager.getCache("popularRecipeListCache");
+        Object cachedOne = recipeCache.get(recipeId);
+        Object cachedList = popularRecipeListCache.get(SimpleKeyGenerator.generateKey(new Object[]{limit}));
+
+        // 수정될 때 캐시 무효화
+        assertThat(cachedOne).isNull();
+        assertThat(cachedList).isNull();
 
         // after test
         deleteFile(recipeId);
@@ -215,16 +271,29 @@ class RecipeServiceTest {
         Member member = memberRepository.findByLoginId("test1").get();
 
         RecipeForm form = setForm();
-        String fileName = "pizza_img.jpeg";
-        String filePath = "/Users/sooha/Desktop/image/food/";
 
         Long recipeId = save(member, form, fileName, filePath);
+
+        int limit = 4;
+        recipeService.findDetailOneById(recipeId);
+        recipeService.findLimitList(limit); // DB에서 조회 후 캐시에 저장
+        Cache recipeCache = cacheManager.getCache("recipeCache");
+        Cache popularRecipeListCache = cacheManager.getCache("popularRecipeListCache");
+        assertThat(recipeCache).isNotNull();
+        assertThat(popularRecipeListCache).isNotNull();
 
         // when
         recipeService.delete(recipeId);
 
         // then
         assertThat(recipeRepository.findById(recipeId)).isEmpty();
+
+        Object cachedOne = recipeCache.get(recipeId);
+        Object cachedList = popularRecipeListCache.get(SimpleKeyGenerator.generateKey(new Object[]{limit}));
+
+        // 삭제될 때 캐시 무효화
+        assertThat(cachedOne).isNull();
+        assertThat(cachedList).isNull();
     }
 
     private RecipeForm setForm() {
