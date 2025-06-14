@@ -12,6 +12,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 import static com.study.cook.domain.QComment.comment;
+import static com.study.cook.domain.QMember.member;
 
 
 public class CommentRepositoryImpl implements CommentRepositoryCustom {
@@ -39,6 +40,7 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
                         comment.member.loginId
                 ))
                 .from(comment)
+                .join(comment.member, member)
                 .where(comment.recipe.id.eq(recipeId))
                 .orderBy(comment.regDate.desc())
                 .offset(pageable.getOffset())   // 시작 페이지
