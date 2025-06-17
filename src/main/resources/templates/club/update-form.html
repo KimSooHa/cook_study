@@ -101,12 +101,21 @@
             let category = document.querySelector("select").value;
             let intro = document.querySelector(".intro").value;
             let maxCnt = document.getElementById("max-count").value;
+            let restCnt = [[ ${restCount} ]];
+            console.log(restCnt);
+            console.log(maxCnt);
             let ingredients = document.getElementById("ingredients").value;
 
             if (name == null || name == "" || category == null || category == "" || intro == null || intro == "" || maxCnt == null || ingredients == null || ingredients == "")
                 return;
 
             e.preventDefault();
+
+            if(restCnt > maxCnt) {
+                alert(`현재 ${restCnt}명이 참여 중입니다. 참여 가능 인원은 최소 ${restCnt}명 이상으로 설정해주세요!`);
+                return;
+            }
+
             let reservationId = [];
             let form = {
                 name: name,

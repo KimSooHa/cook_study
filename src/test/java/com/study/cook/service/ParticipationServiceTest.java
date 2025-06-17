@@ -90,7 +90,7 @@ class ParticipationServiceTest {
         participate(club, member);
 
         // when
-        Long count = participationService.countByClub(club);
+        Long count = participationService.countByClub(club.getId());
 
         // then
         assertThat(count).isEqualTo(1);

@@ -42,7 +42,7 @@ public class ParticipationService {
             participation = Participation.createParticipation(member, club);
             participationRepository.save(participation);
 
-            Long participantCount = countByClub(club);
+            Long participantCount = countByClub(clubId);
             if (club.getMaxCount() <= participantCount) {
                 club.setStatus(COMP);
             }
@@ -50,8 +50,8 @@ public class ParticipationService {
         return participation.getId();
     }
 
-    public Long countByClub(Club club) {
-        return participationRepository.countByClubId(club.getId());
+    public Long countByClub(Long clubId) {
+        return participationRepository.countByClubId(clubId);
     }
 
     public Optional<List<Participation>> findByMember(Member member) {
@@ -68,7 +68,7 @@ public class ParticipationService {
         participationRepository.delete(participation);
         Club club = participation.getClub();
 
-        if (club.getStatus() == COMP || club.getMaxCount() > countByClub(club))
+        if (club.getStatus() == COMP || club.getMaxCount() > countByClub(club.getId()))
             club.setStatus(POS);
     }
 
