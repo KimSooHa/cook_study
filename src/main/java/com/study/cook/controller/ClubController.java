@@ -119,8 +119,8 @@ public class ClubController {
 
         int restCount = club.getMaxCount();
         // 남은 인원수 조회 로직 추가하기
-        if (participationService.countByClub(club) != null)
-            restCount = (int) (club.getMaxCount() - participationService.countByClub(club));
+        if (participationService.countByClub(clubId) != null)
+            restCount = (int) (club.getMaxCount() - participationService.countByClub(clubId));
 
 
         Member member = memberService.findOneById(club.getMember().getId());

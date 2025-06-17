@@ -8,6 +8,7 @@ import com.study.cook.domain.Reservation;
 import com.study.cook.dto.ClubListDto;
 import com.study.cook.dto.SearchCondition;
 import com.study.cook.exception.FindClubException;
+import com.study.cook.exception.InvalidClubCapacityException;
 import com.study.cook.repository.ClubRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
@@ -98,6 +99,10 @@ public class ClubService {
     @CacheEvict(value = "popularClubListCache", allEntries = true)  // 인기 스터디 리스트 캐시 제거
     public void update(Long clubId, ClubForm form) {
         Club club = clubRepository.findById(clubId).orElseThrow(() -> new FindClubException("수정 실패: 해당 쿡스터디가 존재하지 않습니다."));
+
+        if(participationService.countByClub(clubId) > form.getMaxCount())
+            throw new InvalidClubCapacityException("현재 참여 인원보다 적게 설정할 수 없습니다.");
+
         club.setName(form.getName());
         club.setIntroduction(form.getIntroduction());
         club.setMaxCount(form.getMaxCount());
