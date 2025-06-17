@@ -232,6 +232,7 @@ public class ClubController {
         model.addAttribute("reservations", reservations);
         model.addAttribute("categories", categories);
         model.addAttribute("clubId", clubId);
+        model.addAttribute("restCount", participationService.countByClub(clubId));
         return "club/update-form";
     }
 
