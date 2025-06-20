@@ -1,0 +1,30 @@
+package com.study.cook.api;
+
+import com.study.cook.service.EmailAuthService;
+import com.study.cook.util.ResultVO;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/email")
+@Slf4j
+public class EmailAuthApiController {
+
+    private final EmailAuthService emailAuthService;
+
+    /**
+     * 이메일 인증코드 전송
+     * @param email
+     * @return
+     */
+    @PostMapping("/code")
+    public ResultVO sendAuthCode(@RequestParam String email) {
+        emailAuthService.sendAuthCode(email);
+        return new ResultVO("인증번호가 이메일로 전송되었습니다. \n인증코드를 입력해주세요!", "", true);
+    }
+}
