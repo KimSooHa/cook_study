@@ -2,6 +2,7 @@ package com.study.cook.controller;
 
 import com.study.cook.auth.CustomUserDetails;
 import com.study.cook.domain.Member;
+import com.study.cook.dto.LoginMember;
 import com.study.cook.exception.CheckMatchPwdException;
 import com.study.cook.exception.CheckNewPwdException;
 import com.study.cook.exception.FindMemberException;
@@ -93,7 +94,8 @@ public class MemberController {
         // 세션 정보 갱신
         Member updatedMember = memberService.findOneById(memberId);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetails newPrincipal = new CustomUserDetails(updatedMember);
+//        CustomUserDetails newPrincipal = new CustomUserDetails(updatedMember);
+        CustomUserDetails newPrincipal = new CustomUserDetails(new LoginMember(updatedMember));
         Authentication newAuthentication = new UsernamePasswordAuthenticationToken(newPrincipal, authentication.getCredentials(), authentication.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(newAuthentication);
 
