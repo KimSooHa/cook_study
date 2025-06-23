@@ -1,5 +1,6 @@
 package com.study.cook.controller;
 
+import com.study.cook.exception.EmailSendFailException;
 import com.study.cook.exception.ReserveFailException;
 import com.study.cook.exception.SelectMissException;
 import com.study.cook.util.ResultVO;
@@ -35,7 +36,8 @@ public class ExceptionHandlerController {
         return resultVO;
     }
 
-    @ExceptionHandler({ReserveFailException.class})
+    @ExceptionHandler({ReserveFailException.class
+                    , EmailSendFailException.class})
     public ResultVO runtimeExHandle(RuntimeException e) {
         ResultVO resultVO = new ResultVO();
         resultVO.setMsg(e.getMessage());

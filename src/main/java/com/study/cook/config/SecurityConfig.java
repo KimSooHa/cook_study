@@ -22,7 +22,7 @@ public class SecurityConfig  {
             .authorizeRequests(authorizeRequests ->
                     authorizeRequests
                             .antMatchers("/", "/script/**", "/loginForm", "/logout", "/valid-email", "/valid-loginId", "/valid-phoneNum", "/recipes/images/**",
-                            "/reserved-time", "/cooking-rooms", "/css/**", "/members", "/members/searchId", "/members/searchPwd", "/*.ico", "/error", "/image/**", "/cache/all").permitAll()
+                            "/reserved-time", "/cooking-rooms", "/css/**", "/members", "/members/searchId", "/members/searchPwd", "/*.ico", "/error", "/image/**", "/cache/all", "/email/code").permitAll()
                             .anyRequest().authenticated()
             )
             .formLogin()
