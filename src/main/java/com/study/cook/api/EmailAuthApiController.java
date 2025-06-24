@@ -1,5 +1,6 @@
 package com.study.cook.api;
 
+import com.study.cook.domain.EmailAuthStatus;
 import com.study.cook.service.EmailAuthService;
 import com.study.cook.util.ResultVO;
 import lombok.RequiredArgsConstructor;
@@ -26,5 +27,27 @@ public class EmailAuthApiController {
     public ResultVO sendAuthCode(@RequestParam String email) {
         emailAuthService.sendAuthCode(email);
         return new ResultVO("인증번호가 이메일로 전송되었습니다. \n인증코드를 입력해주세요!", "", true);
+    }
+
+    /**
+     * 이메일 인증코드 검증
+     * @param email
+     * @param code
+     * @return
+     */
+    @PostMapping("/verify")
+    public ResultVO verifyCode(@RequestParam String email, @RequestParam String code) {
+        EmailAuthStatus result = emailAuthService.verifyCode(email, code);
+
+        switch (result) {
+            case SUCCESS:
+                return new ResultVO("이메일 인증이 완료되었습니다.", "", true);
+            case CODE_MISMATCH:
+                return new ResultVO("인증번호가 올바르지 않습니다.", "", false);
+            case CODE_EXPIRED:
+                return new ResultVO("인증 시간이 만료되었습니다. 다시 요청해주세요.", "", false);
+            default:
+                return new ResultVO("알 수 없는 오류가 발생했습니다.", "", false);
+        }
     }
 }

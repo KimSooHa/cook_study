@@ -51,6 +51,34 @@ public class EmailAuthService {
     }
 
     /**
+     * 인증코드 검증
+     */
+    public EmailAuthStatus verifyCode(String email, String code) {
+        String key = emailAuthKey + email;
+        EmailAuthInfo info = (EmailAuthInfo) redisTemplate.opsForValue().get(key);
+
+        if (info == null || info.getCode() == null) { // 인증코드 만료
+            return EmailAuthStatus.CODE_EXPIRED;
+        } else if (!info.getCode().equals(code)) { // 인증코드 불일치
+            return EmailAuthStatus.CODE_MISMATCH;
+        }
+
+        info.setVerified(true);
+        redisTemplate.opsForValue().set(key, info, Duration.ofMinutes(10));
+
+        return EmailAuthStatus.SUCCESS;
+    }
+
+    /**
+     * 이메일 인증 여부
+     */
+    public boolean isVerified(String email) {
+        String key = emailAuthKey + email;
+        EmailAuthInfo info = (EmailAuthInfo) redisTemplate.opsForValue().get(key);
+        return info != null && info.isVerified();
+    }
+
+    /**
      * 인증코드 생성(6자리)
      */
     private String generateAuthCode() {
