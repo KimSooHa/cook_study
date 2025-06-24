@@ -76,5 +76,13 @@ spring:
           socketFactory:
             class: javax.net.ssl.SSLSocketFactory
 
+  session:
+    store-type: redis
+    timeout: 30m # 세션 TTL
+  redis:
+    host: localhost
+    port: 6379
+    namespace: cooksession
+
 file:
   dir: /Users/sooha/SpringWorkspace/cook/src/main/resources/static/files/
