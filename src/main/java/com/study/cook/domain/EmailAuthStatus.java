@@ -1,0 +1,7 @@
+package com.study.cook.domain;
+
+public enum EmailAuthStatus {
+    SUCCESS, // 인증 성공
+    CODE_EXPIRED, // 인증코드 만료
+    CODE_MISMATCH // 인증코드 불일치
+}
