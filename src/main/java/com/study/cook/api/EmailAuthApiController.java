@@ -25,8 +25,8 @@ public class EmailAuthApiController {
      */
     @PostMapping("/code")
     public ResultVO sendAuthCode(@RequestParam String email) {
-        emailAuthService.sendAuthCode(email);
-        return new ResultVO("인증번호가 이메일로 전송되었습니다. \n인증코드를 입력해주세요!", "", true);
+        Long ttl = emailAuthService.sendAuthCode(email);
+        return new ResultVO("인증번호가 이메일로 전송되었습니다. \n인증코드를 입력해주세요!", "", ttl, true);
     }
 
     /**
