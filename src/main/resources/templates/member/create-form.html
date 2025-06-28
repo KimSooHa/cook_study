@@ -87,11 +87,20 @@
                     <input type="email" th:field="*{email}" class="form-control" placeholder="이메일을 입력하세요"
                         th:class="${#fields.hasErrors('email')}? 'form-control fieldError' : 'form-control'" required
                         oninput="checkEmail()">
+                    <button type="button" id="sendCodeBtn" class="btn btn-strong btn-default btn-disabled" disabled>인증번호 전송</button>
                 </div>
                 <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="invalid">이메일 형식에 맞지 않습니다.</p>
                 <p class="email-valid d-none valid">사용 가능한 이메일입니다.</p>
                 <p class="email-invalid d-none invalid">이메일이 형식에 맞지 않습니다.</p>
                 <p class="email-origin d-none invalid">이미 사용중인 이메일입니다.</p>
+                <div id="verifySection" class="input-box mt-16">
+                    <label for="authCode">인증번호</label>
+                    <input type="text" id="authCode" name="authCode">
+                    <div class="time-attack"><span id="countdown" class="d-none">04:59</span></div>
+                    <button type="button" id="verifyBtn" class="btn btn-strong btn-default btn-disabled" disabled>인증 확인</button>
+                </div>
+                <p class="email-code-valid d-none valid">인증이 완료되었습니다.</p>
+                <p class="email-code-invalid d-none invalid">인증번호가 올바르지 않습니다.</p>
             </div>
             <div class="form-group">
                 <div class="input-box">
@@ -203,8 +212,19 @@
         const valid = document.querySelector(".email-valid");
         const invalid = document.querySelector(".email-invalid");
         const origin = document.querySelector(".email-origin");
-
+        const emailCodeValid = document.querySelector(".email-code-valid");
+        const emailCodeInvalid = document.querySelector(".email-code-invalid");
+        const sendCodeBtn = document.getElementById("sendCodeBtn");
+        
         request.onreadystatechange = () => {
+            emailCodeValid.classList.add("d-none");
+            emailCodeInvalid.classList.add("d-none");
+            
+            if(!sendCodeBtn.classList.contains("btn-disabled")) {
+                sendCodeBtn.classList.add("btn-disabled");
+                sendCodeBtn.disabled = true;
+            }
+
             if (request.readyState != XMLHttpRequest.DONE)
                 return;
             let response = request.responseText;
@@ -215,8 +235,11 @@
             else if (!validEmailCheck(email))
                 invalidDisplay(valid, invalid, null, origin);
             
-            else
+            else {
                 validDisplay(valid, invalid, null, origin);
+                sendCodeBtn.classList.remove("btn-disabled");
+                sendCodeBtn.disabled = false;
+            }
         }
 
         methodGet(request, url);
@@ -248,6 +271,122 @@
 
         methodGet(request, url);
     }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        // const emailInput = document.getElementById("emailInput") || document.querySelector("input[type=email]");
+        const emailInput = document.querySelector("input[type=email]");
+        const verifyBtn = document.getElementById("verifyBtn");
+        let countdownEl = document.getElementById("countdown");
+        const timerBox = document.querySelector(".time-attack");
+        let emailValid = document.querySelector(".email-valid");
+        let emailCodeValid = document.querySelector(".email-code-valid");
+        let emailCodeInvalid = document.querySelector(".email-code-invalid");
+        let countdownInterval = null;
+        
+        // ✅ 인증 성공 후 버튼 비활성화 함수
+        function disableAuthButtons() {
+            sendCodeBtn.disabled = true;
+            verifyBtn.disabled = true;
+            sendCodeBtn.classList.add("btn-disabled");
+            verifyBtn.classList.add("btn-disabled");
+        }
+
+        // ✅ 인증 요청 → 서버로부터 인증 성공 응답 후 호출
+        function onEmailVerified(msg) {
+            alert("이메일 인증이 완료되었습니다.");
+            emailCodeValid.classList.remove("d-none");
+            emailCodeValid.textContent = msg;
+            emailCodeInvalid.classList.add("d-none");
+            disableAuthButtons();
+        }
+
+        // ✅ 인증번호 전송
+        sendCodeBtn.addEventListener("click", function () {
+        const email = emailInput.value;
+
+        fetch("/email/code", {
+            method: "POST",
+            headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: `email=${encodeURIComponent(email)}` // encodeURIComponent() : 한글, 특수문자 등을 안전하게 인코딩해주는 함수
+        })
+            .then(res => res.json()) // 응답 본문을 json 형태로 파싱
+            .then(data => { // 파싱된 json 데이터에 접근해서 처리
+                if (data.success) {
+                    startCountdown(data.ttl); // 5분 (300초)
+                    emailValid.textContent = data.msg; // 인증번호가 전송되었습니다.
+                    verifyBtn.classList.remove("btn-disabled");
+                    verifyBtn.disabled = false;
+                } else {
+                    alert(data.msg); // 실패 사유                        
+                }
+            })
+            .catch(err => { // 네트워크 오류 등 fetch 자체가 실패했을 때 실행되는 에러 처리 부분
+                console.error(err); 
+                alert("인증번호 전송 중 오류가 발생했습니다.");
+            });
+        });
+
+        // 카운트다운 함수
+        function startCountdown(seconds) {
+            if (countdownInterval) clearInterval(countdownInterval);
+            countdownEl.textContent = "04:59";
+
+            let remaining = seconds-1;
+            const invalid = document.querySelector(".email-invalid");
+            countdownEl.classList.remove("d-none"); // 타이머 보여주기
+
+            countdownInterval = setInterval(() => {
+            let minutes = String(Math.floor(remaining / 60)).padStart(2, "0");
+            let secs = String(remaining % 60).padStart(2, "0");
+
+            countdownEl.textContent = `${minutes}:${secs}`;
+            remaining--;
+
+            if (remaining < 0) {
+                clearInterval(countdownInterval);
+                countdownEl.textContent = "만료됨";
+                alert("인증 시간이 만료되었습니다. 다시 요청해주세요.");
+                emailValid.classList.add("d-none");
+                invalid.classList.remove("d-none");
+                invalid.textContent = "인증코드 재요청 필요";
+                sendCodeBtn.classList.remove("btn-disabled");
+                sendCodeBtn.disabled = false;
+            }
+            }, 1000);
+        }
+
+        // 인증 확인: 인증 확인 버튼 클릭 시
+        verifyBtn.addEventListener("click", function () {
+            const email = emailInput.value;
+            const code = document.getElementById("authCode").value;
+
+            fetch("/email/verify", {
+                method: "POST",
+                headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: `email=${encodeURIComponent(email)}&code=${encodeURIComponent(code)}`
+            })
+                .then(response => response.json()) // 응답 본문을 json 형태로 파싱
+                .then(result => { 
+                if (result.success) {
+                    onEmailVerified(result.msg); // 인증 성공 시 처리
+                    countdownEl.classList.add("d-none");
+                } else {
+                    alert(result.msg); // 실패 메시지 표시
+                    emailCodeInvalid.classList.remove("d-none");
+                    emailCodeInvalid.textContent = result.msg;
+                    
+                }
+                })
+                .catch(err => {
+                    console.log(err); 
+                    alert("인증 요청 중 오류가 발생했습니다.");
+                });
+        });
+  });
 
     /* ]]> */
 </script>
