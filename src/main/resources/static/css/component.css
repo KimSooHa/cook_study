@@ -356,6 +356,10 @@
     margin-top: 12px;
 }
 
+.time-attack {
+    color: var(--color-text-valid);
+}
+
 /* -----------------------modal ----------------------------*/
 .modal{
     display: flex;

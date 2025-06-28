@@ -1,6 +1,7 @@
 package com.study.cook.api;
 
 import com.study.cook.domain.EmailAuthStatus;
+import com.study.cook.dto.EmailAuthResponse;
 import com.study.cook.service.EmailAuthService;
 import com.study.cook.util.ResultVO;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +26,8 @@ public class EmailAuthApiController {
      */
     @PostMapping("/code")
     public ResultVO sendAuthCode(@RequestParam String email) {
-        emailAuthService.sendAuthCode(email);
-        return new ResultVO("인증번호가 이메일로 전송되었습니다. \n인증코드를 입력해주세요!", "", true);
+        EmailAuthResponse response = emailAuthService.sendAuthCode(email);
+        return new ResultVO(response.getMessage(), "", response.getTtl(), true);
     }
 
     /**
