@@ -2,6 +2,7 @@ package com.study.cook.service;
 
 import com.study.cook.domain.EmailAuthStatus;
 import com.study.cook.dto.EmailAuthInfo;
+import com.study.cook.dto.EmailAuthResponse;
 import com.study.cook.exception.EmailAuthLimitException;
 import com.study.cook.exception.EmailSendFailException;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,8 @@ import java.time.Duration;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import static com.study.cook.domain.EmailAuthSendResult.ALREADY_SENT;
+import static com.study.cook.domain.EmailAuthSendResult.SUCCESS;
 import static com.study.cook.domain.EmailAuthStatus.*;
 
 @Service
@@ -36,21 +39,24 @@ public class EmailAuthService {
      * 인증코드 이메일로 전송 및 Redis 저장
      */
     @Transactional  // 변경해야 하기 때문에 읽기, 쓰기가 가능해야 함
-    public Long sendAuthCode(String email) {
+    public EmailAuthResponse sendAuthCode(String email) {
         String key = emailAuthKey + email;
+        Long ttl = null;
 
         // 이미 인증된 이메일이면 재발송 막기
-        if (isVerified(email).equals(SUCCESS)) {
+        if (isVerified(email).equals(EmailAuthStatus.SUCCESS)) {
             throw new EmailAuthLimitException("이미 인증된 이메일입니다.");
         }
         // 이미 인증코드가 Redis에 존재하면 재발송 막기
         if (Boolean.TRUE.equals(redisTemplate.hasKey(key))) {
-            throw new EmailAuthLimitException("이미 인증코드가 발급되었습니다. " + formattedDuration + " 후에 다시 시도해주세요.");
+             ttl = getExpire(key);
+            return new EmailAuthResponse(ALREADY_SENT, ttl, "이미 인증코드가 발급되었습니다. " + formattedDuration + " 후에 다시 시도해주세요.");
         }
 
+        // 인증코드 생성
         String authCode = generateAuthCode();
 
-        // Redis 저장(key: emailAuth:{email}, value: info)
+        // Redis 저장(key: emailAuth:{email}, value: code, verified)
         EmailAuthInfo info = new EmailAuthInfo(authCode, false);
         redisTemplate.opsForValue().set(key, info, TTL);
 
@@ -64,8 +70,18 @@ public class EmailAuthService {
             redisTemplate.delete(key);
             throw new EmailSendFailException("이메일 전송에 실패했습니다.: " + email);
         }
-        Long ttl = redisTemplate.getExpire(key, TimeUnit.SECONDS);
-        return ttl;
+
+        ttl = getExpire(key);
+        return new EmailAuthResponse(SUCCESS, ttl, "인증번호가 이메일로 전송되었습니다. \n인증코드를 입력해주세요!");
+    }
+
+    /**
+     * redis 키 ttl 조회
+     * @param key
+     * @return
+     */
+    private Long getExpire(String key) {
+        return redisTemplate.getExpire(key, TimeUnit.SECONDS);
     }
 
     /**
@@ -85,8 +101,10 @@ public class EmailAuthService {
         redisTemplate.opsForValue().set(key, info, Duration.ofMinutes(10));
         // 인증 시도 로그용
         redisTemplate.opsForValue().set("emailAuth:log:" + email, true, Duration.ofMinutes(30));
-        return SUCCESS;
+        return EmailAuthStatus.SUCCESS;
     }
+
+
 
     /**
      * 이메일 인증 여부
@@ -96,7 +114,7 @@ public class EmailAuthService {
         EmailAuthInfo info = (EmailAuthInfo) redisTemplate.opsForValue().get(key);
         Boolean hasTried = redisTemplate.hasKey("emailAuth:log:" + email);
         if (info != null && info.isVerified())
-            return SUCCESS;
+            return EmailAuthStatus.SUCCESS;
         if (info == null && Boolean.TRUE.equals(hasTried))
             return CODE_EXPIRED;
 
