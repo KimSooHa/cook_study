@@ -44,6 +44,8 @@ public class MemberController {
 
     private final MemberService memberService;
     private final EmailAuthService emailAuthService;
+    // 사용자 정보 기반으로 세션을 찾을 수 있도록 해주는 기능
+    // 사용자의 로그인 ID (또는 username)를 key로 해서 세션을 조회할 수 있는 기능
     private final FindByIndexNameSessionRepository<? extends Session> sessionRepository;
 
 
@@ -113,6 +115,7 @@ public class MemberController {
                             StringUtils.hasText(form.getNewPwd()) == false &&
                             StringUtils.hasText(form.getNewPwdConfirm()) == false;
 
+            // 비밀번호 변경 안할 시 필드(currentPwd, newPwd, newPwdConfirm) 관련 에러 제외
             if (isAllPwdFieldsEmpty) {
                 // 에러는 남아있지만 무시할 수 있도록, 직접 result.hasErrors() 대신 검증
                 List<ObjectError> nonPwdErrors = result.getAllErrors().stream() // 유효성 검증에서 발생한 모든 에러리스트
@@ -121,7 +124,7 @@ public class MemberController {
                                 String field = ((FieldError) e).getField();
                                 return !field.equals("currentPwd") && !field.equals("newPwd") && !field.equals("newPwdConfirm");
                             }
-                            return true;
+                            return true; // Field 에러가 아니면 무시하지 말고 남겨둠
                         })
                         .collect(Collectors.toList()); // 최종적으로 남은 에러리스트들 리스트로 수집
 
@@ -195,13 +198,22 @@ public class MemberController {
         return "member/update-form";
     }
 
-
     // 탈퇴
     @DeleteMapping("/{memberId}")
-    public String delete(@PathVariable Long memberId, Model model) {
-        memberService.delete(memberId);
-        model.addAttribute("msg", "탈퇴되었습니다.");
-        model.addAttribute("url", "/logout"); // 회원 탈퇴 후 로그아웃 처리
-        return "mypage/index";
+    public String delete(@PathVariable Long memberId,
+                         HttpServletRequest request,
+                         HttpServletResponse response,
+                         RedirectAttributes redirectAttributes) {
+        // 현재 인증 정보 가져오기
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        // 인증 객체 제거 (세션 만료 + 시큐리티 컨텍스트 제거)
+        if (auth != null) { // 현재 로그인된 세션 무효화
+            new SecurityContextLogoutHandler().logout(request, response, auth);
+        }
+
+        memberService.delete(memberId); // 회원 삭제
+
+        redirectAttributes.addFlashAttribute("msg", "탈퇴되었습니다.");
+        return "redirect:/";
     }
 }
