@@ -6,19 +6,35 @@ import com.study.cook.dto.LoginMember;
 import com.study.cook.exception.CheckMatchPwdException;
 import com.study.cook.exception.CheckNewPwdException;
 import com.study.cook.exception.FindMemberException;
+import com.study.cook.service.EmailAuthService;
 import com.study.cook.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.session.FindByIndexNameSessionRepository;
+import org.springframework.session.Session;
+import org.springframework.session.SessionRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -27,6 +43,9 @@ import javax.validation.Valid;
 public class MemberController {
 
     private final MemberService memberService;
+    private final EmailAuthService emailAuthService;
+    private final FindByIndexNameSessionRepository<? extends Session> sessionRepository;
+
 
     @GetMapping
     public String createForm(Model model) {
@@ -39,6 +58,18 @@ public class MemberController {
         if (result.hasErrors()) {
             log.info("errors={}", result);
             return "member/create-form";
+        }
+
+        // 이메일 인증 여부 체크
+        switch (emailAuthService.isVerified(form.getEmail())) {
+            case CODE_EXPIRED:
+                model.addAttribute("msg", "인증코드가 만료되었습니다. 이메일 인증을 다시 해주세요.");
+                model.addAttribute("url", "/members");
+                return "member/create-form";
+            case NO_AUTH_RECORD:
+                model.addAttribute("msg", "이메일 인증이 완료되지 않았습니다.");
+                model.addAttribute("url", "/members");
+                return "member/create-form";
         }
 
         try {
@@ -65,8 +96,6 @@ public class MemberController {
         form.setName(member.getName());
         form.setLoginId(member.getLoginId());
         form.setEmail(member.getEmail());
-        // 현재 비밀번호와 변경할 비밀번호 비교때문에 세팅x
-//        form.setPwd(member.getPwd());
         form.setPhoneNum(member.getPhoneNum());
 
         model.addAttribute("memberForm", form);
@@ -78,17 +107,57 @@ public class MemberController {
     public String update(@PathVariable Long memberId, @Valid MemberUpdateForm form, BindingResult result, RedirectAttributes redirectAttributes, Model model) {
 
         if (result.hasErrors()) {
-            log.info("errors={}", result);
-            return resetPwd(form, model);
+            // 💡 비밀번호 관련 필드 전부 비어 있으면 해당 에러 제거
+            boolean isAllPwdFieldsEmpty =
+                    StringUtils.hasText(form.getCurrentPwd()) == false &&
+                            StringUtils.hasText(form.getNewPwd()) == false &&
+                            StringUtils.hasText(form.getNewPwdConfirm()) == false;
+
+            if (isAllPwdFieldsEmpty) {
+                // 에러는 남아있지만 무시할 수 있도록, 직접 result.hasErrors() 대신 검증
+                List<ObjectError> nonPwdErrors = result.getAllErrors().stream() // 유효성 검증에서 발생한 모든 에러리스트
+                        .filter(e -> { // currentPwd, newPwd, newPwdConfirm 에러만 제외
+                            if (e instanceof FieldError) { // 필드에 대한 에러인지 확인
+                                String field = ((FieldError) e).getField();
+                                return !field.equals("currentPwd") && !field.equals("newPwd") && !field.equals("newPwdConfirm");
+                            }
+                            return true;
+                        })
+                        .collect(Collectors.toList()); // 최종적으로 남은 에러리스트들 리스트로 수집
+
+                if (!nonPwdErrors.isEmpty()) {
+                    return resetPwd(form, model);
+                }
+
+                // 비밀번호 외 모든 검증 통과한 경우: 통과!
+            } else {
+                log.info("errors={}", result);
+                return resetPwd(form, model);
+            }
         }
+
+        // 이메일 인증 여부 체크
+        if(memberService.countByEmail(form.getEmail()) < 1) {
+           switch (emailAuthService.isVerified(form.getEmail())) {
+                case CODE_EXPIRED:
+                    model.addAttribute("emailError", "인증코드가 만료되었습니다. 이메일 인증을 다시 해주세요.");
+                    model.addAttribute("memberForm", form);
+                    return "member/update-form";
+                case NO_AUTH_RECORD:
+                    model.addAttribute("emailError", "이메일 인증이 완료되지 않았습니다.");
+                    model.addAttribute("memberForm", form);
+                    return "member/update-form";
+            }
+        }
+
         try {
             memberService.update(memberId, form);
         } catch (FindMemberException e) {
-            return resetPwdAndAddMsg(form, model, e.getMessage(), "msg");
+            return resetPwdAndAddMsg(form, model, "msg", e.getMessage());
         } catch (CheckMatchPwdException e) {
-            return resetPwdAndAddMsg(form, model, e.getMessage(), "currentPwdError");
+            return resetPwdAndAddMsg(form, model, "currentPwdError", e.getMessage());
         } catch (CheckNewPwdException e) {
-            return resetPwdAndAddMsg(form, model, e.getMessage(), "newPwdError");
+            return resetPwdAndAddMsg(form, model, "newPwdError", e.getMessage());
         }
 
         // 세션 정보 갱신
@@ -99,11 +168,21 @@ public class MemberController {
         Authentication newAuthentication = new UsernamePasswordAuthenticationToken(newPrincipal, authentication.getCredentials(), authentication.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(newAuthentication);
 
+        // Redis 세션도 반영
+        if (sessionRepository instanceof SessionRepository) {
+            HttpSession session = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getSession(false); // 세션이 없으면 null(false 때문에 새로 생성하지 않음)
+            if (session != null) {
+                session.setAttribute(
+                        FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME,
+                        updatedMember.getLoginId()
+                );
+            }
+        }
         redirectAttributes.addFlashAttribute("msg", "수정하였습니다.");
         return "redirect:/mypage";
     }
 
-    private static String resetPwdAndAddMsg(MemberUpdateForm form, Model model, String e, String msg) {
+    private static String resetPwdAndAddMsg(MemberUpdateForm form, Model model, String msg, String e) {
         model.addAttribute(msg, e);
         return resetPwd(form, model);
     }

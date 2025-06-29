@@ -13,6 +13,8 @@ import com.study.cook.exception.LoginFailException;
 import com.study.cook.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.session.FindByIndexNameSessionRepository;
+import org.springframework.session.Session;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -91,7 +93,7 @@ public class MemberService {
         member.setName(form.getName());
         member.setLoginId(form.getLoginId());
 
-        if(form.getCurrentPwd() != null) {
+        if(!form.getCurrentPwd().isEmpty()) {
             if(!passwordEncoder.matches(form.getCurrentPwd(), member.getPwd()))
                 throw new CheckMatchPwdException("기존 비밀번호와 일치하지 않습니다");
 
