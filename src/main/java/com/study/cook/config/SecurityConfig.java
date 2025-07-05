@@ -25,7 +25,7 @@ public class SecurityConfig  {
                     authorizeRequests
                             .antMatchers("/", "/script/**", "/loginForm", "/logout", "/valid-email", "/valid-loginId", "/valid-phoneNum", "/recipes/images/**",
                             "/reserved-time", "/cooking-rooms", "/css/**", "/members", "/members/searchId", "/members/searchPwd", "/*.ico", "/error", "/image/**", "/cache/all",
-                                    "/email/**", "/.well-known/**").permitAll()
+                                    "/email/**", "/.well-known/**", "/actuator/*").permitAll()
                             .anyRequest().authenticated()
             )
             .formLogin()

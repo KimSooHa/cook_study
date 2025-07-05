@@ -1,6 +1,8 @@
 spring:
 #  messages:
 #    basename: messages,errors  # 에러메시지
+  application:
+    name: yorimoyeo
 
   data:
     web:
@@ -41,6 +43,9 @@ server:
       timeout: 30m  # 세션 타임아웃 설정(분 단위 기준) 60(1분)
 #      tracking-modes: cookie # url 전달 방식 끄고 항상 쿠키를 통해서만 세션 유지
 
+  tomcat:
+    mbeanregistry:
+      enabled: true
 
   security:
     sessions:
@@ -49,6 +54,22 @@ server:
       session-fixation: migrateSession # 세션 고정 방지 설정
 ##      invalid-session-url: /login?timeout # 세션 만료 시 리다이렉트할 URL 설정
 
+
+# prometheus 설정
+management:
+  endpoints:
+    web: # HTTP를 사용하는 엔드포인트를 설정
+      exposure:
+        include: health,info,prometheus,metrics,beans,httptrace # "*", management.endpoints.web.exposure.include : Actuator 엔드포인트를 노출할지 여부를 지정
+  endpoint:
+    prometheus:
+      enabled: true
+  metrics:
+    enable:
+      all: true
+    export:
+      prometheus:
+        enabled: true
 ---
 spring:
   profiles:

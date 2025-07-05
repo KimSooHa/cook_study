@@ -1,5 +1,6 @@
 package com.study.cook.domain;
 
+import com.study.cook.enums.Role;
 import lombok.*;
 
 import javax.persistence.*;
@@ -7,8 +8,8 @@ import javax.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 
-import static com.study.cook.domain.Role.MANAGER;
-import static com.study.cook.domain.Role.PARTICIPANT;
+import static com.study.cook.enums.Role.MANAGER;
+import static com.study.cook.enums.Role.PARTICIPANT;
 import static javax.persistence.FetchType.LAZY;
 
 @Entity

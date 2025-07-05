@@ -17,8 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.study.cook.domain.ClubStatus.COMP;
-import static com.study.cook.domain.Role.PARTICIPANT;
+import static com.study.cook.enums.ClubStatus.COMP;
+import static com.study.cook.enums.Role.PARTICIPANT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
