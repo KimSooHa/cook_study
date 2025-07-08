@@ -1,6 +1,6 @@
 package com.study.cook.service;
 
-import com.study.cook.domain.EmailAuthStatus;
+import com.study.cook.enums.EmailAuthStatus;
 import com.study.cook.dto.EmailAuthInfo;
 import com.study.cook.dto.EmailAuthResponse;
 import com.study.cook.exception.EmailAuthLimitException;
@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 import static com.study.cook.domain.EmailAuthSendResult.ALREADY_SENT;
 import static com.study.cook.domain.EmailAuthSendResult.SUCCESS;
-import static com.study.cook.domain.EmailAuthStatus.*;
+import static com.study.cook.enums.EmailAuthStatus.*;
 
 @Service
 @Transactional(readOnly = true)

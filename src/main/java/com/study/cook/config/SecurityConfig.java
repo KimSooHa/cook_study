@@ -8,6 +8,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
 // Spring Security 설정
 @Configuration
@@ -23,7 +25,7 @@ public class SecurityConfig  {
                     authorizeRequests
                             .antMatchers("/", "/script/**", "/loginForm", "/logout", "/valid-email", "/valid-loginId", "/valid-phoneNum", "/recipes/images/**",
                             "/reserved-time", "/cooking-rooms", "/css/**", "/members", "/members/searchId", "/members/searchPwd", "/*.ico", "/error", "/image/**", "/cache/all",
-                                    "/email/**", "/.well-known/**").permitAll()
+                                    "/email/**", "/.well-known/**", "/actuator/*").permitAll()
                             .anyRequest().authenticated()
             )
             .formLogin()
@@ -31,8 +33,9 @@ public class SecurityConfig  {
                 .passwordParameter("pwd")
                 .loginPage("/loginForm") // 로그인 페이지의 경로 설정
                 .loginProcessingUrl("/login") // 로그인 처리 url
+                .successHandler(authenticationSuccessHandler()) // 적용
                 .failureUrl("/loginForm?error=true") // 로그인 실패 시 오류 파라미터를 전달
-                .defaultSuccessUrl("/") // 로그인 성공 후 이동할 기본 페이지("/")로 설정. 만약 요청한 페이지가 있다면 로그인 후 해당 페이지로 Redirect
+//                .defaultSuccessUrl("/") // 로그인 성공 후 이동할 기본 페이지("/")로 설정. 만약 요청한 페이지가 있다면 로그인 후 해당 페이지로 Redirect
                 .and()
             .logout()
                .permitAll().logoutSuccessUrl("/").invalidateHttpSession(true).deleteCookies("JSESSIONID")
@@ -55,4 +58,11 @@ public class SecurityConfig  {
         return new BCryptPasswordEncoder(); // BCrypt: 비밀번호를 안전하게 저장하기 위한 해시 함수
     }
 
+    @Bean
+    public AuthenticationSuccessHandler authenticationSuccessHandler() {
+        SavedRequestAwareAuthenticationSuccessHandler handler = new SavedRequestAwareAuthenticationSuccessHandler();
+        handler.setDefaultTargetUrl("/"); // 이전 요청이 없을 경우 이동할 경로
+        handler.setAlwaysUseDefaultTargetUrl(false); // 이전 요청이 있으면 그쪽으로
+        return handler;
+    }
 }

@@ -21,8 +21,8 @@ public class MemberApiController {
     }
 
     @GetMapping("/valid-loginId")
-    public Long loginIdCheck(@RequestParam("loginId") String loginId) {
-        return memberService.countByLoginId(loginId);
+    public Long loginIdCheck(@RequestParam("loginId") String loginId, @RequestParam(required = false) Long memberId) {
+        return memberService.countByLoginId(loginId, memberId);
     }
 
     @GetMapping("/valid-phoneNum")

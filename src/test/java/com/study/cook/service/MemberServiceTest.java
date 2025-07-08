@@ -98,7 +98,7 @@ class MemberServiceTest {
         String loginId = member.getLoginId();
 
         // then
-        assertThat(memberService.countByLoginId(loginId)).isEqualTo(1);
+        assertThat(memberService.countByLoginId(loginId, null)).isEqualTo(1);
     }
 
     @Test

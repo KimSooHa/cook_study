@@ -1,5 +1,6 @@
 package com.study.cook.domain;
 
+import com.study.cook.enums.ClubStatus;
 import lombok.*;
 
 import javax.persistence.*;
@@ -8,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.study.cook.domain.ClubStatus.POS;
+import static com.study.cook.enums.ClubStatus.POS;
 import static javax.persistence.FetchType.LAZY;
 
 @Entity

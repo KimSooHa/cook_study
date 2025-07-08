@@ -1,6 +1,6 @@
 package com.study.cook.api;
 
-import com.study.cook.domain.EmailAuthStatus;
+import com.study.cook.enums.EmailAuthStatus;
 import com.study.cook.dto.EmailAuthResponse;
 import com.study.cook.service.EmailAuthService;
 import com.study.cook.util.ResultVO;

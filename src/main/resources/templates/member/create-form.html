@@ -29,7 +29,7 @@
                 <a href="/cooking-rooms/reservation">요리실 대여</a>
             </div>
             <div class="btn btn-default-color">
-                <a href="/login">로그인</a>
+                <a href="/loginForm">로그인</a>
             </div>
         </nav>
     </div>
@@ -96,7 +96,7 @@
                 <div id="verifySection" class="input-box mt-16">
                     <label for="authCode">인증번호</label>
                     <input type="text" id="authCode" name="authCode">
-                    <div class="time-attack"><span id="countdown" class="d-none">04:59</span></div>
+                    <div class="time-attack"><span id="countdown" class="d-none"></span></div>
                     <button type="button" id="verifyBtn" class="btn btn-strong btn-default btn-disabled" disabled>인증 확인</button>
                 </div>
                 <p class="email-code-valid d-none valid">인증이 완료되었습니다.</p>
@@ -311,7 +311,7 @@
             },
             body: `email=${encodeURIComponent(email)}` // encodeURIComponent() : 한글, 특수문자 등을 안전하게 인코딩해주는 함수
         })
-            .then(res => res.json()) // 응답 본문을 json 형태로 파싱
+            .then(response => response.json()) // 응답 본문을 json 형태로 파싱
             .then(data => { // 파싱된 json 데이터에 접근해서 처리
                 if (data.success) {
                     startCountdown(data.ttl); // 5분 (300초)
@@ -331,7 +331,7 @@
         // 카운트다운 함수
         function startCountdown(seconds) {
             if (countdownInterval) clearInterval(countdownInterval);
-            countdownEl.textContent = "04:59";
+            // countdownEl.textContent = "04:59";
 
             let remaining = seconds-1;
             const invalid = document.querySelector(".email-invalid");

@@ -3,11 +3,13 @@ package com.study.cook.controller;
 import com.study.cook.domain.Club;
 import com.study.cook.domain.Member;
 import com.study.cook.domain.Participation;
+import com.study.cook.enums.ParticipateFailReason;
 import com.study.cook.exception.FindClubException;
 import com.study.cook.exception.ParticipateFailException;
 import com.study.cook.service.ClubService;
 import com.study.cook.service.ParticipationService;
 import com.study.cook.util.MemberFinder;
+import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -27,11 +29,11 @@ public class ParticipationController {
     private final ClubService clubService;
     private final MemberFinder memberFinder;
 
-
     /**
      * 쿡스터디 참여
      */
 
+    @Timed(value = "club.participation.timer", description = "스터디 참여 API 응답 시간")
     @PostMapping("/{clubId}/participations")
     public String reserve(@PathVariable Long clubId, RedirectAttributes redirectAttributes) {
         Member member = memberFinder.getMember();
@@ -43,10 +45,11 @@ public class ParticipationController {
             }
         } catch (FindClubException e) {
             redirectAttributes.addFlashAttribute("msg", e.getMessage());
-            return "redirect:/clubs/list";
+            return "redirect:/clubs/list?error=notFound";
         } catch (ParticipateFailException e) {
+            ParticipateFailReason reason = e.getReason();
             redirectAttributes.addFlashAttribute("msg", e.getMessage());
-            return "redirect:/clubs/{clubId}/detail";
+            return "redirect:/clubs/{clubId}/detail?error=" + reason.name().toLowerCase();
         }
 
         // 참여 성공

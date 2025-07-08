@@ -1,11 +1,8 @@
 package com.study.cook.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
-import com.study.cook.domain.ClubStatus;
-import com.study.cook.domain.Reservation;
+import com.study.cook.enums.ClubStatus;
 import lombok.Data;
-
-import java.util.List;
 
 @Data
 public class ClubDto {

@@ -1,4 +1,4 @@
-package com.study.cook.domain;
+package com.study.cook.enums;
 
 public enum Role {
     MANAGER, PARTICIPANT
