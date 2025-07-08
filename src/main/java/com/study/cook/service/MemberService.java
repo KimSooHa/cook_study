@@ -51,7 +51,12 @@ public class MemberService {
             throw new IllegalStateException("이미 존재하는 회원입니다.");
         }
     }
-    public Long countByLoginId(String loginId) {
+    public Long countByLoginId(String loginId, Long memberId) {
+        if(memberId != null) {
+            Long cnt = memberRepository.countByLoginIdAndId(loginId, memberId);
+            if(cnt > 0)
+                return (long) 0;
+        }
         return memberRepository.countByLoginId(loginId);
     }
 

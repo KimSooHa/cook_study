@@ -73,7 +73,7 @@
                             th:class="${#fields.hasErrors('name')}? 'form-control fieldError' : 'form-control'"
                             required>
                     </div>
-                    <p th:if="${#fields.hasErrors('name')}" class="invalid" th:errors="*{name}">Incorrect date</p>
+                    <p th:if="${#fields.hasErrors('name')}" class="invalid name-error" th:errors="*{name}">Incorrect date</p>
                     <p class="name-invalid d-none invalid">이름이 형식에 맞지 않습니다.</p>
                 </div>
                 <div class="form-group">
@@ -82,7 +82,7 @@
                         <input type="text" th:field="*{loginId}" class="form-control" placeholder="아이디를 입력하세요"
                             th:class="${#fields.hasErrors('loginId')}? 'form-control fieldError' : 'form-control'" required>
                     </div>
-                    <p th:if="${#fields.hasErrors('loginId')}" th:errors="*{loginId}" class="invalid">존재하는 아이디입니다.</p>
+                    <p th:if="${#fields.hasErrors('loginId')}" th:errors="*{loginId}" class="invalid loginid-error">존재하는 아이디입니다.</p>
                     <p class="id-valid d-none valid">사용 가능한 아이디입니다.</p>
                     <p class="id-invalid d-none invalid">아이디가 형식에 맞지 않습니다.</p>
                     <p class="id-exist d-none invalid">이미 사용중인 아이디입니다.</p>
@@ -94,7 +94,7 @@
                         <input type="password" th:field="*{currentPwd}" class="form-control" placeholder="현재 비밀번호를 입력하세요"
                             th:class="${#fields.hasErrors('currentPwd')}? 'form-control fieldError' : 'form-control'">
                     </div>
-                    <p th:if="${#fields.hasErrors('currentPwd')}" class="invalid" th:errors="*{currentPwd}">현재 사용중인 비밀번호가 아닙니다.</p>
+                    <p th:if="${#fields.hasErrors('currentPwd')} and !${isAllPwdFieldsEmpty}" class="invalid" th:errors="*{currentPwd}">현재 사용중인 비밀번호가 아닙니다.</p>
                     <p th:if="${currentPwdError}" th:text="${currentPwdError}" class="invalid"></p>
                     <p class="pwd-invalid d-none invalid">기존 비밀번호를 입력해주세요.</p>
                     <div class="input-box">
@@ -102,14 +102,14 @@
                         <input type="password" th:field="*{newPwd}" class="form-control" placeholder="새 비밀번호를 입력하세요"
                             th:class="${#fields.hasErrors('newPwd')}? 'form-control fieldError' : 'form-control'">
                     </div>
-                    <p th:if="${#fields.hasErrors('newPwd')}" class="invalid" th:errors="*{newPwd}">비밀번호가 형식에 맞지 않습니다.</p>
+                    <p th:if="${#fields.hasErrors('newPwd')} and !${isAllPwdFieldsEmpty}" class="invalid" th:errors="*{newPwd}">비밀번호가 형식에 맞지 않습니다.</p>
                     <p class="newPwd-invalid d-none invalid">새 비밀번호가 형식에 맞지 않습니다.</p>
                     <div class="input-box">
                         <label th:for="newPwdConfirm">새 비밀번호 확인</label>
                         <input type="password" th:field="*{newPwdConfirm}" class="form-control" placeholder="새 비밀번호를 입력하세요"
                             th:class="${#fields.hasErrors('newPwdConfirm')}? 'form-control fieldError' : 'form-control'">
                     </div>
-                    <p th:if="${#fields.hasErrors('newPwdConfirm')}" class="invalid" th:errors="*{newPwdConfirm}">비밀번호가 일치하지 않습니다.</p>
+                    <p th:if="${#fields.hasErrors('newPwdConfirm')} and !${isAllPwdFieldsEmpty}" class="invalid" th:errors="*{newPwdConfirm}">비밀번호가 일치하지 않습니다.</p>
                     <p th:if="${newPwdError}" th:text="${newPwdError}" class="invalid"></p>
                     <p class="newPwdConfirm-invalid d-none invalid">새 비밀번호와 일치하지 않습니다.</p>
                 </div>
@@ -143,7 +143,7 @@
                             th:class="${#fields.hasErrors('phoneNum')}? 'form-control fieldError' : 'form-control'"
                             required>
                     </div>
-                    <p th:if="${#fields.hasErrors('phoneNum')}" th:errors="*{phoneNum}">휴대폰 번호 형식에 맞지 않습니다.</p>
+                    <p th:if="${#fields.hasErrors('phoneNum')}" th:errors="*{phoneNum}" class="phone-error">휴대폰 번호 형식에 맞지 않습니다.</p>
                     <p class="phone-valid d-none valid">사용 가능한 휴대폰 번호입니다.</p>
                     <p class="phone-invalid d-none invalid">휴대폰 번호 형식에 맞지 않습니다.</p>
                     <p class="phone-exist d-none invalid">이미 사용중인 휴대폰 번호입니다.</p>
@@ -255,8 +255,11 @@
         };
 
         function checkName() {
+            const nameError = document.querySelector(".name-error");
             let name = document.querySelector("#name").value;
             const invalid = document.querySelector(".name-invalid");
+
+            nameError.classList.add("d-none");
 
             if (!validNameCheck(name))
                 invalid.classList.remove("d-none");
@@ -278,12 +281,14 @@
         function checkLoginId() {
             let loginId = document.querySelector("#loginId").value;
             const request = new XMLHttpRequest();
-            let url = "/valid-loginId?loginId=" + loginId;
+            let url = "/valid-loginId?loginId=" + loginId + "&memberId=" + [[${memberId}]];
             const valid = document.querySelector(".id-valid");
             const invalid = document.querySelector(".id-invalid");
             const origin = document.querySelector(".id-origin");
             const exist = document.querySelector(".id-exist");
-
+            const loginIdError = document.querySelector(".loginid-error");
+            
+            loginIdError.classList.add("d-none");
 
             request.onreadystatechange = () => {
                 if (request.readyState != XMLHttpRequest.DONE)
@@ -363,6 +368,9 @@
             const invalid = document.querySelector(".phone-invalid");
             const origin = document.querySelector(".phone-origin");
             const exist = document.querySelector(".phone-exist");
+            const phoneError = document.querySelector(".phone-error");
+
+            phoneError.classList.add("d-none");
 
             request.onreadystatechange = () => {
                 if (request.readyState != XMLHttpRequest.DONE)
@@ -387,7 +395,6 @@
         }
 
         document.addEventListener("DOMContentLoaded", function () {
-        // const emailInput = document.getElementById("emailInput") || document.querySelector("input[type=email]");
         const emailInput = document.querySelector("input[type=email]");
         const verifyBtn = document.getElementById("verifyBtn");
         let countdownEl = document.getElementById("countdown");

@@ -115,6 +115,8 @@ public class MemberController {
                             StringUtils.hasText(form.getNewPwd()) == false &&
                             StringUtils.hasText(form.getNewPwdConfirm()) == false;
 
+            model.addAttribute("isAllPwdFieldsEmpty", isAllPwdFieldsEmpty);
+
             // 비밀번호 변경 안할 시 필드(currentPwd, newPwd, newPwdConfirm) 관련 에러 제외
             if (isAllPwdFieldsEmpty) {
                 // 에러는 남아있지만 무시할 수 있도록, 직접 result.hasErrors() 대신 검증
@@ -129,12 +131,18 @@ public class MemberController {
                         .collect(Collectors.toList()); // 최종적으로 남은 에러리스트들 리스트로 수집
 
                 if (!nonPwdErrors.isEmpty()) {
+                    // 원래 BindingResult는 직접 수정 못하므로, model에 errors 따로 담아 보내기
+                    model.addAttribute("org.springframework.validation.BindingResult.memberForm", result); // 혹시 기본 값이 memberForm일 경우
+                    model.addAttribute("memberForm", form);
+//                    return "member/update-form";
                     return resetPwd(form, model);
                 }
 
                 // 비밀번호 외 모든 검증 통과한 경우: 통과!
             } else {
                 log.info("errors={}", result);
+                // 비밀번호 입력이 하나라도 있다면 에러 그대로 처리
+                model.addAttribute("org.springframework.validation.BindingResult.memberForm", result);
                 return resetPwd(form, model);
             }
         }

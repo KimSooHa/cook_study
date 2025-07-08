@@ -17,7 +17,7 @@ import javax.validation.constraints.Size;
 public class MemberUpdateForm {
 
     @NotBlank(message = "이름을 작성해주세요.")
-    @Pattern(regexp = "^[가-힣a-zA-Z]*$")
+    @Pattern(regexp = "^[가-힣a-zA-Z]*$", message = "이름 형식에 맞지 않습니다.")
     private String name;
 
     @NotBlank(message = "아이디를 작성해주세요.")
