@@ -27,7 +27,7 @@ public class RepositoryTimingAspect {
     @Around("execution(* com.study.cook.repository..*.*(..))") // execution(...): 메서드 실행을 대상으로 함
     public Object measureTime(ProceedingJoinPoint joinPoint) throws Throwable {
         String methodName = joinPoint.getSignature().getName();
-        String className = joinPoint.getTarget().getClass().getSimpleName();
+        String className = joinPoint.getSignature().getDeclaringType().getSimpleName(); // 실제 선언된 클래스명 가져오기
 
         long startTime = System.currentTimeMillis();
         Object result;
