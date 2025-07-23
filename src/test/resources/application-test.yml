@@ -1,7 +1,4 @@
 spring:
-  profiles:
-    active: test
-#spring:
 #  config:
 #    activate:
 #      on-profile: test
@@ -12,18 +9,26 @@ spring:
 #    driver-class-name: org.h2.Driver
 
 #  --로컬서버용--
-#  datasource:
-#    username: root
-#    password: 12341234
-#    driver-class-name: org.mariadb.jdbc.Driver
-#    url: jdbc:mariadb://localhost:3306/cook_study
-
-# --운영서버용--
   datasource:
-    url: jdbc:mariadb://springboot-webservice.c2fnuqugf4lp.ap-northeast-2.rds.amazonaws.com:3306/webservice
-    username: ${db_username}
-    password: ${db_passwd}
+    username: root
+    password: 12341234
     driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost:3306/cook_study
+
+  redis:
+    host: localhost
+    port: 6379
+
+  data:
+    redis:
+      repositories:
+        enabled: false
+# --운영서버용--
+#  datasource:
+#    url: jdbc:mariadb://springboot-webservice.c2fnuqugf4lp.ap-northeast-2.rds.amazonaws.com:3306/webservice
+#    username: ${db_username}
+#    password: ${db_passwd}
+#    driver-class-name: org.mariadb.jdbc.Driver
 
   messages:
     basename: messages,errors  # 에러메시지
