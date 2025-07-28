@@ -142,4 +142,47 @@ class EmailAuthServiceTest {
         // then
         assertThat(status).isEqualTo(CODE_MISMATCH);
     }
+
+    @Test
+    @DisplayName("이메일 인증 여부 - 인증 완료")
+    void isVerified_success() {
+        // given
+        EmailAuthInfo info = new EmailAuthInfo(code, true);  // 인증 완료 상태
+
+        when(valueOperations.get(key)).thenReturn(info);
+
+        // when
+        EmailAuthStatus status = emailAuthService.isVerified(email);
+
+        // then
+        assertThat(status).isEqualTo(SUCCESS);
+    }
+
+    @Test
+    @DisplayName("이메일 인증 여부 - 인증코드는 있으나 만료됨")
+    void isVerified_codeExpired() {
+        // given
+        when(valueOperations.get(key)).thenReturn(null); // 만료됨
+        when(redisTemplate.hasKey("emailAuth:log:" + email)).thenReturn(true); // 인증 시도는 있었음
+
+        // when
+        EmailAuthStatus status = emailAuthService.isVerified(email);
+
+        // then
+        assertThat(status).isEqualTo(CODE_EXPIRED);
+    }
+
+    @Test
+    @DisplayName("이메일 인증 여부 - 인증 시도도 없음")
+    void isVerified_noAuthRecord() {
+        // given
+        when(valueOperations.get(key)).thenReturn(null);
+        when(redisTemplate.hasKey("emailAuth:log:" + email)).thenReturn(false);
+
+        // when
+        EmailAuthStatus status = emailAuthService.isVerified(email);
+
+        // then
+        assertThat(status).isEqualTo(NO_AUTH_RECORD);
+    }
 }
