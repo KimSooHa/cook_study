@@ -112,4 +112,34 @@ class EmailAuthServiceTest {
         verify(redisTemplate).delete(key);
         verify(mailService).sendTextEmail(any(), any(), any());
     }
+
+    @Test
+    @DisplayName("인증코드 검증 - 성공")
+    void verifyCode_success() {
+        // given
+        EmailAuthInfo mockInfo = new EmailAuthInfo(code, false);
+        when(valueOperations.get(key)).thenReturn(mockInfo);
+
+        // when
+        EmailAuthStatus status = emailAuthService.verifyCode(email, code);
+
+        // then
+        assertThat(status).isEqualTo(SUCCESS);
+        verify(valueOperations).set(eq(key), argThat(info -> ((EmailAuthInfo) info).isVerified()), eq(Duration.ofMinutes(10))); // argThat : 검증된 상태로 변경되었는지 확인
+        verify(valueOperations).set(eq("emailAuth:log:" + email), eq(true), eq(Duration.ofMinutes(30)));
+    }
+
+    @Test
+    @DisplayName("인증코드 검증 - 실패")
+    void verifyCode_failure() {
+        // given
+        EmailAuthInfo mockInfo = new EmailAuthInfo("654321", false);  // 다른 코드
+        when(valueOperations.get(key)).thenReturn(mockInfo);
+
+        // when
+        EmailAuthStatus status = emailAuthService.verifyCode(email, code);
+
+        // then
+        assertThat(status).isEqualTo(CODE_MISMATCH);
+    }
 }
