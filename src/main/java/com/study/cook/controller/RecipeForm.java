@@ -23,7 +23,7 @@ public class RecipeForm {
 
     private MultipartFile imageFile;
 
-    private Photo img;
+    private Photo photo;
 
     @NotBlank(message = "레시피에 필요한 재료를 작성해주세요.")
     @Size(max = 200, message = "최대 200자까지 가능합니다.")

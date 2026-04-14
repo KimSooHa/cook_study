@@ -28,8 +28,8 @@
                 <div class="img-box cooking-box mt-16">
                     <label class="detail-title" for="image-file">메인 이미지</label>
                     <input type="file" th:name="imageFile" id="image-file" accept="image/*">
-                    <span class="original-file" th:text="${recipeForm.img.getUploadFileName()}"></span>
-                    <img class="d-none food-detail-img" th:src="|/recipes/images/${recipeForm.img.getStoreFileName()}|"
+                    <span class="original-file" th:text="${recipeForm.photo.getUploadFileName()}"></span>
+                    <img class="d-none food-detail-img" th:src="|/recipes/images/${recipeForm.photo.getStoreFileName()}|"
                         alt="요리사진">
                 </div>
                 <div class="info explanation input-content">
@@ -82,9 +82,9 @@
                         <span th:text="|${fieldFormStat.count}.|" class="order-num">1.</span>
                         <label class="detail-title" for="image-file"></label>
                         <input type="file" id="image-file" th:name="imageFile" accept="image/*">
-                        <span class="original-file" th:text="${fieldForm.img.getUploadFileName()}"></span>
+                        <span class="original-file" th:text="${fieldForm.photo.getUploadFileName()}"></span>
                     </div>
-                    <img class="d-none food-detail-img" th:src="|/recipes/images/${fieldForm.img.getStoreFileName()}|"
+                    <img class="d-none food-detail-img" th:src="|/recipes/images/${fieldForm.photo.getStoreFileName()}|"
                         name="imageFile" id="imageFile" alt="요리사진">
                     <textarea th:text="*{fieldForm.content}" class="content" name="content" id="content" cols="30"
                         rows="5" placeholder="내용을 입력해주세요." required></textarea>

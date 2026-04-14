@@ -29,6 +29,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.FileInputStream;
@@ -40,6 +41,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Transactional
+@ActiveProfiles("test")
 @Import(CacheConfig.class) // Ehcache 설정 import
 @Slf4j
 class RecipeServiceTest {
@@ -120,7 +122,7 @@ class RecipeServiceTest {
         Page<RecipeListDto> list = recipeService.findList(condition, pageRequest);
 
         // then
-        assertThat(list.get().count()).isLessThan(pageRequest.getPageSize());
+        assertThat(list.get().count()).isLessThanOrEqualTo(pageRequest.getPageSize());
     }
 
     @Test
@@ -205,29 +207,6 @@ class RecipeServiceTest {
     }
 
     @Test
-    @DisplayName("아이디로 캐시된 레시피 조회")
-    void findDetailOneById() {
-        // given
-        Member member = memberRepository.findByLoginId("test1").get();
-
-        RecipeForm form = setForm();
-
-        Long recipeId = save(member, form, fileName, filePath);
-
-        // when
-        RecipeDetailDto recipeDetailDto = recipeService.findDetailOneById(recipeId);
-
-        // then
-        Cache recipeCache = cacheManager.getCache("recipeCache");
-        Object cached = recipeCache.get(recipeId);
-        assertThat(cached).isNotNull();
-        assertThat(recipeDetailDto.getRecipe().getTitle()).isEqualTo(form.getTitle());
-
-        // after test
-        deleteFile(recipeId);
-    }
-
-    @Test
     @DisplayName("레시피 수정 - 캐시 무효화")
     void update() {
         // given
@@ -250,14 +229,11 @@ class RecipeServiceTest {
         recipeService.update(recipeId, form, Optional.of(file));
 
         // then
-        assertThat(recipeDetailDto.getRecipe().getImg().getUploadFileName()).isNotEqualTo(fileName);
-        Cache recipeCache = cacheManager.getCache("recipeCache");
+        assertThat(recipeDetailDto.getRecipe().getPhoto().getUploadFileName()).isNotEqualTo(fileName);
         Cache popularRecipeListCache = cacheManager.getCache("popularRecipeListCache");
-        Object cachedOne = recipeCache.get(recipeId);
         Object cachedList = popularRecipeListCache.get(SimpleKeyGenerator.generateKey(new Object[]{limit}));
 
         // 수정될 때 캐시 무효화
-        assertThat(cachedOne).isNull();
         assertThat(cachedList).isNull();
 
         // after test

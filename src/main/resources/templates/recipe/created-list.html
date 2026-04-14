@@ -42,7 +42,7 @@
             <section class="list-element" th:each="recipe : ${list}">
                 <a th:href="@{/recipes/{param1}?redirectURL=/recipes/list/created(param1=${recipe.recipeId})}">
                     <img class="image-view-round food-list-img"
-                        th:src="|/recipes/images/${recipe.img.getStoreFileName()}|" alt="목록 이미지">
+                        th:src="|/recipes/images/${recipe.storeFileName}|" alt="목록 이미지">
                 </a>
                 <h1 th:text="${recipe.title}">레시피 제목</h1>
             </section>

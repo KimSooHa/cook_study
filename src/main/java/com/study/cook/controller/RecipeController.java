@@ -4,9 +4,7 @@ import com.study.cook.domain.Category;
 import com.study.cook.domain.Member;
 import com.study.cook.domain.Recipe;
 import com.study.cook.domain.RecipeField;
-import com.study.cook.dto.RecipeDetailDto;
-import com.study.cook.dto.RecipeListDto;
-import com.study.cook.dto.SearchCondition;
+import com.study.cook.dto.*;
 import com.study.cook.service.CategoryService;
 import com.study.cook.service.RecipeFieldService;
 import com.study.cook.service.RecipeService;
@@ -99,7 +97,7 @@ public class RecipeController {
 
     @GetMapping("/{recipeId}")
     public String detail(@PathVariable Long recipeId, Model model) {
-        /*
+
         Recipe recipe = recipeService.findOneById(recipeId);
 
         RecipeDto recipeDto = new RecipeDto(recipe.getTitle(), recipe.getIntroduction(), recipe.getPhoto(), recipe.getIngredients(), recipe.getCookingTime(), recipe.getServings(), recipe.getCategory().getName());
@@ -122,8 +120,9 @@ public class RecipeController {
         Member loginMember = memberFinder.getMember();
         model.addAttribute("member", member);
         model.addAttribute("loginMember", loginMember);
-        */
 
+
+        /*
         RecipeDetailDto recipeDetailDto = recipeService.findDetailOneById(recipeId);
         if(!recipeDetailDto.getRecipeFields().isEmpty())
             model.addAttribute("recipeFieldDtoList", recipeDetailDto.getRecipeFields());
@@ -134,7 +133,7 @@ public class RecipeController {
         Member loginMember = memberFinder.getMember();
         model.addAttribute("member", recipeDetailDto.getMember());
         model.addAttribute("loginMember", loginMember);
-
+        */
         return "recipe/detail";
     }
 
@@ -147,7 +146,7 @@ public class RecipeController {
         recipeForm.setTitle(recipe.getTitle());
         recipeForm.setIngredients(recipe.getIngredients());
         recipeForm.setIntroduction(recipe.getIntroduction());
-        recipeForm.setImg(recipe.getPhoto());
+        recipeForm.setPhoto(recipe.getPhoto());
         recipeForm.setCookingTime(recipe.getCookingTime());
         recipeForm.setCategoryId(recipe.getCategory().getId());
         recipeForm.setServings(recipe.getServings());
@@ -156,7 +155,7 @@ public class RecipeController {
         Optional<List<RecipeField>> recipeFieldList = recipeFieldService.findByRecipeId(recipeId);
         List<RecipeFieldForm> fieldForms = recipeFieldList.get().stream().map(rf -> {
             RecipeFieldForm fieldForm = new RecipeFieldForm();
-            fieldForm.setImg(rf.getPhoto());
+            fieldForm.setPhoto(rf.getPhoto());
             fieldForm.setContent(rf.getContent());
             return fieldForm;
         }).collect(toList());

@@ -1,24 +1,20 @@
 package com.study.cook.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
-import com.study.cook.domain.Comment;
 import com.study.cook.domain.Photo;
-import com.study.cook.domain.RecipeField;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Data
 @NoArgsConstructor
 public class RecipeFieldDto {
 
-    private Photo img;
+    private Photo photo;
     private String content;
 
     @QueryProjection
-    public RecipeFieldDto(Photo img, String content) {
-        this.img = img;
+    public RecipeFieldDto(Photo photo, String content) {
+        this.photo = photo;
         this.content = content;
     }
 }

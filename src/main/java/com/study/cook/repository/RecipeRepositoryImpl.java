@@ -34,7 +34,7 @@ public class RecipeRepositoryImpl implements RecipeRepositoryCustom {
                 .select(new QRecipeListDto(
                         recipe.id,
                         recipe.title,
-                        recipe.photo))
+                        recipe.photo.storeFileName))
                 .from(recipe)
                 .where(titleLike(condition.getTitle()),
                         categoryNameEq(condition.getCategoryName()),
@@ -65,7 +65,7 @@ public class RecipeRepositoryImpl implements RecipeRepositoryCustom {
                 .select(new QRecipeListDto(
                         recipe.id,
                         recipe.title,
-                        recipe.photo))
+                        recipe.photo.storeFileName))
                 .from(recipe)
                 .where(titleLike(condition.getTitle()),
                         categoryNameEq(condition.getCategoryName()))
@@ -96,7 +96,7 @@ public class RecipeRepositoryImpl implements RecipeRepositoryCustom {
             queryFactory.select(new QRecipeListDto(
                             recipe.id,
                             recipe.title,
-                            recipe.photo))
+                            recipe.photo.storeFileName))
                     .from(recipe)
                     .orderBy(recipe.comments.size().desc(),
                             recipe.regDate.desc())

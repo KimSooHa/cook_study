@@ -78,6 +78,7 @@ public class RecipeService {
      */
     @Cacheable(value = "popularRecipeListCache")
     public List<RecipeListDto> findLimitList(int length) {
+        log.info("📦 DB 접근! limit: {}", length);
         return recipeRepository.findList(length);
     }
 
@@ -88,7 +89,6 @@ public class RecipeService {
     public Recipe findOneById(Long recipeId) {
         return recipeRepository.findById(recipeId).orElse(null);
     }
-    @Cacheable(value = "recipeCache", key = "#recipeId")
     public RecipeDetailDto findDetailOneById(Long recipeId) {
         log.info("📦 DB에서 레시피 조회: " + recipeId); // 로그 찍기
         Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(() -> new FindRecipeException("해당하는 레시피가 없습니다."));
@@ -109,7 +109,6 @@ public class RecipeService {
 
     @Transactional
     @Caching(evict = {
-        @CacheEvict(value = "recipeCache", key = "#recipeId"),  // 상세 조회 캐시 제거
         @CacheEvict(value = "popularRecipeListCache", allEntries = true)  // 인기 레시피 리스트 캐시 제거
     })
     public void update(Long recipeId, RecipeForm form, Optional<MultipartFile> file) {
@@ -144,7 +143,6 @@ public class RecipeService {
 
     @Transactional
     @Caching(evict = {
-        @CacheEvict(value = "recipeCache", key = "#recipeId"),  // 상세 조회 캐시 제거
         @CacheEvict(value = "popularRecipeListCache", allEntries = true)  // 인기 레시피 리스트 캐시 제거
     })
     public void delete(Long recipeId) {
