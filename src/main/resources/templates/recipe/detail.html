@@ -6,7 +6,7 @@
         <section class="detail-container">
             <h1 class="d-none">레시피 상세정보</h1>
             <div class="recipe-intro">
-                <img th:src="|/recipes/images/${recipeDto.img.getStoreFileName()}|" class="food-detail-img"
+                <img th:src="|/recipes/images/${recipeDto.photo.getStoreFileName()}|" class="food-detail-img"
                     src="https://www.menupan.com/cook/cookimg/004000.jpg" alt="메인 이미지">
                 <div th:text="${recipeDto.title}" class="detail-title">아망디오쇼콜라 만들기!</div>
                 <div th:text="|작성자: ${member.loginId}|">작성자</div>
@@ -27,7 +27,7 @@
                 <h1 class="detail-sub-title">조리순서</h1>
                 <div class="order-box" th:each="recipeField : ${recipeFieldDtoList}">
                     <p th:text="|${recipeFieldStat.count}. ${recipeField.content}|" class="detail-content-title">리스트</p>
-                    <img class="food-detail-img" th:src="|/recipes/images/${recipeField.img.getStoreFileName()}|"
+                    <img class="food-detail-img" th:src="|/recipes/images/${recipeField.photo.getStoreFileName()}|"
                         src="https://bakeitwithlove.com/wp-content/uploads/2022/02/valentines-day-chocolate-covered-strawberries-sq.jpg"
                         alt="요리사진">
                 </div>

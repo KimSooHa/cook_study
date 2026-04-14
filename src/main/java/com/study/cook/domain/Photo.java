@@ -1,6 +1,10 @@
 package com.study.cook.domain;
 
-import lombok.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -24,6 +28,7 @@ public class Photo {
     private String storeFileName;   // 서버 내부에서 관리하는 파일명
 
     @OneToOne(mappedBy = "photo", fetch = LAZY)
+    @JsonIgnore
     private Recipe recipe;
 
     @OneToOne(mappedBy = "photo", fetch = LAZY)

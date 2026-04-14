@@ -11,7 +11,7 @@ public class RecipeDto {
 
     private String title;
     private String introduction;
-    private Photo img;
+    private Photo photo;
     private String ingredients;
     private int cookingTime;
     private int servings;
@@ -20,10 +20,10 @@ public class RecipeDto {
 
 
     @QueryProjection
-    public RecipeDto(String title, String introduction, Photo img, String ingredients, int cookingTime, int servings, String categoryName) {
+    public RecipeDto(String title, String introduction, Photo photo, String ingredients, int cookingTime, int servings, String categoryName) {
         this.title = title;
         this.introduction = introduction;
-        this.img = img;
+        this.photo = photo;
         this.ingredients = ingredients;
         this.cookingTime = cookingTime;
         this.servings = servings;

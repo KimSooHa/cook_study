@@ -68,7 +68,7 @@
             <section class="best-list">
                 <div class="list-element" th:each="recipe : ${recipeList}">
                     <a class="element-link" th:href="@{recipes/{param1}(param1=${recipe.recipeId})}">
-                        <img class="food-list-img" th:src="|/recipes/images/${recipe.img.getStoreFileName()}|" alt="목록 이미지">
+                        <img class="food-list-img" th:src="|/recipes/images/${recipe.storeFileName}|" alt="목록 이미지">
                         <span class="title" th:text="${recipe.title}">레시피 제목</span>
                     </a>
                 </div>
