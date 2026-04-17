@@ -24,7 +24,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -245,7 +248,7 @@ class ReservationServiceTest {
 
     private ReservationForm setForm(int roomNum, int time) {
         ReservationForm form = new ReservationForm();
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now().plusDays(1);
         LocalDate date = LocalDate.of(now.getYear(), now.getMonth(), now.getDayOfMonth());
         String formatDate = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         form.setDate(formatDate);

@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @Transactional
@@ -51,7 +50,7 @@ class RecipeFieldServiceTest {
     @Autowired
     FileStore fileStore;
 
-    private String filePath = "/Users/sooha/Desktop/image/food/";
+    private String filePath = "/Users/sooha/Desktop/image/food/pizza/";
     private String fileName = "pizza_img.jpeg";
     private Long recipeId;
 
