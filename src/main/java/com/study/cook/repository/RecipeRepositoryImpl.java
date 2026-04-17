@@ -50,8 +50,7 @@ public class RecipeRepositoryImpl implements RecipeRepositoryCustom {
                 .from(recipe)
                 .where(titleLike(condition.getTitle()),
                         categoryNameEq(condition.getCategoryName()),
-                        recipe.member.id.eq(memberId))
-                .orderBy(recipe.regDate.desc());
+                        recipe.member.id.eq(memberId));
 
         return PageableExecutionUtils.getPage(content, pageable, () -> countQuery.fetchOne());
     }
@@ -79,8 +78,7 @@ public class RecipeRepositoryImpl implements RecipeRepositoryCustom {
                 .select(recipe.count())
                 .from(recipe)
                 .where(titleLike(condition.getTitle()),
-                        categoryNameEq(condition.getCategoryName()))
-                .orderBy(recipe.regDate.desc());
+                        categoryNameEq(condition.getCategoryName()));
 
         return PageableExecutionUtils.getPage(content, pageable, () -> countQuery.fetchOne());
     }

@@ -95,21 +95,21 @@
 
         const commentForm = document.querySelector(".input-content");
         const regBtn = commentForm.querySelector("button");
+        let lastId = null;
 
         // 댓글 더보기
         function moreComments(cnt) {
             const rq = new XMLHttpRequest();
-            let url = `/comments/list?recipeId=[[${recipeId}]]&page=${cnt}`;
+            let url = `/comments/list?recipeId=[[${recipeId}]]&lastId=${lastId}`;
 
             rq.onreadystatechange = () => {
                 if (rq.readyState != XMLHttpRequest.DONE)
                     return;
 
                 let results = rq.response;
-                let comments = results.comments.content;
-                let size = results.size;
-                let totalElements = results.totalElements;
-                let totalPages = results.totalPages;
+                let comments = results.comments;
+                let hasNext = results.hasNext;
+                lastId = results.lastId;
                 const moreBtn = document.querySelector(".more-comment");
                 moreBtn.remove();
 
@@ -140,17 +140,13 @@
                     }
 
                 }
-                if (totalPages > cnt + 1) {
+                if (hasNext) {
                     html += `<div class="more-comment">
                             <span class="btn btn-default btn-strong" onclick=moreComments(${cnt}+1)>+</span>
                         </div>`;
                 }
 
                 document.querySelector(".comment-container").insertAdjacentHTML("beforeend", html);
-                if (totalElements == undefined)
-                    return;
-
-                document.querySelector(".comment-sum").innerText = totalElements;
             }
 
             methodGetJson(rq, url);
@@ -167,10 +163,10 @@
                     return;
 
                 let results = getRequest.response;
-                let comments = results.comments.content;
-                let size = results.size;
+                let comments = results.comments;
                 let totalElements = results.totalElements;
-                let totalPages = results.totalPages;
+                let hasNext = results.hasNext;
+                lastId = results.lastId;
 
                 let html = ``;
                 for (let i = 0; i < comments.length; i++) {
@@ -200,7 +196,7 @@
 
                 }
 
-                if (totalPages > cnt + 1) {
+                if (hasNext) {
                     html += `<div class="more-comment">
                             <span class="btn btn-default btn-strong" onclick=moreComments(${cnt}+1)>+</span>
                         </div>`;
@@ -210,7 +206,7 @@
                 if (totalElements == undefined)
                     return;
 
-                document.querySelector(".comment-sum").innerText = totalElements;
+                document.querySelector(".comment-sum").innerText = `총 ${totalElements}개`;
             }
 
             methodGetJson(getRequest, url);

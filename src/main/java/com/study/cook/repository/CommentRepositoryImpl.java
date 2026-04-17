@@ -1,12 +1,11 @@
 package com.study.cook.repository;
 
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.study.cook.dto.CommentDto;
 import com.study.cook.dto.QCommentDto;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.support.PageableExecutionUtils;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -29,7 +28,7 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
      * comment 목록
      */
     @Override
-    public Page<CommentDto> findList(Long recipeId, Pageable pageable) {
+    public Slice<CommentDto> findList(Long recipeId, Long lastId, int size) {
 
         List<CommentDto> content = queryFactory
                 .select(new QCommentDto(
@@ -41,21 +40,34 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
                 ))
                 .from(comment)
                 .join(comment.member, member)
-                .where(comment.recipe.id.eq(recipeId))
-                .orderBy(comment.regDate.desc())
-                .offset(pageable.getOffset())   // 시작 페이지
-                .limit(pageable.getPageSize())  // 한 페이지당 몇개씩 가져올건지
-                .fetch();// 컨텐츠만 반환
+                .where(
+                        comment.recipe.id.eq(recipeId),
+                        lastId != null ? comment.id.lt(lastId) : null
+                )
+                .orderBy(comment.id.desc()) // regDate 말고 id 추천
+                .limit(size + 1)
+                .fetch();
 
-        // 카운트 쿼리
-        JPAQuery<Long> countQuery = queryFactory
+        boolean hasNext = content.size() > size;
+
+        List<CommentDto> result = hasNext
+                ? content.subList(0, size)
+                : content;
+
+        return new SliceImpl<>(result, PageRequest.of(0, size), hasNext);
+    }
+
+    /**
+     * 레시피에 해당하는 댓글 갯수 조회
+     * @param recipeId
+     * @return
+     */
+    public long countByRecipe(Long recipeId) {
+        return queryFactory
                 .select(comment.count())
                 .from(comment)
                 .where(comment.recipe.id.eq(recipeId))
-                .orderBy(comment.regDate.desc());
-
-        return PageableExecutionUtils.getPage(content, pageable, () -> countQuery.fetchOne());
-
+                .fetchOne();
     }
 
 }
