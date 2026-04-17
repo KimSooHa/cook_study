@@ -18,9 +18,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Slice;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,7 +55,7 @@ class CommentServiceTest {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    private String filePath = "/Users/sooha/Desktop/image/food/";
+    private String filePath = "/Users/sooha/Desktop/image/food/pizza/";
     private String fileName = "pizza_img.jpeg";
     private Long recipeId;
 
@@ -96,10 +94,10 @@ class CommentServiceTest {
     void findList() {
         // given
         Long commentId = save();
-        PageRequest pageRequest = PageRequest.of(0, 4, Sort.Direction.DESC, "regDate");
+        int size = 4;
 
         // when
-        Page<CommentDto> list = commentService.findList(recipeId, pageRequest);
+        Slice<CommentDto> list = commentService.findList(recipeId, null, size);
 
         // then
         assertThat(list.get().count()).isEqualTo(1);

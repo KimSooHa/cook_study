@@ -11,8 +11,7 @@ import com.study.cook.repository.CommentRepository;
 import com.study.cook.repository.RecipeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,25 +44,44 @@ public class CommentService {
     /**
      * 댓글 전체 조회
      */
-    public Page<CommentDto> findList(Long recipeId, Pageable pageable) {
-        return commentRepository.findList(recipeId, pageable);
+    public Slice<CommentDto> findList(Long recipeId, Long lastId, int size) {
+        return commentRepository.findList(recipeId, lastId, size);
+    }
+
+    /**
+     * 댓글 갯수 조회
+     * @param recipeId
+     * @return
+     */
+    public long countByRecipe(Long recipeId) {
+        return commentRepository.countByRecipe(recipeId);
     }
 
 
     /**
      * 댓글 조회
+     * @param commentId
+     * @return
      */
     public Comment findOneById(Long commentId) {
         return commentRepository.findById(commentId).orElse(null);
     }
 
-
+    /**
+     * 댓글 수정
+     * @param commentId
+     * @param form
+     */
     @Transactional
     public void update(Long commentId, CommentForm form) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new FindCommentException("존재하지 않는 댓글입니다."));
         comment.setContent(form.getContent());
     }
 
+    /**
+     * 댓글 삭제
+     * @param commentId
+     */
     @Transactional
     @CacheEvict(value = "popularRecipeListCache", allEntries = true)  // 인기 레시피 리스트 캐시 제거
     public void delete(Long commentId) {

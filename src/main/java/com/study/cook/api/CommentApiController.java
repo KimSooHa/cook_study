@@ -8,16 +8,12 @@ import com.study.cook.util.DateParser;
 import com.study.cook.util.MemberFinder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,19 +26,28 @@ public class CommentApiController {
     private final MemberFinder memberFinder;
 
     @GetMapping("/list")
-    public Map<String, Object> list(@RequestParam Long recipeId, @PageableDefault(size = 4, sort = "regDate", direction = DESC) Pageable pageable) {
+    public Map<String, Object> list(@RequestParam Long recipeId,
+                                    @RequestParam(required = false) Long lastId,
+                                    @RequestParam(defaultValue = "4") int size) {
 
-        Page<CommentDto> comments = commentService.findList(recipeId, pageable);
+        Slice<CommentDto> comments = commentService.findList(recipeId, lastId, size);
+
         comments.forEach(cd -> cd.setRegDateStr(dateParser.getFormatDateDash(cd.getRegDate())));
-        int size = comments.getSize();
-        long totalElements = comments.getTotalElements();
-        int totalPages = comments.getTotalPages();
 
         Map<String, Object> map = new HashMap<>();
-        map.put("comments", comments);
-        map.put("size", size);
-        map.put("totalElements", totalElements);
-        map.put("totalPages", totalPages);
+        map.put("comments", comments.getContent());
+        map.put("hasNext", comments.hasNext());
+
+        if(lastId == null) {
+            long totalCount = commentService.countByRecipe(recipeId);
+            map.put("totalElements", totalCount);
+        }
+        if (!comments.isEmpty()) {
+            map.put("lastId", comments.getContent()
+                    .get(comments.getNumberOfElements() - 1)
+                    .getCommentId());
+        }
+
         return map;
     }
 
